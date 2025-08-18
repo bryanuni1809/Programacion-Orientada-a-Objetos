@@ -28,12 +28,33 @@ public class Autenticacion {
                     }
                 }
             }
-        } catch (IOException ex) {
+        } catch (IOException ex){
             System.out.println("Error al leer usuarios.txt: " + ex.getMessage());
         }
         return false;
     }
-    public void registrarUsuario(String usuario, String contrasena) {
+     private boolean usuarioExiste(String usuario){
+        try (BufferedReader reader = new BufferedReader(new FileReader("usuarios.txt"))) {
+            String linea;
+            while ((linea = reader.readLine()) != null) {
+                String[] partes = linea.split(",");
+                if (partes.length == 2) {
+                    String u = partes[0].trim();
+                    if (u.equals(usuario)) {
+                        return true;
+                     }
+                }
+            }
+        } catch(IOException ex) {
+            System.out.println("Error al leer usuarios.txt: " + ex.getMessage());
+        }
+        return false;
+    }
+    public void registrarUsuario(String usuario,String contrasena) {
+        if (usuarioExiste(usuario)) {
+            System.out.println("El usuario '" + usuario + "' ya esta registrado.");
+            return;
+        }
     try (BufferedWriter writer = new BufferedWriter(new FileWriter("usuarios.txt", true))) {
         writer.write(usuario + "," + contrasena);
         writer.newLine();
@@ -41,6 +62,5 @@ public class Autenticacion {
     } catch (IOException e) {
         System.out.println("Error al registrar usuario: " + e.getMessage());
     }
-}
-
+    }
 }
