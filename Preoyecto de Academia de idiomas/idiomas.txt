@@ -1,0 +1,5 @@
+C101,Ingles Basico I,Basico,Curso orientado a principiantes con enfoque conversacional.
+C102,Aleman Intermedio,Intermedio,Incluye practicas de pronunciacion y gramatica aplicada.
+C103,Frances para Viajes,Basico,Curso practico para viajeros
+C104,Italiano Avanzado II,Avanzado,Enfocado en fluidez oral y comprension lectora.
+C105,Portugues Conversacional,Intermedio,Enfasis en situaciones reales y conversacion diaria.
