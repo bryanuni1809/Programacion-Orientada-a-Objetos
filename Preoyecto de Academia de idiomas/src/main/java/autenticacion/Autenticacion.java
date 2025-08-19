@@ -15,8 +15,9 @@ import java.io.IOException;
  * @author BRYAN
  */
 public class Autenticacion {
+    private static final String ARCHIVO = "usuarios.txt";
     public boolean validarCredenciales(String usuario, String contrasena) {
-        try (BufferedReader reader = new BufferedReader(new FileReader("usuarios.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(ARCHIVO))) {
             String linea;
             while ((linea = reader.readLine()) != null) {
                 String[] partes = linea.split(",");
@@ -29,12 +30,12 @@ public class Autenticacion {
                 }
             }
         } catch (IOException ex){
-            System.out.println("Error al leer usuarios.txt: " + ex.getMessage());
+            System.out.println("Error al leer usurios: " + ex.getMessage());
         }
         return false;
     }
      private boolean usuarioExiste(String usuario){
-        try (BufferedReader reader = new BufferedReader(new FileReader("usuarios.txt"))) {
+        try (BufferedReader reader = new BufferedReader(new FileReader(ARCHIVO))) {
             String linea;
             while ((linea = reader.readLine()) != null) {
                 String[] partes = linea.split(",");
@@ -46,7 +47,6 @@ public class Autenticacion {
                 }
             }
         } catch(IOException ex) {
-            System.out.println("Error al leer usuarios.txt: " + ex.getMessage());
         }
         return false;
     }
@@ -55,7 +55,7 @@ public class Autenticacion {
             System.out.println("El usuario '" + usuario + "' ya esta registrado.");
             return;
         }
-    try (BufferedWriter writer = new BufferedWriter(new FileWriter("usuarios.txt", true))) {
+    try (BufferedWriter writer = new BufferedWriter(new FileWriter(ARCHIVO, true))) {
         writer.write(usuario + "," + contrasena);
         writer.newLine();
         System.out.println("Usuario registrado con exito.");
