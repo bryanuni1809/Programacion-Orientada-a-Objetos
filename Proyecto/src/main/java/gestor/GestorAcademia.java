@@ -16,8 +16,10 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Scanner;
 import util.ArchivoUtil;
+import entidades.Ordenaciones;
 
 /**
  *
@@ -153,6 +155,7 @@ public class GestorAcademia {
         System.out.println("4. Matriculas y Calificaciones");
         System.out.println("5. Niveles de Idioma");
         System.out.println("6. Generar Reportes HTML");
+        System.out.println("7. Ordena Listas (Alumnos, Profesores, etc)");
         System.out.println("0. Salir");
         System.out.print("Seleccione una opcion: ");
         opcion = Integer.parseInt(scanner.nextLine());
@@ -176,6 +179,83 @@ public class GestorAcademia {
             case 6:
                 mostrarMenuReportesHTML();
                 break;
+            case 7:
+                System.out.println("=== ORDENAR LISTAS ===");
+                System.out.println("1. Ordenar Estudiantes");
+                System.out.println("2. Ordenar Profesores");
+                System.out.println("0. Volver al menu principal");
+                int lista =Integer.parseInt(scanner.nextLine());
+
+                switch (lista){
+                    case 1:
+                        if (estudiantes.isEmpty()) {
+                        System.out.println("No hay estudiantes registrados.");
+                        break;
+                        }
+                    System.out.println("=== ORDENAR ESTUDIANTES ===");
+                    System.out.println("1. Burbuja");
+                    System.out.println("2. Seleccion");
+                    System.out.println("3. Insercion");
+                    int ordest = Integer.parseInt(scanner.nextLine());
+                        switch (ordest){
+                            case 1:
+                                Ordenaciones.burbuja(estudiantes,Comparator.comparing(Estudiante::getApellidos));
+                                break;
+                            case 2:
+                                Ordenaciones.seleccion(estudiantes,Comparator.comparing(Estudiante::getApellidos));
+                                break;
+                            case 3:
+                                Ordenaciones.insercion(estudiantes,Comparator.comparing(Estudiante::getApellidos));
+                                break;
+                            default:
+                                System.out.println("Opcion invalida.");
+                                break;
+                        }
+                    System.out.println("=== Lista de Estudiantes Ordenados ===");
+                        for (Estudiante e : estudiantes) {
+                        System.out.println(e.mostrarInfo());
+                        }
+                    break;
+
+                    case 2:
+                        if (profesores.isEmpty()) {
+                        System.out.println("No hay profesores registrados.");
+                        break;
+                        }
+                    System.out.println("=== ORDENAR PROFESORES ===");
+                    System.out.println("1. Burbuja");
+                    System.out.println("2. Seleccion");
+                    System.out.println("3. Insercion");
+                    int ordprof = Integer.parseInt(scanner.nextLine());
+                        switch (ordprof) {
+                            case 1:
+                                Ordenaciones.burbuja(profesores,Comparator.comparing(Profesor::getApellidos));
+                                break;
+                            case 2:
+                                Ordenaciones.seleccion(profesores,Comparator.comparing(Profesor::getApellidos));
+                                break;
+                            case 3:
+                                Ordenaciones.insercion(profesores,Comparator.comparingInt(Profesor::getExperiencia));
+                                break;
+                            default:
+                                System.out.println("Opcion invalida.");
+                                break;
+                        }
+                        System.out.println("=== Lista de Profesores Ordenados ===");
+                            for (Profesor p : profesores) {
+                                System.out.println(p.mostrarInfo());
+                            }
+                break;
+
+        case 0:
+            System.out.println("Volviendo al menú principal...");
+            break;
+
+        default:
+            System.out.println("Opción inválida.");
+            break;
+    }
+    break;
             case 0:
                 System.out.println("Cerrando sesion...");
                 break;
@@ -982,3 +1062,4 @@ private void generarReporteNivelesIdiomaHTML() {
     }
 }
 }
+

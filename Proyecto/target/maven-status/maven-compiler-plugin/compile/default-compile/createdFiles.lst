@@ -6,6 +6,7 @@ entidades\Estudiante.class
 entidades\Calificacion.class
 util\ArchivoUtil.class
 app\Main.class
+entidades\Ordenaciones.class
 autenticacion\Autenticacion.class
 entidades\Curso.class
 gestor\GestorAcademia.class
