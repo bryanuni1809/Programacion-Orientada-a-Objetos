@@ -13,6 +13,7 @@ public class Profesor extends Persona {
     private String especialidad;
     private int experiencia;
 
+    // Constructor
     public Profesor(String dni, String nombres, String apellidos, String direccion,
                     String telefono, String correo, String especialidad, int experiencia) {
         super(dni, nombres, apellidos, direccion, telefono, correo);

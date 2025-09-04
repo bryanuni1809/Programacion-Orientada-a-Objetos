@@ -8,7 +8,7 @@ package entidades;
  *
  * @author BRYAN
  */
-//La clase Estudiante hereda de Persona
+//La clase Estudiante hereda de Persona. Esto significa que Estudiante es una subclase, incluyendo atributos y metodos de Persona
 public class Estudiante extends Persona {
     private String fechaNacimiento;
     private String nivelEstudios;
