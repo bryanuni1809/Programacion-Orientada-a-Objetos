@@ -8,10 +8,12 @@ package entidades;
  *
  * @author BRYAN
  */
+//La clase Estudiante hereda de Persona
 public class Estudiante extends Persona {
     private String fechaNacimiento;
     private String nivelEstudios;
-
+    
+ // Constructor
     public Estudiante(String dni, String nombres, String apellidos, String direccion,
                       String telefono, String correo, String fechaNacimiento, String nivelEstudios) {
         super(dni, nombres, apellidos, direccion, telefono, correo);
@@ -25,6 +27,7 @@ public class Estudiante extends Persona {
     public String getNivelEstudios() { return nivelEstudios; }
     public void setNivelEstudios(String nivelEstudios) { this.nivelEstudios = nivelEstudios; }
 
+    //Sobrescritura de método
     @Override
     public String mostrarInfo() {
         return super.mostrarInfo() + " | Fecha Nac: " + fechaNacimiento + " | Nivel: " + nivelEstudios;

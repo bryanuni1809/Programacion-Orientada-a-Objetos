@@ -8,6 +8,7 @@ package entidades;
  *
  * @author BRYAN
  */
+// Profesor hereda de Persona. Esto evita repetir atributos comunes
 public class Profesor extends Persona {
     private String especialidad;
     private int experiencia;
@@ -25,6 +26,7 @@ public class Profesor extends Persona {
     public int getExperiencia() { return experiencia; }
     public void setExperiencia(int experiencia) { this.experiencia = experiencia; }
 
+    //Sobrescritura de método
     @Override
     public String mostrarInfo() {
         return super.mostrarInfo() + " | Especialidad: " + especialidad + " | Años experiencia: " + experiencia;
