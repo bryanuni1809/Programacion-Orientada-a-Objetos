@@ -20,14 +20,14 @@ private static final String ARCHIVO = "usuarios.txt";
     // Método que valida si un usuario y contraseña existen en el archivo
     // Complejidad: O(n) (búsqueda lineal)
     public boolean validarCredenciales(String usuario, String contrasena) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(ARCHIVO))) {
+        try (BufferedReader reader =new BufferedReader(new FileReader(ARCHIVO))) {
             String linea;
-            while ((linea = reader.readLine()) != null) {
+            while ((linea = reader.readLine()) != null){
                 String[] partes = linea.split(",");
                 if (partes.length == 2) {
                     String u = partes[0].trim();
                     String c = partes[1].trim();
-                    if (u.equals(usuario) && c.equals(contrasena)) {
+                    if (u.equals(usuario) && c.equals(contrasena)){
                         return true;
                     }
                 }
@@ -38,14 +38,14 @@ private static final String ARCHIVO = "usuarios.txt";
         return false;
     }
 
-    private boolean usuarioExiste(String usuario) {
-        try (BufferedReader reader = new BufferedReader(new FileReader(ARCHIVO))) {
+    private boolean usuarioExiste(String usuario){
+        try (BufferedReader reader=new BufferedReader(new FileReader(ARCHIVO))) {
             String linea;
             while ((linea = reader.readLine()) != null) {
                 String[] partes = linea.split(",");
-                if (partes.length == 2) {
+                if (partes.length == 2){
                     String u = partes[0].trim();
-                    if (u.equals(usuario)) {
+                    if (u.equals(usuario)){
                         return true;
                     }
                 }

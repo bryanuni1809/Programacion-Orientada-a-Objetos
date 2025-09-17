@@ -13,7 +13,7 @@ import java.util.Scanner;
  */
 public class Main{
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
         Scanner scanner = new Scanner(System.in);
         Autenticacion auth = new Autenticacion();
         int opcion;
@@ -63,6 +63,6 @@ public class Main{
                     break;
             }
 
-        } while (opcion != 0);
+        } while(opcion != 0);
     }
 }
