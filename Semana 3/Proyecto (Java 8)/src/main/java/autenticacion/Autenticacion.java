@@ -59,15 +59,15 @@ private static final String ARCHIVO = "usuarios.txt";
     // Método que registra un nuevo usuario en el archivo
     // Complejidad: O(1) (agrega al final del archivo)
     public void registrarUsuario(String usuario, String contrasena) {
-        if (usuarioExiste(usuario)) {
-            System.out.println("El usuario '" + usuario + "' ya está registrado.");
+        if(usuarioExiste(usuario)){
+            System.out.println("El usuario '"+ usuario+"' ya está registrado.");
             return;
         }
-        try (BufferedWriter writer = new BufferedWriter(new FileWriter(ARCHIVO, true))) {
+        try(BufferedWriter writer=new BufferedWriter(new FileWriter(ARCHIVO, true))){
             writer.write(usuario + "," + contrasena);
             writer.newLine();
             System.out.println("Usuario registrado con éxito.");
-        } catch (IOException e) {
+        }catch(IOException e){
             System.out.println("Error al registrar usuario: " + e.getMessage());
         }
     }
