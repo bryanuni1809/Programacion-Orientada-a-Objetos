@@ -9,7 +9,7 @@ package entidades;
  * @author BRYAN
  */
 //La clase Estudiante hereda de Persona. Esto significa que Estudiante es una subclase, incluyendo atributos y metodos de Persona
-public class Estudiante extends Persona {
+public class Estudiante extends Persona{
     private String fechaNacimiento;
     private String nivelEstudios;
     
@@ -21,15 +21,15 @@ public class Estudiante extends Persona {
         this.nivelEstudios = nivelEstudios;
     }
 
-    public String getFechaNacimiento() { return fechaNacimiento; }
+    public String getFechaNacimiento(){ return fechaNacimiento; }
     public void setFechaNacimiento(String fechaNacimiento) { this.fechaNacimiento = fechaNacimiento; }
 
-    public String getNivelEstudios() { return nivelEstudios; }
+    public String getNivelEstudios(){ return nivelEstudios; }
     public void setNivelEstudios(String nivelEstudios) { this.nivelEstudios = nivelEstudios; }
 
     //Sobrescritura de método
     @Override
-    public String mostrarInfo() {
-        return super.mostrarInfo() + " | Fecha Nac: " + fechaNacimiento + " | Nivel: " + nivelEstudios;
+    public String mostrarInfo(){
+        return super.mostrarInfo()+" | Fecha Nac: " + fechaNacimiento + " | Nivel: " + nivelEstudios;
     }
 }
