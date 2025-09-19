@@ -39,9 +39,9 @@ private static final String ARCHIVO = "usuarios.txt";
     }
 
     private boolean usuarioExiste(String usuario){
-        try (BufferedReader reader=new BufferedReader(new FileReader(ARCHIVO))) {
+        try(BufferedReader reader=new BufferedReader(new FileReader(ARCHIVO))){
             String linea;
-            while ((linea = reader.readLine()) != null) {
+            while((linea = reader.readLine()) != null) {
                 String[] partes = linea.split(",");
                 if (partes.length == 2){
                     String u = partes[0].trim();
@@ -50,7 +50,7 @@ private static final String ARCHIVO = "usuarios.txt";
                     }
                 }
             }
-        } catch (IOException ex) {
+        }catch (IOException ex){
             System.out.println("Error al verificar usuario: " + ex.getMessage());
         }
         return false;
@@ -68,7 +68,7 @@ private static final String ARCHIVO = "usuarios.txt";
             writer.newLine();
             System.out.println("Usuario registrado con éxito.");
         }catch(IOException e){
-            System.out.println("Error al registrar usuario: " + e.getMessage());
+            System.out.println("Error al registrar usuario: "+e.getMessage());
         }
     }
 }
