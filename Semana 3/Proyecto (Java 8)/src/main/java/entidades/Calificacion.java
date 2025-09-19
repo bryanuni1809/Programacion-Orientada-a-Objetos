@@ -15,10 +15,10 @@ public class Calificacion {
     private double nota;
     private String observaciones;
 
-    public Calificacion(String codigoCurso, String dniEstudiante, String fecha, double nota, String observaciones) {
-        this.codigoCurso = codigoCurso;
-        this.dniEstudiante = dniEstudiante;
-        this.fecha = fecha;
+    public Calificacion(String codigoCurso,String dniEstudiante,String fecha,double nota,String observaciones) {
+        this.codigoCurso=codigoCurso;
+        this.dniEstudiante=dniEstudiante;
+        this.fecha=fecha;
         this.nota = nota;
         this.observaciones = observaciones;
     }
