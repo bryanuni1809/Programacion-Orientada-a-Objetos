@@ -8,13 +8,13 @@ package entidades;
  *
  * @author BRYAN
  */
-public class Estudiante extends Persona {
+public class Estudiante extends Persona{
     private String fechaNacimiento;
     private String nivelEstudios;
 
-    public Estudiante(String dni, String nombres, String apellidos, String direccion,
-                      String telefono, String correo, String fechaNacimiento, String nivelEstudios) {
-        super(dni, nombres, apellidos, direccion, telefono, correo);
+    public Estudiante(String dni,String nombres,String apellidos,String direccion,
+                      String telefono,String correo,String fechaNacimiento,String nivelEstudios) {
+        super(dni,nombres,apellidos,direccion,telefono,correo);
         this.fechaNacimiento = fechaNacimiento;
         this.nivelEstudios = nivelEstudios;
     }
@@ -32,6 +32,6 @@ public class Estudiante extends Persona {
 
     @Override
     public String getTipo() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return "Estudiante";
     }
 }

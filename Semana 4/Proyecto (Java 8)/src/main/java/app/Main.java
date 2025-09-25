@@ -13,7 +13,7 @@ import java.util.Scanner;
  */
 public class Main {
 
-    public static void main(String[] args) {
+    public static void main(String[] args){
         Scanner scanner = new Scanner(System.in);
         Autenticacion auth = new Autenticacion();
         int opcion;
@@ -26,7 +26,7 @@ public class Main {
             System.out.print("Seleccione una opcion: ");
             try {
                 opcion = Integer.parseInt(scanner.nextLine());
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException e){
                 System.out.println("Debe ingresar un numero valido.");
                 opcion = -1;
             }
@@ -38,7 +38,7 @@ public class Main {
                     System.out.print("Contraseña: ");
                     String contrasena = scanner.nextLine();
 
-                    if (auth.validarCredenciales(usuario, contrasena)) {
+                    if (auth.validarCredenciales(usuario,contrasena)){
                         System.out.println("Bienvenido, " + usuario);
                         new gestor.GestorAcademia().mostrarMenu();
                     } else {
