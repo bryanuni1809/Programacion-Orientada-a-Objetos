@@ -70,33 +70,33 @@ public class GestorAcademia{
     private void cargarProfesores(){
     try (BufferedReader br=new BufferedReader(new FileReader("profesores.txt"))){
         String linea;
-        while ((linea = br.readLine()) != null) {
+        while ((linea = br.readLine()) != null){
             String[] partes=linea.split(",");
-            if (partes.length >= 8){
+            if (partes.length >=8){
                 Profesor p = new Profesor(
-                    partes[0], partes[1], partes[2], partes[3],
-                    partes[4], partes[5], partes[6],
+                    partes[0],partes[1],partes[2],partes[3],
+                    partes[4],partes[5],partes[6],
                     Integer.parseInt(partes[7])
                 );
                 profesores.add(p);
             }
         }
-    } catch (IOException e) {
-        System.out.println("Error al cargar profesores: " + e.getMessage());
+    } catch (IOException e){
+        System.out.println("Error al cargar profesores: "+e.getMessage());
     }
 }
-    private void cargarNivelesIdioma() {
-    try (BufferedReader br = new BufferedReader(new FileReader("idiomas.txt"))) {
+    private void cargarNivelesIdioma(){
+    try (BufferedReader br =new BufferedReader(new FileReader("idiomas.txt"))) {
         String linea;
-        while ((linea = br.readLine()) != null) {
+        while ((linea = br.readLine()) !=null) {
             String[] partes = linea.split(",");
-            if (partes.length >= 4) {
-                IdiomaNivel in = new IdiomaNivel(partes[0], partes[1], partes[2], partes[3]);
+            if (partes.length >=4) {
+                IdiomaNivel in=new IdiomaNivel(partes[0],partes[1],partes[2],partes[3]);
                 nivelesIdioma.add(in);
             }
         }
     } catch (IOException e) {
-        System.out.println("Error al cargar niveles de idioma: " + e.getMessage());
+        System.out.println("Error al cargar niveles de idioma: "+ e.getMessage());
     }
 }
     private void cargarEstudiantes() {
