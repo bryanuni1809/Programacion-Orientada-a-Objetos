@@ -1,0 +1,5 @@
+C101,Ingles Basico I,Ingles,Basico,73598241,Lunes y Miercoles 9:00-11:00,8,25,250,Curso orientado a principiantes con enfoque conversacional.
+C102,Aleman Intermedio,Aleman,Intermedio,84932017,Martes y Jueves 14:00-16:00,10,20,300,Incluye practicas de pronunciación y gramatica aplicada.
+C103,Frances para Viajes,Frances,Basico,68943125,Sabados 10:00-13:00,6,15,180,Curso practico para viajeros, incluye vocabulario turistico.
+C104,Italiano Avanzado II,Italiano,Avanzado,59387016,Lunes a Viernes 18:00-19:30,12,30,350,Enfocado en fluidez oral y comprensión lectora.
+C105,Portugues Conversacional,Portugues,Intermedio,70984561,Miercoles y Viernes 10:00-12:00,8,18,220,Enfasis en situaciones reales y conversacion diaria.
