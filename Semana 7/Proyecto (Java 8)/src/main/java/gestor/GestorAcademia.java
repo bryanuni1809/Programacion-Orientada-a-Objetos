@@ -47,15 +47,15 @@ public class GestorAcademia{
     cargarCalificaciones();
     cargarNivelesIdioma();
     }
-    private void cargarCursos() {
-    try (BufferedReader br = new BufferedReader(new FileReader("cursos.txt"))) {
+    private void cargarCursos(){
+    try (BufferedReader br=new BufferedReader(new FileReader("cursos.txt"))) {
         String linea;
-        while ((linea = br.readLine()) != null) {
+        while ((linea = br.readLine()) != null){
             String[] partes = linea.split(",");
             if (partes.length >= 10) {
                 Curso c = new Curso(
-                    partes[0], partes[1], partes[2], partes[3],
-                    partes[4], partes[5], Integer.parseInt(partes[6]),
+                    partes[0],partes[1],partes[2],partes[3],
+                    partes[4],partes[5],Integer.parseInt(partes[6]),
                     Integer.parseInt(partes[7]),
                     Double.parseDouble(partes[8]),
                     partes[9]
@@ -63,16 +63,16 @@ public class GestorAcademia{
                 cursos.add(c);
             }
         }
-    } catch (IOException e) {
-        System.out.println("Error al cargar cursos: " + e.getMessage());
+    } catch (IOException e){
+        System.out.println("Error al cargar cursos: "+e.getMessage());
     }
     }
-    private void cargarProfesores() {
-    try (BufferedReader br = new BufferedReader(new FileReader("profesores.txt"))) {
+    private void cargarProfesores(){
+    try (BufferedReader br=new BufferedReader(new FileReader("profesores.txt"))){
         String linea;
         while ((linea = br.readLine()) != null) {
-            String[] partes = linea.split(",");
-            if (partes.length >= 8) {
+            String[] partes=linea.split(",");
+            if (partes.length >= 8){
                 Profesor p = new Profesor(
                     partes[0], partes[1], partes[2], partes[3],
                     partes[4], partes[5], partes[6],
