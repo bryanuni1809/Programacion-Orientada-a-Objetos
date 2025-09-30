@@ -545,7 +545,7 @@ private void mostrarMenuReportesHTML(){
         System.out.println("Estudiante registrado y guardado.");
     }
 
-    private void buscarEstudiante() {
+    private void buscarEstudiante(){
         System.out.print("Ingrese DNI del estudiante: ");
         String dni = scanner.nextLine();
         Estudiante e = estudiantes.get(dni);
@@ -556,7 +556,7 @@ private void mostrarMenuReportesHTML(){
         }
     }
 
-    private void registrarProfesor() {
+    private void registrarProfesor(){
         System.out.println("Registro de Profesor:");
         System.out.print("DNI: ");
         String dni=scanner.nextLine();
@@ -636,8 +636,8 @@ private void mostrarMenuReportesHTML(){
         String codigoCurso =scanner.nextLine();
 
         Curso cursoSeleccionado=null;
-        for (Curso c:cursos){
-            if (c.getCodigo().equals(codigoCurso)) {
+        for(Curso c:cursos){
+            if(c.getCodigo().equals(codigoCurso)){
                 cursoSeleccionado=c;
                 break;
             }
@@ -705,11 +705,11 @@ private void mostrarMenuReportesHTML(){
             System.out.println("No hay estudiantes matriculados en este curso.");
         }
     }
-    private void modificarEstudiante() {
+    private void modificarEstudiante(){
     System.out.print("Ingrese DNI del estudiante a modificar: ");
-    String dni = scanner.nextLine();
+    String dni=scanner.nextLine();
 
-    Estudiante e = estudiantes.get(dni);
+    Estudiante e =estudiantes.get(dni);
         if (e != null){
             System.out.println("Estudiante encontrado:");
             System.out.println(e.mostrarInfo());
