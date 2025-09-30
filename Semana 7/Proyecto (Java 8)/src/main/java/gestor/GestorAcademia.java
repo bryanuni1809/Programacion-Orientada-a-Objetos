@@ -238,13 +238,13 @@ public class GestorAcademia{
             }
             if(ordest>=1&&ordest<=3){
                 System.out.println("=== Lista de Estudiantes Ordenados ===");
-                for (Estudiante e : listaEstudiantes) {
+                for (Estudiante e : listaEstudiantes){
                     System.out.println(e.mostrarInfo());
                 }
             }
             break;
                     case 2:
-                        if (profesores.isEmpty()) {
+                        if (profesores.isEmpty()){
                         System.out.println("No hay profesores registrados.");
                         break;
                         }
@@ -271,15 +271,15 @@ public class GestorAcademia{
                                     ExternalSort.externalSort(entrada,salida,100);
                                     System.out.println("Archivo de profesores ordenado generado: " +salida.getName());
 
-                                try (BufferedReader br = new BufferedReader(new FileReader(salida))) {
+                                try (BufferedReader br = new BufferedReader(new FileReader(salida))){
                                     String linea;
                                     System.out.println("=== Lista de Profesores Ordenados (archivo) ===");
                                 while ((linea = br.readLine()) != null) {
                                     System.out.println(linea);
                                 }
                             }
-                        } catch (IOException e) {
-                            System.out.println("Error en ordenacion externa: " + e.getMessage());
+                        } catch (IOException e){
+                            System.out.println("Error en ordenacion externa: "+e.getMessage());
                     }
                     break;
 
@@ -314,7 +314,7 @@ public class GestorAcademia{
     } while (opcion !=0);
 }
 
-private void menuEstudiantes() {
+private void menuEstudiantes(){
     int opcion;
     do {
         System.out.println("\n--- GESTION DE ESTUDIANTES ---");
@@ -349,7 +349,7 @@ private void menuEstudiantes() {
     } while (opcion != 0);
 }
 
-private void menuProfesores() {
+private void menuProfesores(){
     int opcion;
     do {
         System.out.println("\n--- GESTION DE PROFESORES ---");
@@ -417,7 +417,7 @@ private void menuProfesores() {
     } while (opcion !=0);
 }
 
-private void menuMatriculasNotas() {
+private void menuMatriculasNotas(){
     int opcion;
     do {
         System.out.println("\n--- MATRICULAS Y CALIFICACIONES ---");
