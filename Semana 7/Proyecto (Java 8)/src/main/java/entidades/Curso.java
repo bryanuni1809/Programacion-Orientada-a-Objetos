@@ -20,8 +20,8 @@ public class Curso {
     private double precio;
     private String observaciones;
 
-    public Curso(String codigo, String nombre, String idioma, String nivel, String profesorDni,
-                 String horario, int duracion, int capacidadMaxima, double precio, String observaciones) {
+    public Curso(String codigo,String nombre,String idioma,String nivel,String profesorDni,
+                 String horario,int duracion,int capacidadMaxima,double precio,String observaciones){
         this.codigo = codigo;
         this.nombre = nombre;
         this.idioma = idioma;
