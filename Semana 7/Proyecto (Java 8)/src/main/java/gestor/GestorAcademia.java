@@ -81,21 +81,21 @@ public class GestorAcademia{
                 profesores.add(p);
             }
         }
-    } catch (IOException e){
+    }catch (IOException e){
         System.out.println("Error al cargar profesores: "+e.getMessage());
     }
 }
     private void cargarNivelesIdioma(){
-    try (BufferedReader br =new BufferedReader(new FileReader("idiomas.txt"))) {
+    try(BufferedReader br =new BufferedReader(new FileReader("idiomas.txt"))) {
         String linea;
-        while ((linea = br.readLine()) !=null) {
+        while ((linea = br.readLine()) !=null){
             String[] partes = linea.split(",");
-            if (partes.length >=4) {
+            if (partes.length >=4){
                 IdiomaNivel in=new IdiomaNivel(partes[0],partes[1],partes[2],partes[3]);
                 nivelesIdioma.add(in);
             }
         }
-    } catch (IOException e) {
+    }catch(IOException e){
         System.out.println("Error al cargar niveles de idioma: "+ e.getMessage());
     }
 }
