@@ -1023,16 +1023,16 @@ private void generarReporteProfesoresHTML() {
         System.out.println("Error al generar reporte de profesores: " + e.getMessage());
     }
 }
-private void generarReporteCursosHTML() {
+private void generarReporteCursosHTML(){
     try (BufferedWriter bw = new BufferedWriter(new FileWriter("reporte_cursos.html"))) {
         bw.write("<html><head><title>Reporte de Cursos</title><style>");
         bw.write("table { width: 100%; border-collapse: collapse; } th, td { border: 1px solid black; padding: 8px; }");
         bw.write("</style></head><body><h1>Cursos Registrados</h1><table>");
         bw.write("<tr><th>Código</th><th>Nombre</th><th>Idioma</th><th>Nivel</th><th>Profesor</th><th>Horario</th><th>Duración</th><th>Capacidad</th><th>Precio</th><th>Observaciones</th></tr>");
         for (Curso c : cursos) {
-            bw.write("<tr><td>" + c.getCodigo() + "</td><td>" + c.getNombre() + "</td><td>" + c.getIdioma() + "</td><td>" + c.getNivel() + "</td><td>" +
-                     c.getProfesorDni() + "</td><td>" + c.getHorario() + "</td><td>" + c.getDuracion() + "</td><td>" + c.getCapacidadMaxima() +
-                     "</td><td>" + c.getPrecio() + "</td><td>" + c.getObservaciones() + "</td></tr>");
+            bw.write("<tr><td>" +c.getCodigo() + "</td><td>" +c.getNombre() + "</td><td>" +c.getIdioma() + "</td><td>" +c.getNivel() + "</td><td>" +
+                     c.getProfesorDni() + "</td><td>" +c.getHorario() + "</td><td>" +c.getDuracion() + "</td><td>" +c.getCapacidadMaxima() +
+                     "</td><td>" +c.getPrecio() + "</td><td>" +c.getObservaciones() + "</td></tr>");
         }
         bw.write("</table></body></html>");
         System.out.println("Reporte generado: reporte_cursos.html");
@@ -1040,7 +1040,7 @@ private void generarReporteCursosHTML() {
         System.out.println("Error al generar reporte de cursos: " + e.getMessage());
     }
 }
-private void generarReporteMatriculasHTML() {
+private void generarReporteMatriculasHTML(){
     try (BufferedWriter bw = new BufferedWriter(new FileWriter("reporte_matriculas.html"))) {
         bw.write("<html><head><title>Reporte de Matriculas</title><style>");
         bw.write("table { width: 100%; border-collapse: collapse; } th, td { border: 1px solid black; padding: 8px; }");
@@ -1055,7 +1055,7 @@ private void generarReporteMatriculasHTML() {
         System.out.println("Error al generar reporte de matrículas: " + e.getMessage());
     }
 }
-private void generarReporteCalificacionesHTML() {
+private void generarReporteCalificacionesHTML(){
     try (BufferedWriter bw = new BufferedWriter(new FileWriter("reporte_calificaciones.html"))) {
         bw.write("<html><head><title>Reporte de Calificaciones</title><style>");
         bw.write("table { width: 100%; border-collapse: collapse; } th, td { border: 1px solid black; padding: 8px; }");
@@ -1070,7 +1070,7 @@ private void generarReporteCalificacionesHTML() {
         System.out.println("Error al generar reporte de calificaciones: " + e.getMessage());
     }
 }
-private void generarReporteNivelesIdiomaHTML() {
+private void generarReporteNivelesIdiomaHTML(){
     try (BufferedWriter bw = new BufferedWriter(new FileWriter("reporte_niveles_idioma.html"))) {
         bw.write("<html><head><title>Reporte de Niveles de Idioma</title><style>");
         bw.write("table { width: 100%; border-collapse: collapse; } th, td { border: 1px solid black; padding: 8px; }");
