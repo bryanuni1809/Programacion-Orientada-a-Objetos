@@ -39,7 +39,7 @@ public class GestorAcademia{
     private final ArrayList<Calificacion> calificaciones = new ArrayList<>();
     private final ArrayList<IdiomaNivel> nivelesIdioma = new ArrayList<>();
     
-    public GestorAcademia() {
+    public GestorAcademia(){
     cargarEstudiantes();
     cargarProfesores();
     cargarCursos();
@@ -99,7 +99,7 @@ public class GestorAcademia{
         System.out.println("Error al cargar niveles de idioma: "+ e.getMessage());
     }
 }
-    private void cargarEstudiantes() {
+    private void cargarEstudiantes(){
     try (BufferedReader br = new BufferedReader(new FileReader("estudiantes.txt"))) {
         String linea;
         while ((linea = br.readLine()) != null) {
@@ -109,17 +109,17 @@ public class GestorAcademia{
                     partes[0], partes[1], partes[2], partes[3],
                     partes[4], partes[5], partes[6], partes[7]
                 );
-            estudiantes.put(e.getDni(), e);
+            estudiantes.put(e.getDni(),e);
             }
         }
-    } catch (IOException e) {
+    } catch (IOException e){
         System.out.println("Error al cargar estudiantes: " + e.getMessage());
     }
 }
     private void cargarMatriculas() {
-    try (BufferedReader br = new BufferedReader(new FileReader("matriculas.txt"))) {
+    try (BufferedReader br = new BufferedReader(new FileReader("matriculas.txt"))){
         String linea;
-        while ((linea = br.readLine()) != null) {
+        while ((linea = br.readLine()) != null){
             String[] partes = linea.split(",");
             if (partes.length >= 4) {
                 Matricula m = new Matricula(
@@ -134,9 +134,9 @@ public class GestorAcademia{
     }
 }
     private void cargarCalificaciones(){
-    try (BufferedReader br = new BufferedReader(new FileReader("calificaciones.txt"))) {
+    try (BufferedReader br = new BufferedReader(new FileReader("calificaciones.txt"))){
         String linea;
-        while ((linea = br.readLine()) != null) {
+        while ((linea = br.readLine()) != null){
             String[] partes = linea.split(",");
             if (partes.length >= 5) {
                 Calificacion c = new Calificacion(
@@ -193,7 +193,7 @@ public class GestorAcademia{
 
                 switch(lista){
                     case 1:
-                        if (estudiantes.isEmpty()) {
+                        if (estudiantes.isEmpty()){
                         System.out.println("No hay estudiantes registrados.");
                         break;
                         }
@@ -220,14 +220,14 @@ public class GestorAcademia{
                                     File salida =new File("estudiantes_ordenados.txt");
                                     ExternalSort.externalSort(entrada,salida,100);
                                     System.out.println("Archivo de estudiantes ordenado generado: " +salida.getName());
-                                try (BufferedReader br =new BufferedReader(new FileReader(salida))) {
+                                try (BufferedReader br =new BufferedReader(new FileReader(salida))){
                                     String linea;
                                     System.out.println("=== Lista de Estudiantes Ordenados (archivo) ===");
                                 while ((linea = br.readLine()) != null) {
                                     System.out.println(linea);
                                 }
                             }
-                        }catch (IOException e) {
+                        }catch (IOException e){
                         System.out.println("Error en ordenación externa: " + e.getMessage());
                     }
                     break;
