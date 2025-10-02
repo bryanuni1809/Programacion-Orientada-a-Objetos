@@ -53,18 +53,18 @@ public class Curso {
     public void setHorario(String horario) { this.horario =horario; }
 
     public int getDuracion(){ return duracion;}
-    public void setDuracion(int duracion) { this.duracion =duracion; }
+    public void setDuracion(int duracion) { this.duracion=duracion; }
 
     public int getCapacidadMaxima(){ return capacidadMaxima; }
-    public void setCapacidadMaxima(int capacidadMaxima) { this.capacidadMaxima =capacidadMaxima; }
+    public void setCapacidadMaxima(int capacidadMaxima) { this.capacidadMaxima=capacidadMaxima; }
 
     public double getPrecio(){ return precio; }
-    public void setPrecio(double precio) { this.precio = precio; }
+    public void setPrecio(double precio){ this.precio=precio; }
 
-    public String getObservaciones() { return observaciones; }
+    public String getObservaciones(){ return observaciones; }
     public void setObservaciones(String observaciones) { this.observaciones = observaciones; }
 
-    public String mostrarInfo() {
+    public String mostrarInfo(){
         return "Codigo: " + codigo + " | Nombre: " + nombre + " | Idioma: " + idioma + " | Nivel: " + nivel +
                " | Profesor DNI: " + profesorDni + " | Horario: " + horario + " | Precio: S/" + precio +
                "\nObservaciones: " + observaciones;
