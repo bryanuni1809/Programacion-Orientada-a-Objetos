@@ -34,15 +34,15 @@ public class Matricula{
     public void setMonto(double monto) { this.monto = monto; }
 
     public String mostrarInfo() {
-        return "Curso: " + codigoCurso + " | Estudiante: " + dniEstudiante + 
-               " | Fecha: " + fechaMatricula + " | Monto: S/" + monto;
+        return "Curso: " + codigoCurso+" | Estudiante: "+dniEstudiante+ 
+               " | Fecha: "+fechaMatricula +" | Monto: S/" +monto;
     }
 
-    public String getFecha() {
+    public String getFecha(){
         throw new UnsupportedOperationException("Not supported yet."); 
     }
 
-    public String getMontoPagado() {
+    public String getMontoPagado(){
         throw new UnsupportedOperationException("Not supported yet."); 
     }
 }

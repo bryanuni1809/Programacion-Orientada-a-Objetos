@@ -11,15 +11,14 @@ import java.util.List;
  *
  * @author BRYAN
  */
-public class Ordenaciones {
-    private Ordenaciones() {}
+public class Ordenaciones{
+    private Ordenaciones(){}
 
     public static <T> void burbuja(List<T> lista, Comparator<T> comp) {
     int n = lista.size();
-    for (int i = 0; i < n - 1; i++) {
-        for (int j = 0; j < n - i - 1; j++) {
-            if (comp.compare(lista.get(j), lista.get(j + 1)) > 0) {
-                // Intercambiar
+    for (int i = 0; i < n - 1; i++){
+        for (int j = 0; j < n - i - 1; j++){
+            if (comp.compare(lista.get(j),lista.get(j + 1)) > 0) {
                 T temp = lista.get(j);
                 lista.set(j, lista.get(j + 1));
                 lista.set(j + 1, temp);
@@ -36,8 +35,7 @@ public class Ordenaciones {
                 minIndex = j;
             }
         }
-        // Intercambiar
-        T temp = lista.get(i);
+        T temp=lista.get(i);
         lista.set(i, lista.get(minIndex));
         lista.set(minIndex, temp);
     }
