@@ -22,16 +22,16 @@ public class Curso {
 
     public Curso(String codigo,String nombre,String idioma,String nivel,String profesorDni,
                  String horario,int duracion,int capacidadMaxima,double precio,String observaciones){
-        this.codigo = codigo;
-        this.nombre = nombre;
-        this.idioma = idioma;
-        this.nivel = nivel;
-        this.profesorDni = profesorDni;
-        this.horario = horario;
-        this.duracion = duracion;
-        this.capacidadMaxima = capacidadMaxima;
-        this.precio = precio;
-        this.observaciones = observaciones;
+        this.codigo=codigo;
+        this.nombre=nombre;
+        this.idioma=idioma;
+        this.nivel=nivel;
+        this.profesorDni=profesorDni;
+        this.horario=horario;
+        this.duracion=duracion;
+        this.capacidadMaxima=capacidadMaxima;
+        this.precio=precio;
+        this.observaciones=observaciones;
     }
 
     public String getCodigo() { return codigo; }
