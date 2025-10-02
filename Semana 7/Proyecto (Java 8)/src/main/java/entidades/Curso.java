@@ -34,29 +34,29 @@ public class Curso {
         this.observaciones=observaciones;
     }
 
-    public String getCodigo() { return codigo; }
-    public void setCodigo(String codigo) { this.codigo = codigo; }
+    public String getCodigo(){ return codigo; }
+    public void setCodigo(String codigo) { this.codigo =codigo; }
 
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    public String getNombre(){ return nombre; }
+    public void setNombre(String nombre) { this.nombre =nombre; }
 
-    public String getIdioma() { return idioma; }
-    public void setIdioma(String idioma) { this.idioma = idioma; }
+    public String getIdioma(){ return idioma; }
+    public void setIdioma(String idioma) { this.idioma =idioma; }
 
-    public String getNivel() { return nivel; }
-    public void setNivel(String nivel) { this.nivel = nivel; }
+    public String getNivel(){ return nivel; }
+    public void setNivel(String nivel) { this.nivel= nivel; }
 
-    public String getProfesorDni() { return profesorDni; }
-    public void setProfesorDni(String profesorDni) { this.profesorDni = profesorDni; }
+    public String getProfesorDni(){ return profesorDni; }
+    public void setProfesorDni(String profesorDni) { this.profesorDni= profesorDni; }
 
     public String getHorario() { return horario; }
-    public void setHorario(String horario) { this.horario = horario; }
+    public void setHorario(String horario) { this.horario =horario; }
 
-    public int getDuracion() { return duracion; }
-    public void setDuracion(int duracion) { this.duracion = duracion; }
+    public int getDuracion() { return duracion;}
+    public void setDuracion(int duracion) { this.duracion =duracion; }
 
     public int getCapacidadMaxima() { return capacidadMaxima; }
-    public void setCapacidadMaxima(int capacidadMaxima) { this.capacidadMaxima = capacidadMaxima; }
+    public void setCapacidadMaxima(int capacidadMaxima) { this.capacidadMaxima =capacidadMaxima; }
 
     public double getPrecio() { return precio; }
     public void setPrecio(double precio) { this.precio = precio; }
