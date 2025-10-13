@@ -27,6 +27,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import util.BusquedaExterna;
 import util.Validador;
 
 /**
@@ -164,8 +165,10 @@ public class GestorAcademia{
         System.out.println("5. Niveles de Idioma");
         System.out.println("6. Generar Reportes HTML");
         System.out.println("7. Ordena Listas (Alumnos, Profesores, etc)");
-        System.out.println("8. Validar Todas las Entidades");
-        System.out.println("9. Mostrar Todas las Entidades");
+        System.out.println("8. Búsqueda Interna");
+        System.out.println("9. Búsqueda Externa");
+        System.out.println("10. Validar Todas las Entidades");
+        System.out.println("11. Mostrar Todas las Entidades");
         System.out.println("0. Salir");
         System.out.print("Seleccione una opcion: ");
         opcion = Integer.parseInt(scanner.nextLine());
@@ -193,9 +196,15 @@ public class GestorAcademia{
                 menuOrdenamientos();
                 break;
             case 8:
-                validarTodasLasEntidades();
+                menuBusquedaInterna();
                 break;
             case 9:
+                menuBusquedaExterna();
+                break;
+            case 10:
+                validarTodasLasEntidades();
+                break;
+            case 11:
                 mostrarTodasLasEntidades();
                 break;
             case 0:
@@ -1332,7 +1341,7 @@ private double leerDoubleValidado(String mensaje,double min,double max) {
     }
 }
 //polimorfismo
-private void validarTodasLasEntidades() {
+private void validarTodasLasEntidades(){
     System.out.println("\n=== VALIDACIÓN GENERAL DE ENTIDADES ===");
     List<IValidable> todasLasEntidades = new ArrayList<>();
     todasLasEntidades.addAll(estudiantes.values());
@@ -1351,31 +1360,31 @@ private void validarTodasLasEntidades() {
             if (entidad instanceof IEntidad) {
                 IEntidad entidadConTipo = (IEntidad) entidad;
                 String tipo = entidadConTipo.getTipo();
-                System.out.println("❌ " + tipo + " inválido: " + entidad.getMensajeError());
+                System.out.println("" + tipo + " inválido: " + entidad.getMensajeError());
                 invalidosPorTipo.put(tipo, invalidosPorTipo.getOrDefault(tipo, 0) + 1);
             }
         }
     }
     
     System.out.println("\nResumen de validación:");
-    System.out.println("Entidades válidas: " + validas);
-    System.out.println("Entidades inválidas: " + invalidas);
-    System.out.println("Total: " + todasLasEntidades.size());
+    System.out.println("Entidades válidas: "+validas);
+    System.out.println("Entidades inválidas: " +invalidas);
+    System.out.println("Total: " +todasLasEntidades.size());
     if (!invalidosPorTipo.isEmpty()) {
-        System.out.println("\n🔍 Detalle de entidades inválidas por tipo:");
+        System.out.println("\nDetalle de entidades inválidas por tipo:");
         for (Map.Entry<String, Integer> entry : invalidosPorTipo.entrySet()) {
-            System.out.println("   • " + entry.getKey() + ": " + entry.getValue() + " inválidos");
+            System.out.println("   • " + entry.getKey()+ ": " + entry.getValue() + " inválidos");
         }
     }
     System.out.println("\n?ESTADÍSTICAS POR TIPO:");
-    System.out.println("Estudiantes: " + estudiantes.size());
-    System.out.println("Profesores: " + profesores.size());
-    System.out.println("Cursos: " + cursos.size());
+    System.out.println("Estudiantes: " +estudiantes.size());
+    System.out.println("Profesores: " +profesores.size());
+    System.out.println("Cursos: " +cursos.size());
     System.out.println("Niveles de Idioma: " + nivelesIdioma.size());
     System.out.println("Matrículas: " + matriculas.size());
-    System.out.println("Calificaciones: " + calificaciones.size());
+    System.out.println("Calificaciones: " +calificaciones.size());
 }
-private void mostrarTodasLasEntidades() {
+private void mostrarTodasLasEntidades(){
     System.out.println("\n=== INFORMACIÓN GENERAL DEL SISTEMA ===");
     
     List<IEntidad> todasLasEntidades = new ArrayList<>();
@@ -1392,6 +1401,535 @@ private void mostrarTodasLasEntidades() {
     }
     
     System.out.println("Total de entidades en el sistema: " + todasLasEntidades.size());
+}
+private void menuBusquedaInterna(){
+    int opcion;
+    do{
+        System.out.println("\n=== BÚSQUEDA INTERNA (EN MEMORIA) ===");
+        System.out.println("1. Buscar Estudiantes");
+        System.out.println("2. Buscar Profesores");
+        System.out.println("3. Buscar Cursos");
+        System.out.println("4. Búsqueda Avanzada");
+        System.out.println("0. Volver al menú principal");
+        System.out.print("Seleccione una opción: ");
+        opcion=Integer.parseInt(scanner.nextLine());
+
+        switch(opcion){
+            case 1:
+                buscarEstudiantesInterna();
+                break;
+            case 2:
+                buscarProfesoresInterna();
+                break;
+            case 3:
+                buscarCursosInterna();
+                break;
+            case 4:
+                busquedaAvanzada();
+                break;
+            case 0:
+                System.out.println("Volviendo al menú principal...");
+                break;
+            default:
+                System.out.println("Opción inválida.");
+        }
+    } while (opcion != 0);
+}
+
+private void buscarEstudiantesInterna() {
+    System.out.println("\n=== BÚSQUEDA DE ESTUDIANTES ===");
+    System.out.println("1. Por DNI (Búsqueda Exacta)");
+    System.out.println("2. Por Nombre/Apellido (Búsqueda Parcial)");
+    System.out.println("3. Por Nivel de Estudios");
+    System.out.print("Seleccione criterio: ");
+    int criterio=Integer.parseInt(scanner.nextLine());
+    System.out.print("Ingrese término de búsqueda: ");
+    String termino = scanner.nextLine().toLowerCase();
+    long startTime=System.currentTimeMillis();
+    int resultados=0;
+    switch (criterio){
+        case 1:
+            // Búsqueda exacta por DNI
+            Estudiante estudiante = estudiantes.get(termino);
+            if (estudiante != null) {
+                System.out.println("ENCONTRADO: " + estudiante.mostrarInfo());
+                resultados++;
+            }
+            break;
+            
+        case 2:
+            // Búsqueda parcial por nombre/apellido
+            for (Estudiante e : estudiantes.values()) {
+                String nombreCompleto = (e.getNombres() + " " + e.getApellidos()).toLowerCase();
+                if (nombreCompleto.contains(termino)) {
+                    System.out.println( e.mostrarInfo());
+                    resultados++;
+                }
+            }
+            break;
+            
+        case 3:
+            // Búsqueda por nivel de estudios
+            for (Estudiante e : estudiantes.values()) {
+                if (e.getNivelEstudios().toLowerCase().contains(termino)) {
+                    System.out.println( e.mostrarInfo());
+                    resultados++;
+                }
+            }
+            break;
+    }
+    
+    long endTime = System.currentTimeMillis();
+    System.out.println("\nBúsqueda completada en " + (endTime - startTime) + " ms");
+    System.out.println("Resultados encontrados: " + resultados);
+}
+
+private void buscarProfesoresInterna() {
+    System.out.println("\n=== BÚSQUEDA DE PROFESORES ===");
+    System.out.println("1. Por DNI");
+    System.out.println("2. Por Nombre/Especialidad");
+    System.out.println("3. Por Especialidad");
+    System.out.println("4. Por Experiencia (años)");
+    System.out.print("Seleccione criterio: ");
+    int criterio = Integer.parseInt(scanner.nextLine());
+    
+    System.out.print("Ingrese término de búsqueda: ");
+    String termino = scanner.nextLine().toLowerCase();
+    
+    long startTime = System.currentTimeMillis();
+    int resultados = 0;
+    
+    switch (criterio) {
+        case 1:
+            Profesor profesor = profesores.get(termino);
+            if (profesor != null) {
+                System.out.println("ENCONTRADO: " +profesor.mostrarInfo());
+                resultados++;
+            }
+            break;
+            
+        case 2:
+            for (Profesor p : profesores.values()) {
+                String infoCompleta = (p.getNombres() + " " +p.getApellidos() + " " + p.getEspecialidad()).toLowerCase();
+                if (infoCompleta.contains(termino)) {
+                    System.out.println(p.mostrarInfo());
+                    resultados++;
+                }
+            }
+            break;
+        case 3:
+            System.out.print("Ingrese especialidad: ");
+            String especialidad = scanner.nextLine().toLowerCase();
+            for (Profesor p : profesores.values()) {
+                if (p.getEspecialidad().toLowerCase().contains(especialidad)) {
+                    System.out.println(p.mostrarInfo());
+                    resultados++;
+                }
+            }
+            break;
+        case 4:
+            System.out.print("Ingrese años de experiencia (mínimo): ");
+            try {
+                int experienciaMin = Integer.parseInt(scanner.nextLine());
+                for (Profesor p : profesores.values()) {
+                    if (p.getExperiencia() >= experienciaMin) {
+                        System.out.println(p.mostrarInfo());
+                        resultados++;
+                    }
+                }
+            }catch (NumberFormatException e) {
+                System.out.println("Error: Debe ingresar un número válido");
+            }
+            break;
+            
+        default:
+            System.out.println("Criterio inválido.");
+            return;
+    }
+    long endTime = System.currentTimeMillis();
+    System.out.println("\nBúsqueda completada en " + (endTime - startTime) + " ms");
+    System.out.println("Resultados encontrados: " + resultados);
+}
+    private void buscarCursosInterna() {
+    System.out.println("\n=== BÚSQUEDA DE CURSOS ===");
+    System.out.println("1. Por Código (Búsqueda Exacta)");
+    System.out.println("2. Por Nombre (Búsqueda Parcial)");
+    System.out.println("3. Por Idioma");
+    System.out.println("4. Por Nivel");
+    System.out.println("5. Por Profesor");
+    System.out.print("Seleccione criterio: ");
+    int criterio = Integer.parseInt(scanner.nextLine());
+    
+    System.out.print("Ingrese término de búsqueda: ");
+    String termino = scanner.nextLine().toLowerCase();
+    
+    long startTime = System.currentTimeMillis();
+    int resultados = 0;
+    
+    switch (criterio) {
+        case 1:
+            // Búsqueda exacta por código
+            Curso curso = cursos.get(termino.toUpperCase());
+            if(curso != null) {
+                System.out.println("ENCONTRADO: " + curso.mostrarInfo());
+                resultados++;
+            } else{
+                System.out.println("No se encontró ningún curso con el código: " + termino);
+            }
+            break;
+        case 2:
+            // Búsqueda parcial por nombre
+            for(Curso c : cursos.values()) {
+                if(c.getNombre().toLowerCase().contains(termino)) {
+                    System.out.println(c.mostrarInfo());
+                    resultados++;
+                }
+            }
+            break;
+        case 3:
+            // Búsqueda por idioma
+            for (Curso c : cursos.values()) {
+                if (c.getIdioma().toLowerCase().contains(termino)) {
+                    System.out.println(c.mostrarInfo());
+                    resultados++;
+                }
+            }
+            break;
+        case 4:
+            // Búsqueda por nivel
+            for(Curso c : cursos.values()) {
+                if(c.getNivel().toLowerCase().contains(termino)) {
+                    System.out.println(c.mostrarInfo());
+                    resultados++;
+                }
+            }
+            break;
+        case 5:
+            // Búsqueda por profesor (DNI o nombre)
+            for(Curso c : cursos.values()) {
+                // Buscar por DNI del profesor
+                if(c.getProfesorDni().toLowerCase().contains(termino)){
+                    System.out.println(c.mostrarInfo());
+                    resultados++;
+                }else{
+                    // Buscar por nombre del profesor si está disponible
+                    Profesor profesor = profesores.get(c.getProfesorDni());
+                    if (profesor != null) {
+                        String nombreProfesor = (profesor.getNombres() + " " + profesor.getApellidos()).toLowerCase();
+                        if (nombreProfesor.contains(termino)) {
+                            System.out.println(c.mostrarInfo());
+                            resultados++;
+                        }
+                    }
+                }
+            }
+            break;
+        default:
+            System.out.println("Criterio inválido.");
+            return;
+    }
+    long endTime = System.currentTimeMillis();
+    System.out.println("\nBúsqueda completada en " + (endTime - startTime) + " ms");
+    System.out.println("Resultados encontrados: " + resultados);
+    if(resultados == 0 && criterio != 1){
+        System.out.println("Sugerencia: Intente con términos más generales o verifique la ortografía");
+    }
+}
+private void busquedaAvanzada(){
+    System.out.println("\n=== BÚSQUEDA AVANZADA ===");
+    System.out.print("Ingrese término de búsqueda (buscará en todas las entidades): ");
+    String termino = scanner.nextLine().toLowerCase();
+    long startTime=System.currentTimeMillis();
+    int resultados =0;
+    System.out.println("\n--- ESTUDIANTES ---");
+    for (Estudiante e : estudiantes.values()) {
+        String info = (e.getDni() + " " + e.getNombres() + " " + e.getApellidos() + " " + e.getNivelEstudios()).toLowerCase();
+        if (info.contains(termino)) {
+            System.out.println(e.mostrarInfo());
+            resultados++;
+        }
+    }
+    System.out.println("\n--- PROFESORES ---");
+    for (Profesor p : profesores.values()) {
+        String info = (p.getDni() + " " + p.getNombres() + " " + p.getApellidos() + " " + p.getEspecialidad()).toLowerCase();
+        if (info.contains(termino)) {
+            System.out.println( p.mostrarInfo());
+            resultados++;
+        }
+    }
+    System.out.println("\n--- CURSOS ---");
+    for (Curso c : cursos.values()) {
+        String info = (c.getCodigo() + " " + c.getNombre() + " " + c.getIdioma() + " " + c.getNivel()).toLowerCase();
+        if (info.contains(termino)) {
+            System.out.println(c.mostrarInfo());
+            resultados++;
+        }
+    }
+    long endTime = System.currentTimeMillis();
+    System.out.println("\nBúsqueda avanzada completada en " + (endTime - startTime) + " ms");
+    System.out.println("Total de resultados: " + resultados);
+}
+private void menuBusquedaExterna(){
+    int opcion;
+    do{
+        System.out.println("\n=== BÚSQUEDA EXTERNA (EN ARCHIVOS) ===");
+        System.out.println("1. Buscar en Archivo de Estudiantes");
+        System.out.println("2. Buscar en Archivo de Profesores");
+        System.out.println("3. Buscar en Archivo de Cursos");
+        System.out.println("4. Búsqueda en Todos los Archivos");
+        System.out.println("0. Volver al menú principal");
+        System.out.print("Seleccione una opción: ");
+        opcion = Integer.parseInt(scanner.nextLine());
+
+        switch (opcion) {
+            case 1:
+                buscarEnArchivoEstudiantes();
+                break;
+            case 2:
+                buscarEnArchivoProfesores();
+                break;
+            case 3:
+                buscarEnArchivoCursos();
+                break;
+            case 4:
+                buscarEnTodosLosArchivos();
+                break;
+            case 0:
+                System.out.println("Volviendo al menú principal...");
+                break;
+            default:
+                System.out.println("Opción inválida.");
+        }
+    } while (opcion != 0);
+}
+private void buscarEnArchivoEstudiantes(){
+    try{
+        System.out.print("Ingrese término de búsqueda: ");
+        String termino =scanner.nextLine();
+        System.out.println("\n=== OPCIONES DE BÚSQUEDA EN ESTUDIANTES ===");
+        System.out.println("1. Buscar en todas las columnas");
+        System.out.println("2. Buscar por columna específica");
+        System.out.print("Seleccione opción: ");
+        int opcionBusqueda=Integer.parseInt(scanner.nextLine());
+        
+        System.out.println("\nColumnas disponibles:");
+        System.out.println("0 = DNI | 1 = Nombres | 2 = Apellidos | 3 = Dirección");
+        System.out.println("4 = Teléfono | 5 = Correo | 6 = Fecha Nacimiento | 7 = Nivel Estudios");
+        
+        long startTime =System.currentTimeMillis();
+        List<String> resultados;
+        
+        if(opcionBusqueda == 1){
+            resultados = BusquedaExterna.buscarEnArchivoMultiple("estudiantes.txt", termino);
+        }else{
+            System.out.print("Número de columna: ");
+            int columna = Integer.parseInt(scanner.nextLine());
+            resultados = BusquedaExterna.buscarEnArchivo("estudiantes.txt", termino, columna);
+        }
+        
+        long endTime = System.currentTimeMillis();
+        
+        // Mostrar resultados formateados
+        System.out.println("\nRESULTADOS ENCONTRADOS EN ESTUDIANTES:");
+        if(resultados.isEmpty()) {
+            System.out.println("No se encontraron estudiantes que coincidan con: '" + termino + "'");
+        } else{
+            for (int i = 0; i < resultados.size(); i++) {
+                String[] datos = resultados.get(i).split(",");
+                System.out.println("\nESTUDIANTE #" + (i + 1) + ":");
+                System.out.println("   DNI: " + (datos.length > 0 ? datos[0] : "N/A"));
+                System.out.println("   Nombres: " + (datos.length > 1 ? datos[1] : "N/A"));
+                System.out.println("   Apellidos: " + (datos.length > 2 ? datos[2] : "N/A"));
+                System.out.println("   Dirección: " + (datos.length > 3 ? datos[3] : "N/A"));
+                System.out.println("   Teléfono: " + (datos.length > 4 ? datos[4] : "N/A"));
+                System.out.println("   Correo: " + (datos.length > 5 ? datos[5] : "N/A"));
+                System.out.println("   Fecha Nacimiento: " + (datos.length > 6 ? datos[6] : "N/A"));
+                System.out.println("   Nivel Estudios: " + (datos.length > 7 ? datos[7] : "N/A"));
+                
+                // Calcular edad si tenemos fecha de nacimiento
+                if(datos.length >6 && !datos[6].isEmpty()) {
+                    try{
+                        int edad = Validador.calcularEdad(datos[6]);
+                        System.out.println("   Edad: " + edad + " años");
+                    } catch (Exception e) {
+                    }
+                }
+            }
+        }
+        System.out.println("\nTiempo de búsqueda: " + (endTime - startTime) + " ms");
+        System.out.println("Total de estudiantes encontrados: " + resultados.size());
+        
+    }catch(IOException e){
+        System.out.println("Error al buscar en archivo de estudiantes: " + e.getMessage());
+    } catch(NumberFormatException e) {
+        System.out.println("Error: Debe ingresar un número válido para la columna");
+    }
+}
+
+private void buscarEnArchivoProfesores(){
+    try{
+        System.out.print("Ingrese término de búsqueda: ");
+        String termino = scanner.nextLine();
+        System.out.println("\n=== OPCIONES DE BÚSQUEDA EN PROFESORES ===");
+        System.out.println("1. Buscar en todas las columnas");
+        System.out.println("2. Buscar por columna específica");
+        System.out.print("Seleccione opción: ");
+        int opcionBusqueda =Integer.parseInt(scanner.nextLine());
+        System.out.println("\nColumnas disponibles:");
+        System.out.println("0 = DNI | 1 = Nombres | 2 = Apellidos | 3 = Dirección");
+        System.out.println("4 = Teléfono | 5 = Correo | 6 = Especialidad | 7 = Experiencia");
+        
+        long startTime =System.currentTimeMillis();
+        List<String> resultados;
+        
+        if (opcionBusqueda== 1){
+            resultados = BusquedaExterna.buscarEnArchivoMultiple("profesores.txt", termino);
+        } else {
+            System.out.print("Número de columna: ");
+            int columna =Integer.parseInt(scanner.nextLine());
+            resultados =BusquedaExterna.buscarEnArchivo("profesores.txt", termino, columna);
+        }
+        long endTime=System.currentTimeMillis();
+        // Mostrar resultados formateados
+        System.out.println("\nRESULTADOS ENCONTRADOS EN PROFESORES:");
+        if (resultados.isEmpty()) {
+            System.out.println("No se encontraron profesores que coincidan con: '" + termino + "'");
+        } else {
+            for (int i = 0; i < resultados.size(); i++) {
+                String[] datos = resultados.get(i).split(",");
+                System.out.println("\nPROFESOR #" + (i + 1) + ":");
+                System.out.println("   DNI: " + (datos.length > 0 ? datos[0] : "N/A"));
+                System.out.println("   Nombres: " + (datos.length > 1 ? datos[1] : "N/A"));
+                System.out.println("   Apellidos: " + (datos.length > 2 ? datos[2] : "N/A"));
+                System.out.println("   Dirección: " + (datos.length > 3 ? datos[3] : "N/A"));
+                System.out.println("   Teléfono: " + (datos.length > 4 ? datos[4] : "N/A"));
+                System.out.println("   Correo: " + (datos.length > 5 ? datos[5] : "N/A"));
+                System.out.println("   Especialidad: " + (datos.length > 6 ? datos[6] : "N/A"));
+                System.out.println("   Experiencia: " + (datos.length > 7 ? datos[7] : "N/A") + " años");
+            }
+        }
+        System.out.println("\nTiempo de búsqueda: " + (endTime - startTime) + " ms");
+        System.out.println("Total de profesores encontrados: " + resultados.size());
+    } catch(IOException e){
+        System.out.println("Error al buscar en archivo de profesores: " + e.getMessage());
+    }catch (NumberFormatException e){
+        System.out.println("Error: Debe ingresar un número válido para la columna");
+    }
+}
+private void buscarEnArchivoCursos(){
+    try {
+        System.out.print("Ingrese término de búsqueda: ");
+        String termino = scanner.nextLine();
+        System.out.println("\n=== OPCIONES DE BÚSQUEDA EN CURSOS ===");
+        System.out.println("1. Buscar en todas las columnas");
+        System.out.println("2. Buscar por columna específica");
+        System.out.print("Seleccione opción: ");
+        int opcionBusqueda = Integer.parseInt(scanner.nextLine());
+        System.out.println("\nColumnas disponibles:");
+        System.out.println("0 = Código | 1 = Nombre | 2 = Idioma | 3 = Nivel");
+        System.out.println("4 = DNI Profesor | 5 = Horario | 6 = Duración");
+        System.out.println("7 = Capacidad | 8 = Precio | 9 = Observaciones");
+        long startTime = System.currentTimeMillis();
+        List<String> resultados;
+        
+        if (opcionBusqueda == 1) {
+            // Búsqueda en todas las columnas
+            resultados = BusquedaExterna.buscarEnArchivoMultiple("cursos.txt", termino);
+        }else{
+            System.out.print("Número de columna: ");
+            int columna = Integer.parseInt(scanner.nextLine());
+            resultados = BusquedaExterna.buscarEnArchivo("cursos.txt", termino, columna);
+        }
+        long endTime=System.currentTimeMillis();
+        // Mostrar resultados formateados
+        System.out.println("\nRESULTADOS ENCONTRADOS EN CURSOS:");
+        if (resultados.isEmpty()) {
+            System.out.println("No se encontraron cursos que coincidan con: '" + termino + "'");
+        } else {
+            for (int i = 0; i < resultados.size(); i++) {
+                String[] datos = resultados.get(i).split(",");
+                System.out.println("\nCURSO #" + (i + 1) + ":");
+                System.out.println("   Código: " + (datos.length > 0 ? datos[0] : "N/A"));
+                System.out.println("   Nombre: " + (datos.length > 1 ? datos[1] : "N/A"));
+                System.out.println("   Idioma: " + (datos.length > 2 ? datos[2] : "N/A"));
+                System.out.println("   Nivel: " + (datos.length > 3 ? datos[3] : "N/A"));
+                System.out.println("   Profesor (DNI): " + (datos.length > 4 ? datos[4] : "N/A"));
+                System.out.println("   Horario: " + (datos.length > 5 ? datos[5] : "N/A"));
+                System.out.println("   Duración: " + (datos.length > 6 ? datos[6] : "N/A") + " semanas");
+                System.out.println("   Capacidad: " + (datos.length > 7 ? datos[7] : "N/A") + " estudiantes");
+                System.out.println("   Precio: S/" + (datos.length > 8 ? datos[8] : "N/A"));
+                if (datos.length > 9) {
+                    System.out.println("   Observaciones: " + datos[9]);
+                }
+            }
+        }
+        System.out.println("\nTiempo de búsqueda: " + (endTime - startTime) + " ms");
+        System.out.println("Total de cursos encontrados: " + resultados.size());
+        
+    } catch (IOException e) {
+        System.out.println("Error al buscar en archivo de cursos: " + e.getMessage());
+        System.out.println("Asegúrate de que el archivo 'cursos.txt' exista y tenga datos");
+    } catch (NumberFormatException e) {
+        System.out.println("Error: Debe ingresar un número válido para la columna");
+    }
+}
+private void buscarEnTodosLosArchivos(){
+    try {
+        System.out.print("Ingrese término de búsqueda global: ");
+        String termino=scanner.nextLine();
+        
+        long startTime =System.currentTimeMillis();
+        int totalResultados=0;
+        System.out.println("\nREALIZANDO BÚSQUEDA GLOBAL...");
+        // Buscar en estudiantes
+        System.out.println("\n--- ESTUDIANTES.TXT ---");
+        List<String> resultadosEstudiantes = BusquedaExterna.buscarEnArchivoMultiple("estudiantes.txt", termino);
+        if (resultadosEstudiantes.isEmpty()) {
+            System.out.println("No se encontraron estudiantes");
+        } else {
+            for (String resultado : resultadosEstudiantes) {
+                String[] datos = resultado.split(",");
+                System.out.println(datos[1] + " " + datos[2] + " (DNI: " + datos[0] + ")");
+            }
+        }
+        totalResultados += resultadosEstudiantes.size();
+        // Buscar en profesores
+        System.out.println("\n--- PROFESORES.TXT ---");
+        List<String> resultadosProfesores =BusquedaExterna.buscarEnArchivoMultiple("profesores.txt", termino);
+        if (resultadosProfesores.isEmpty()) {
+            System.out.println("No se encontraron profesores");
+        } else {
+            for (String resultado : resultadosProfesores) {
+                String[] datos = resultado.split(",");
+                System.out.println(datos[1] + " " + datos[2] + " - " + datos[6] + " (DNI: " + datos[0] + ")");
+            }
+        }
+        totalResultados += resultadosProfesores.size();
+        // Buscar en cursos
+        System.out.println("\n--- CURSOS.TXT ---");
+        List<String> resultadosCursos = BusquedaExterna.buscarEnArchivoMultiple("cursos.txt", termino);
+        if (resultadosCursos.isEmpty()) {
+            System.out.println("No se encontraron cursos");
+        } else {
+            for (String resultado : resultadosCursos) {
+                String[] datos = resultado.split(",");
+                System.out.println(datos[1] + " (" + datos[0] + ") - " + datos[2] + " " + datos[3]);
+            }
+        }
+        totalResultados +=resultadosCursos.size();
+        long endTime= System.currentTimeMillis();
+        
+        System.out.println("\nRESUMEN DE BÚSQUEDA GLOBAL:");
+        System.out.println("Tiempo total de búsqueda: " + (endTime - startTime) + " ms");
+        System.out.println("Estudiantes encontrados: " +resultadosEstudiantes.size());
+        System.out.println("Profesores encontrados: " +resultadosProfesores.size());
+        System.out.println("Cursos encontrados: " + resultadosCursos.size());
+        System.out.println("Total general de resultados: " + totalResultados);
+        
+    }catch(IOException e){
+        System.out.println("Error en búsqueda global: " +e.getMessage());
+        System.out.println("Verifica que existan los archivos: estudiantes.txt, profesores.txt, cursos.txt");
+    }
 }
 }
 
