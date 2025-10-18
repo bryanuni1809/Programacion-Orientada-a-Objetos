@@ -20,7 +20,7 @@ public class Calificacion implements IEntidad, IValidable{
     private String observaciones;
     private String mensajeError;
 
-    public Calificacion(String codigoCurso,String dniEstudiante,String fecha,double nota,String observaciones) {
+    public Calificacion(String codigoCurso,String dniEstudiante,String fecha,double nota,String observaciones){
         this.codigoCurso=codigoCurso;
         this.dniEstudiante=dniEstudiante;
         this.fecha=fecha;
@@ -41,12 +41,12 @@ public class Calificacion implements IEntidad, IValidable{
     public double getNota(){return nota;}
     public void setNota(double nota){this.nota=nota;}
 
-    public String getObservaciones(){ return observaciones; }
-    public void setObservaciones(String observaciones) { this.observaciones = observaciones; }
+    public String getObservaciones(){ return observaciones;}
+    public void setObservaciones(String observaciones){ this.observaciones=observaciones;}
 
     @Override
-    public String mostrarInfo() {
-        return "Curso: " + codigoCurso + " | Estudiante: " + dniEstudiante + " | Nota: " + nota + "\nObservaciones: " + observaciones;
+    public String mostrarInfo(){
+        return "Curso: "+codigoCurso+" | Estudiante: "+dniEstudiante+" | Nota: "+nota +"\nObservaciones: "+observaciones;
     }
     @Override
     public String getTipo() {

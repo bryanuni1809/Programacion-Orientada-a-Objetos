@@ -17,10 +17,10 @@ import java.io.IOException;
 public class Autenticacion{
 private static final String ARCHIVO="usuarios.txt";
 
-    public boolean validarCredenciales(String usuario, String contrasena){
+    public boolean validarCredenciales(String usuario,String contrasena){
         try(BufferedReader reader=new BufferedReader(new FileReader(ARCHIVO))){
             String linea;
-            while((linea=reader.readLine())!= null){
+            while((linea=reader.readLine())!=null){
                 String[] partes=linea.split(",");
                 if(partes.length==2){
                     String u=partes[0].trim();
