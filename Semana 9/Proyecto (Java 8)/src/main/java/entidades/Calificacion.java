@@ -46,30 +46,30 @@ public class Calificacion implements IEntidad, IValidable{
 
     @Override
     public String mostrarInfo(){
-        return "Curso: "+codigoCurso+" | Estudiante: "+dniEstudiante+" | Nota: "+nota +"\nObservaciones: "+observaciones;
+        return "Curso: "+codigoCurso+" | Estudiante: "+dniEstudiante+" | Nota: "+nota+"\nObservaciones: "+observaciones;
     }
     @Override
-    public String getTipo() {
+    public String getTipo(){
         return "Calificación";
     }
     @Override
-    public boolean validar() {
+    public boolean validar(){
         try {
             Validador.validarCodigoCurso(codigoCurso);
             Validador.validarDNI(dniEstudiante);
-            Validador.validarFecha(fecha, "fecha de calificación");
+            Validador.validarFecha(fecha,"fecha de calificación");
             Validador.validarNota(nota);
-            Validador.validarNoVacio(observaciones, "observaciones");
-            mensajeError = "";
+            Validador.validarNoVacio(observaciones,"observaciones");
+            mensajeError="";
             return true;
-        } catch (IllegalArgumentException e) {
-            mensajeError = e.getMessage();
+        } catch (IllegalArgumentException e){
+            mensajeError=e.getMessage();
             return false;
         }
     }
 
     @Override
-    public String getMensajeError() {
+    public String getMensajeError(){
         return mensajeError;
     }
 }

@@ -21,27 +21,27 @@ public class Curso extends EntidadAcademica{
     private double precio;
     private String observaciones;
 
-    public Curso(String codigo, String nombre, String idioma, String nivel, String profesorDni,
-                 String horario, int duracion, int capacidadMaxima, double precio, String observaciones) {
+    public Curso(String codigo,String nombre,String idioma,String nivel,String profesorDni,
+                 String horario,int duracion,int capacidadMaxima,double precio,String observaciones){
         super(codigo);
-        this.nombre = nombre;
-        this.idioma = idioma;
-        this.nivel = nivel;
-        this.profesorDni = profesorDni;
-        this.horario = horario;
-        this.duracion = duracion;
-        this.capacidadMaxima = capacidadMaxima;
-        this.precio = precio;
-        this.observaciones = observaciones;
+        this.nombre=nombre;
+        this.idioma=idioma;
+        this.nivel=nivel;
+        this.profesorDni=profesorDni;
+        this.horario=horario;
+        this.duracion=duracion;
+        this.capacidadMaxima=capacidadMaxima;
+        this.precio=precio;
+        this.observaciones=observaciones;
     }
-    public String getNombre() { return nombre; }
-    public void setNombre(String nombre) { this.nombre = nombre; }
+    public String getNombre(){return nombre;}
+    public void setNombre(String nombre){this.nombre=nombre;}
 
-    public String getIdioma() { return idioma; }
-    public void setIdioma(String idioma) { this.idioma = idioma; }
+    public String getIdioma(){return idioma;}
+    public void setIdioma(String idioma){this.idioma=idioma;}
 
-    public String getNivel() { return nivel; }
-    public void setNivel(String nivel) { this.nivel = nivel; }
+    public String getNivel() { return nivel;}
+    public void setNivel(String nivel) { this.nivel=nivel; }
 
     public String getProfesorDni() { return profesorDni; }
     public void setProfesorDni(String profesorDni) { this.profesorDni = profesorDni; }
