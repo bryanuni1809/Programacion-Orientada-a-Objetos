@@ -8,7 +8,7 @@ package interfaces;
  *
  * @author BRYAN
  */
-public interface IEntidad {
+public interface IEntidad{
     String mostrarInfo();
     String getTipo();
 }

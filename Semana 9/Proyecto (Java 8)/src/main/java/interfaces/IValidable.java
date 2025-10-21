@@ -8,7 +8,7 @@ package interfaces;
  *
  * @author BRYAN
  */
-public interface IValidable {
+public interface IValidable{
     boolean validar();
     String getMensajeError();
 }

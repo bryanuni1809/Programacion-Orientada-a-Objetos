@@ -10,7 +10,7 @@ import java.io.IOException;
  *
  * @author BRYAN
  */
-public interface IPersistible {
-    void guardar() throws IOException;
-    void cargar() throws IOException;
+public interface IPersistible{
+    void guardar()throws IOException;
+    void cargar()throws IOException;
 }
