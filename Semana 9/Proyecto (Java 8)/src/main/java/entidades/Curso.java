@@ -63,8 +63,8 @@ public class Curso extends EntidadAcademica{
     
     @Override
     public String mostrarInfo(){
-        return "Codigo: " + codigo+" | Nombre: " + nombre + " | Idioma: " + idioma + " | Nivel: " + nivel +
-               " | Profesor DNI: "+profesorDni + " | Horario: " + horario + " | Precio: S/" + precio +
+        return "Codigo: " + codigo+" | Nombre: "+nombre+" | Idioma: "+idioma+" | Nivel: "+nivel+
+               " | Profesor DNI: "+profesorDni+" | Horario: " + horario + " | Precio: S/"+precio+
                "\nObservaciones: "+observaciones;
     }
     @Override
@@ -80,15 +80,15 @@ public class Curso extends EntidadAcademica{
             Validador.validarCapacidadCurso(capacidadMaxima);
             Validador.validarPrecio(precio);
             Validador.validarNoVacio(observaciones, "observaciones");
-            mensajeError = "";
+            mensajeError="";
             return true;
-        } catch (IllegalArgumentException e) {
-            mensajeError = e.getMessage();
+        } catch (IllegalArgumentException e){
+            mensajeError=e.getMessage();
             return false;
         }
     }
      @Override
-        public String getTipo() {
+        public String getTipo(){
         return "Curso";
     }
 }

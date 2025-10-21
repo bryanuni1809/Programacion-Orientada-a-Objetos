@@ -12,7 +12,7 @@ import util.Validador;
  *
  * @author BRYAN
  */
-public abstract class Persona implements IEntidad, IValidable{
+public abstract class Persona implements IEntidad,IValidable{
     protected String dni;
     protected String nombres;
     protected String apellidos;
@@ -21,7 +21,7 @@ public abstract class Persona implements IEntidad, IValidable{
     protected String correo;
     protected String mensajeError;
 
-    public Persona(String dni,String nombres,String apellidos,String direccion,String telefono,String correo) {
+    public Persona(String dni,String nombres,String apellidos,String direccion,String telefono,String correo){
         this.dni=dni;
         this.nombres=nombres;
         this.apellidos=apellidos;
@@ -50,10 +50,10 @@ public abstract class Persona implements IEntidad, IValidable{
 
    @Override
     public String mostrarInfo(){
-        return "DNI: " +dni+" | Nombre: "+nombres+" "+apellidos;
+        return "DNI: "+dni+" | Nombre: "+nombres+" "+apellidos;
     }
     @Override
-    public boolean validar() {
+    public boolean validar(){
         try {
             Validador.validarDNI(dni);
             Validador.validarSoloLetras(nombres,"nombres");
@@ -61,7 +61,7 @@ public abstract class Persona implements IEntidad, IValidable{
             Validador.validarNoVacio(direccion,"dirección");
             Validador.validarTelefono(telefono);
             Validador.validarEmail(correo);
-            mensajeError = "";
+            mensajeError="";
             return true;
         }catch(IllegalArgumentException e){
             mensajeError=e.getMessage();
@@ -69,7 +69,7 @@ public abstract class Persona implements IEntidad, IValidable{
         }
     }
      @Override
-    public String getMensajeError() {
+    public String getMensajeError(){
         return mensajeError;
     }
     public abstract String getTipo();

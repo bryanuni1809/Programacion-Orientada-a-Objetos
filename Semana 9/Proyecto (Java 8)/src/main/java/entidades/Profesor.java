@@ -15,7 +15,7 @@ public class Profesor extends Persona{
     private int experiencia;
 
     public Profesor(String dni,String nombres,String apellidos,String direccion,
-                    String telefono,String correo,String especialidad,int experiencia) {
+                    String telefono,String correo,String especialidad,int experiencia){
         super(dni,nombres,apellidos,direccion,telefono,correo);
         this.especialidad=especialidad;
         this.experiencia=experiencia;
@@ -45,7 +45,7 @@ public class Profesor extends Persona{
             Validador.validarExperiencia(experiencia);
             return true;
         }catch(IllegalArgumentException e){
-            mensajeError =e.getMessage();
+            mensajeError=e.getMessage();
             return false;
         }
     }
