@@ -1,0 +1,8 @@
+48392014,Luis,Cordova,Av. Javier Prado 150 - La Molina,987654321,lcordova@gmail.com,14/06/2001,Secundario
+72910587,Sandra,Gallegos,Jr. Ayacucho 342 - Trujillo,912345678,sandra.gallegos@yahoo.com,02/10/2002,Tecnico
+65483091,Esteban,Reategui,Calle Lima 345 - Pucallpa,945786123,esteban.rgt@hotmail.com,23/03/1999,Universitario
+83927451,Natalia,Caceres,Pasaje Piura 201 - Cusco,987112233,ncaceres@mail.com,30/07/2000,Basico
+78129384,Marcos,Loayza,Av. Grau 781 - Piura,956321478,marcos.loayza@gmail.com,12/11/2003,Secundario
+59031247,Lucia,Herrera,Jr. Huanuco 148 - San Juan de Miraflores,923456189,lherrera22@gmail.com,04/05/2005,Tecnico
+61728394,Carlos,Palacios,Av. El Sol 915 - Arequipa,998745632,carlos.pal@gmail.com,18/08/2002,Universitario
+72389145,Valeria,Montoya,Av. Venezuela 1340 - Breña,987998877,valeria.montoya@hotmail.com,09/01/2001,Basico
