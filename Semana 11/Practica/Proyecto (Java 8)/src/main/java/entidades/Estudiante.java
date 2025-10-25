@@ -13,42 +13,36 @@ import util.Validador;
 public class Estudiante extends Persona{
     private String fechaNacimiento;
     private String nivelEstudios;
-
     public Estudiante(String dni,String nombres,String apellidos,String direccion,
                       String telefono,String correo,String fechaNacimiento,String nivelEstudios) {
         super(dni,nombres,apellidos,direccion,telefono,correo);
-        this.fechaNacimiento = fechaNacimiento;
-        this.nivelEstudios = nivelEstudios;
+        this.fechaNacimiento=fechaNacimiento;
+        this.nivelEstudios=nivelEstudios;
     }
-
     public String getFechaNacimiento(){return fechaNacimiento;}
     public void setFechaNacimiento(String fechaNacimiento){this.fechaNacimiento=fechaNacimiento;}
-
     public String getNivelEstudios(){return nivelEstudios;}
     public void setNivelEstudios(String nivelEstudios){this.nivelEstudios=nivelEstudios;}
-
     @Override
     public String mostrarInfo(){
         return super.mostrarInfo()+" | Fecha Nac: "+fechaNacimiento+" | Nivel: "+nivelEstudios;
     }
-
     @Override
     public String getTipo(){
         return "Estudiante";
     }
     @Override
-    public boolean validar() {
-        if (!super.validar()) {
+    public boolean validar(){
+        if(!super.validar()){
             return false;
         }
-
-        try {
+        try{
             Validador.validarFecha(fechaNacimiento,"fecha de nacimiento");
             Validador.validarNoVacio(nivelEstudios,"nivel de estudios");
             Validador.validarEdadEstudiante(fechaNacimiento,12,80);
             return true;
-        } catch (IllegalArgumentException e){
-            mensajeError = e.getMessage();
+        }catch(IllegalArgumentException e){
+            mensajeError=e.getMessage();
             return false;
         }
     }

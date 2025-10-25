@@ -439,45 +439,37 @@ private void mostrarMenuReportesHTML(){
     } while (opcion != 0);
 }
  private void registrarEstudiante(){
-         try {
+        try{
         System.out.println("\nREGISTRO DE NUEVO ESTUDIANTE");
-        String dni = leerDNI();
-        if (estudiantes.containsKey(dni)) {
+        String dni=leerDNI();
+        if(estudiantes.containsKey(dni)){
             System.out.println("Ya existe un estudiante registrado con este DNI.");
             return;
         }
-        
         System.out.print("Nombres: ");
-        String nombres = Validador.formatearTexto(scanner.nextLine());
+        String nombres=Validador.formatearTexto(scanner.nextLine());
         Validador.validarSoloLetras(nombres, "nombres");
-        
         System.out.print("Apellidos: ");
-        String apellidos = Validador.formatearTexto(scanner.nextLine());
+        String apellidos=Validador.formatearTexto(scanner.nextLine());
         Validador.validarSoloLetras(apellidos, "apellidos");
-        
         System.out.print("Dirección: ");
-        String direccion = scanner.nextLine().trim();
-        Validador.validarNoVacio(direccion, "dirección");
-        
-        String telefono = leerTelefono();
-        String correo = leerEmail();
-        
-        String fechaNacimiento = leerFecha("Fecha de nacimiento (dd/MM/yyyy): ");
-        Validador.validarEdadEstudiante(fechaNacimiento, 12, 80);
-        
+        String direccion=scanner.nextLine().trim();
+        Validador.validarNoVacio(direccion, "dirección");     
+        String telefono=leerTelefono();
+        String correo=leerEmail();
+        String fechaNacimiento=leerFecha("Fecha de nacimiento (dd/MM/yyyy): ");
+        Validador.validarEdadEstudiante(fechaNacimiento,12,80);
         System.out.print("Nivel de estudios: ");
-        String nivelEstudios = scanner.nextLine().trim();
-        Validador.validarNoVacio(nivelEstudios, "nivel de estudios");
-       
+        String nivelEstudios=scanner.nextLine().trim();
+        Validador.validarNoVacio(nivelEstudios,"nivel de estudios");
         Validador.validarDatosEstudiante(dni, nombres, apellidos, direccion, telefono, correo, fechaNacimiento, nivelEstudios);
-        
         Estudiante e=new Estudiante(dni, nombres, apellidos, direccion, telefono, correo, fechaNacimiento, nivelEstudios);
             if (!e.validar()) {
             System.out.println("Error de validación: " + e.getMensajeError());
             return;
         }
         estudiantes.put(e.getDni(), e);
-        ArchivoUtil.guardarEstudiante(e, "estudiantes.txt");
+        ArchivoUtil.guardarEstudiante(e,"estudiantes.txt");
         System.out.println("Estudiante registrado y validado exitosamente!");
     } catch (IllegalArgumentException e) {
         System.out.println("Error de validación: " + e.getMessage());
@@ -485,20 +477,18 @@ private void mostrarMenuReportesHTML(){
         System.out.println("Error inesperado: " + e.getMessage());
     }
 }
-
     private void buscarEstudiante() {
         System.out.print("Ingrese DNI del estudiante: ");
-        String dni = scanner.nextLine();
-        Estudiante e = estudiantes.get(dni);
-            if (e != null) {
-        System.out.println("Estudiante encontrado: " + e.mostrarInfo());
-            } else {
+        String dni=scanner.nextLine();
+        Estudiante e=estudiantes.get(dni);
+            if(e!= null){
+        System.out.println("Estudiante encontrado: " +e.mostrarInfo());
+            }else{
     System.out.println("Estudiante no encontrado.");
         }
     }
-
-    private void registrarProfesor() {
-        try {
+    private void registrarProfesor(){
+        try{
         System.out.println("\nREGISTRO DE NUEVO PROFESOR");
         String dni = leerDNI();
         System.out.print("Nombres: ");
@@ -893,7 +883,7 @@ private void modificarNivelIdioma(){
 }
 private void buscarProfesor(){
     System.out.print("Ingrese DNI del profesor: ");
-    String dni = scanner.nextLine();
+    String dni=scanner.nextLine();
     Profesor p=profesores.get(dni);
         if (p !=null){
             System.out.println("Profesor encontrado:");
@@ -906,7 +896,7 @@ private void buscarCurso(){
     System.out.print("Ingrese codigo del curso: ");
     String codigo=scanner.nextLine();
     Curso c=cursos.get(codigo);
-        if (c !=null){
+        if(c !=null){
             System.out.println("Curso encontrado:");
             System.out.println(c.mostrarInfo());
         }else{
@@ -918,7 +908,7 @@ private void buscarNivelIdioma(){
     System.out.print("Ingrese codigo del nivel de idioma: ");
     String codigo = scanner.nextLine();
     IdiomaNivel in=nivelesIdioma.get(codigo);
-        if (in !=null){
+        if(in !=null){
             System.out.println("Nivel encontrado:");
             System.out.println(in.mostrarInfo());
         }else{
@@ -928,8 +918,8 @@ private void buscarNivelIdioma(){
 private void eliminarProfesor(){
     System.out.print("Ingrese DNI del profesor a eliminar: ");
     String dni=scanner.nextLine();
-    if (profesores.remove(dni) != null){
-            ArchivoUtil.sobrescribirProfesores(new ArrayList<>(profesores.values()), "profesores.txt");
+    if(profesores.remove(dni) != null){
+            ArchivoUtil.sobrescribirProfesores(new ArrayList<>(profesores.values()),"profesores.txt");
             System.out.println("Profesor eliminado.");
         }else{
         System.out.println("Profesor no encontrado.");
@@ -937,9 +927,9 @@ private void eliminarProfesor(){
 }
 private void eliminarCurso(){
     System.out.print("Ingrese codigo del curso a eliminar: ");
-    String codigo = scanner.nextLine();
-        if (cursos.remove(codigo) !=null){
-            ArchivoUtil.sobrescribirCursos(new ArrayList<>(cursos.values()), "cursos.txt");
+    String codigo=scanner.nextLine();
+        if(cursos.remove(codigo) !=null){
+            ArchivoUtil.sobrescribirCursos(new ArrayList<>(cursos.values()),"cursos.txt");
             System.out.println("Curso eliminado.");
         }else{
         System.out.println("Curso no encontrado.");    
@@ -947,65 +937,64 @@ private void eliminarCurso(){
 }
 private void eliminarNivelIdioma(){
     System.out.print("Ingrese codigo del nivel de idioma a eliminar: ");
-    String codigo = scanner.nextLine();
+    String codigo=scanner.nextLine();
         if (nivelesIdioma.remove(codigo) !=null) {
-            ArchivoUtil.sobrescribirNivelesIdioma(new ArrayList<>(nivelesIdioma.values()), "idiomas.txt");
+            ArchivoUtil.sobrescribirNivelesIdioma(new ArrayList<>(nivelesIdioma.values()),"idiomas.txt");
             System.out.println("Nivel de idioma eliminado.");
         }else{
         System.out.println("Nivel de idioma no encontrado.");    
     }   
 }
-private void eliminarEstudiante() {
+private void eliminarEstudiante(){
     System.out.print("Ingrese DNI del estudiante a eliminar: ");
-    String dni = scanner.nextLine();
+    String dni=scanner.nextLine();
 
-    for (int i = 0; i < estudiantes.size(); i++) {
-        if (estudiantes.containsKey(dni)) {
+    for(int i=0;i<estudiantes.size();i++){
+        if (estudiantes.containsKey(dni)){
             estudiantes.remove(dni);
-            ArchivoUtil.sobrescribirEstudiantes(new ArrayList<>(estudiantes.values()), "estudiantes.txt");
+            ArchivoUtil.sobrescribirEstudiantes(new ArrayList<>(estudiantes.values()),"estudiantes.txt");
             System.out.println("Estudiante eliminado correctamente.");
             return;
         }
     }
-
     System.out.println("Estudiante no encontrado.");
 }
-private void generarReporteEstudiantesHTML() {
-    try (BufferedWriter bw = new BufferedWriter(new FileWriter("reporte_estudiantes.html"))) {
+private void generarReporteEstudiantesHTML(){
+    try(BufferedWriter bw=new BufferedWriter(new FileWriter("reporte_estudiantes.html"))){
         bw.write("<html><head><title>Reporte de Estudiantes</title><style>");
         bw.write("table { width: 100%; border-collapse: collapse; } th, td { border: 1px solid black; padding: 8px; }");
         bw.write("</style></head><body><h1>Estudiantes Registrados</h1><table>");
         bw.write("<tr><th>DNI</th><th>Nombres</th><th>Apellidos</th><th>Dirección</th><th>Teléfono</th><th>Correo</th><th>Fecha Nac.</th><th>Nivel</th></tr>");
-        for (Estudiante e : estudiantes.values()) {
-            bw.write("<tr><td>" + e.getDni() + "</td><td>" + e.getNombres() + "</td><td>" + e.getApellidos() +
-                     "</td><td>" + e.getDireccion() + "</td><td>" + e.getTelefono() + "</td><td>" + e.getCorreo() +
-                     "</td><td>" + e.getFechaNacimiento() + "</td><td>" + e.getNivelEstudios() + "</td></tr>");
+        for(Estudiante e:estudiantes.values()){
+            bw.write("<tr><td>"+e.getDni()+"</td><td>"+e.getNombres()+"</td><td>"+e.getApellidos()+
+                     "</td><td>"+e.getDireccion()+"</td><td>"+e.getTelefono()+"</td><td>"+e.getCorreo()+
+                     "</td><td>"+e.getFechaNacimiento()+"</td><td>"+e.getNivelEstudios()+"</td></tr>");
         }
         bw.write("</table></body></html>");
         System.out.println("Reporte generado: reporte_estudiantes.html");
-    } catch (IOException e) {
-        System.out.println("Error al generar reporte de estudiantes: " + e.getMessage());
+    }catch(IOException e){
+        System.out.println("Error al generar reporte de estudiantes: "+e.getMessage());
     }
 }
-private void generarReporteProfesoresHTML() {
-    try (BufferedWriter bw = new BufferedWriter(new FileWriter("reporte_profesores.html"))) {
+private void generarReporteProfesoresHTML(){
+    try(BufferedWriter bw=new BufferedWriter(new FileWriter("reporte_profesores.html"))){
         bw.write("<html><head><title>Reporte de Profesores</title><style>");
         bw.write("table { width: 100%; border-collapse: collapse; } th, td { border: 1px solid black; padding: 8px; }");
         bw.write("</style></head><body><h1>Profesores Registrados</h1><table>");
         bw.write("<tr><th>DNI</th><th>Nombres</th><th>Apellidos</th><th>Dirección</th><th>Teléfono</th><th>Correo</th><th>Especialidad</th><th>Experiencia</th></tr>");
-        for (Profesor p : profesores.values()) {
-            bw.write("<tr><td>" + p.getDni() + "</td><td>" + p.getNombres() + "</td><td>" + p.getApellidos() +
-                     "</td><td>" + p.getDireccion() + "</td><td>" + p.getTelefono() + "</td><td>" + p.getCorreo() +
-                     "</td><td>" + p.getEspecialidad() + "</td><td>" + p.getExperiencia() + "</td></tr>");
+        for(Profesor p:profesores.values()){
+            bw.write("<tr><td>"+p.getDni()+"</td><td>"+p.getNombres()+"</td><td>" +p.getApellidos()+
+                     "</td><td>"+p.getDireccion()+"</td><td>"+p.getTelefono()+"</td><td>"+p.getCorreo()+
+                     "</td><td>"+p.getEspecialidad()+"</td><td>" +p.getExperiencia()+"</td></tr>");
         }
         bw.write("</table></body></html>");
         System.out.println("Reporte generado: reporte_profesores.html");
-    } catch (IOException e) {
-        System.out.println("Error al generar reporte de profesores: " + e.getMessage());
+    }catch(IOException e){
+        System.out.println("Error al generar reporte de profesores: "+e.getMessage());
     }
 }
-private void generarReporteCursosHTML() {
-    try (BufferedWriter bw = new BufferedWriter(new FileWriter("reporte_cursos.html"))) {
+private void generarReporteCursosHTML(){
+    try (BufferedWriter bw=new BufferedWriter(new FileWriter("reporte_cursos.html"))) {
         bw.write("<html><head><title>Reporte de Cursos</title><style>");
         bw.write("table { width: 100%; border-collapse: collapse; } th, td { border: 1px solid black; padding: 8px; }");
         bw.write("</style></head><body><h1>Cursos Registrados</h1><table>");
