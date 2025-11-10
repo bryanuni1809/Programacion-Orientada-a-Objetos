@@ -1651,7 +1651,7 @@ private void buscarEnTodosLosArchivos() {
     System.out.println("Total de resultados: " + totalResultados);
     System.out.println("Tiempo de búsqueda: " + (fin - inicio) + " ms");
 }
-private void generarReporteEstudiantes() {
+private void generarReporteEstudiantes(){
     if (estudiantes.isEmpty()) {
         System.out.println("No hay estudiantes registrados.");
         return;
@@ -1663,7 +1663,7 @@ private void generarReporteEstudiantes() {
     );
 }
 
-private void generarReporteProfesores() {
+private void generarReporteProfesores(){
     if (profesores.isEmpty()) {
         System.out.println("No hay profesores registrados.");
         return;
@@ -1675,7 +1675,7 @@ private void generarReporteProfesores() {
     );
 }
 
-private void generarReporteCursos() {
+private void generarReporteCursos(){
     if (cursos.isEmpty()) {
         System.out.println("No hay cursos registrados.");
         return;
@@ -1687,7 +1687,7 @@ private void generarReporteCursos() {
     );
 }
 
-private void generarReporteMatriculas() {
+private void generarReporteMatriculas(){
     if (matriculas.isEmpty()) {
         System.out.println("No hay matrículas registradas.");
         return;
@@ -1699,7 +1699,7 @@ private void generarReporteMatriculas() {
     );
 }
 
-private void generarReporteCalificaciones() {
+private void generarReporteCalificaciones(){
     if (calificaciones.isEmpty()) {
         System.out.println("No hay calificaciones registradas.");
         return;
