@@ -1,0 +1,5 @@
+73598241,Alejandra,Tamara,Av. Angamos 456 Surquillo,981234567,alejandra.tamara@gmail.com,Ingles,4
+84932017,Martin,Escudero,Calle Bolivar 231 Huancayo,956789123,martin.escudero@hotmail.com,Aleman,6
+68943125,Paola,Ramirez,Jr. Junin 120 Tacna,987654980,paola.ramirez@yahoo.com,Frances,3
+59387016,Alvaro,Torres,Pasaje Las Flores 67 Cajamarca,912345120,alvaro.torres@mail.com,Italiano,5
+70984561,Valentina,Cruz,Av. America Sur 310 Trujillo,924567891,valentina.cruz@outlook.com,Portugues,2
