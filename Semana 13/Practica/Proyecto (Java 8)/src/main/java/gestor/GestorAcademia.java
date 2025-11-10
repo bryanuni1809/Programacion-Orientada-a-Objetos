@@ -934,7 +934,7 @@ private void eliminarProfesor(){
     System.out.print("Ingrese DNI del profesor a eliminar: ");
     String dni=scanner.nextLine();
     if(profesores.remove(dni)!= null){
-            ArchivoUtil.sobrescribirProfesores(new ArrayList<>(profesores.values()),"profesores.txt");
+            ArchivoUtil.guardarLista(new ArrayList<>(profesores.values()),"profesores.txt");
             System.out.println("Profesor eliminado.");
         }else{
         System.out.println("Profesor no encontrado.");
@@ -944,7 +944,7 @@ private void eliminarCurso(){
     System.out.print("Ingrese codigo del curso a eliminar: ");
     String codigo=scanner.nextLine();
         if(cursos.remove(codigo)!=null){
-            ArchivoUtil.sobrescribirCursos(new ArrayList<>(cursos.values()),"cursos.txt");
+            ArchivoUtil.guardarLista(new ArrayList<>(cursos.values()),"cursos.txt");
             System.out.println("Curso eliminado.");
         }else{
         System.out.println("Curso no encontrado.");    
@@ -954,7 +954,7 @@ private void eliminarNivelIdioma(){
     System.out.print("Ingrese codigo del nivel de idioma a eliminar: ");
     String codigo=scanner.nextLine();
         if (nivelesIdioma.remove(codigo) !=null) {
-            ArchivoUtil.sobrescribirNivelesIdioma(new ArrayList<>(nivelesIdioma.values()),"idiomas.txt");
+            ArchivoUtil.guardarLista(new ArrayList<>(nivelesIdioma.values()),"idiomas.txt");
             System.out.println("Nivel de idioma eliminado.");
         }else{
         System.out.println("Nivel de idioma no encontrado.");    
@@ -967,7 +967,7 @@ private void eliminarEstudiante(){
     for(int i=0;i<estudiantes.size();i++){
         if (estudiantes.containsKey(dni)){
             estudiantes.remove(dni);
-            ArchivoUtil.sobrescribirEstudiantes(new ArrayList<>(estudiantes.values()),"estudiantes.txt");
+            ArchivoUtil.guardarLista(new ArrayList<>(estudiantes.values()),"estudiantes.txt");
             System.out.println("Estudiante eliminado correctamente.");
             return;
         }
@@ -2201,4 +2201,5 @@ private void mostrarEstadisticasMultilistas(){
         }
     }
 }
+
 

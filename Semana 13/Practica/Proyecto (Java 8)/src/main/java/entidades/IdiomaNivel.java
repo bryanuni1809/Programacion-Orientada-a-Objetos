@@ -6,13 +6,15 @@ package entidades;
 
 import interfaces.IEntidad;
 import interfaces.IValidable;
+import java.io.Serializable;
 import util.Validador;
 
 /**
  *
  * @author BRYAN
  */
-public class IdiomaNivel implements IEntidad, IValidable {
+public class IdiomaNivel implements IEntidad, IValidable, Serializable {
+    private static final long serialVersionUID = 1L;
     private String codigo;
     private String idioma;
     private String nivel;
