@@ -331,5 +331,10 @@ public class Validador{
         validarPrecio(precio);
         validarNoVacio(observaciones,"observaciones");
     }
+    public static void validarNumeroPositivo(double valor, String campo) {
+    if (valor < 0) {
+        throw new IllegalArgumentException("El campo '" + campo + "' debe ser un número positivo.");
+    }
+    }
 }
 
