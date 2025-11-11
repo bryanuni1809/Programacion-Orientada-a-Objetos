@@ -20,7 +20,6 @@ import util.ArchivoUtil;
 import interfaces.IEntidad;
 import interfaces.IValidable;
 import java.util.HashMap;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import util.GeneradorReportes;
@@ -39,10 +38,6 @@ public class GestorAcademia{
     private final ArrayList<Matricula>matriculas=new ArrayList<>();
     private final ArrayList<Calificacion>calificaciones=new ArrayList<>();
     private final Map<String,IdiomaNivel>nivelesIdioma=new HashMap<>();
-    private Map<String,LinkedList<Estudiante>>estudiantesPorNivel;
-    private Map<String,LinkedList<Estudiante>> estudiantesPorEdad;
-    private Map<String,LinkedList<String>> indicePorNombre;
-    private Map<String,LinkedList<String>> indicePorCurso;
     
     public GestorAcademia(){
     cargarEstudiantes();
@@ -51,8 +46,6 @@ public class GestorAcademia{
     cargarMatriculas();
     cargarCalificaciones();
     cargarNivelesIdioma();
-    inicializarMultilistas();
-    inicializarListasInvertidas();
     }
     
         private void cargarEstudiantes(){
@@ -179,12 +172,10 @@ public class GestorAcademia{
             System.out.println("4. Matriculas y Calificaciones");
             System.out.println("5. Niveles de Idioma");
             System.out.println("6. Generar Reportes HTML");
-            System.out.println("7. Ordena Listas (Alumnos, Profesores, etc)");
+            System.out.println("7. Ordenar listas (Estudiantes,Profesores,Cursos)");
             System.out.println("8. Búsqueda en Archivos");
-            System.out.println("10. Validar Todas las Entidades");
-            System.out.println("11. Mostrar Todas las Entidades");
-            System.out.println("12. Sistema de Multilistas");
-            System.out.println("13. Ordenamiento con Quicksort");
+            System.out.println("9. Validar Todas las Entidades");
+            System.out.println("10. Mostrar Todas las Entidades");
             System.out.println("0. Salir");
             System.out.print("Seleccione una opcion: ");
             opcion=Integer.parseInt(scanner.nextLine());
@@ -220,12 +211,6 @@ public class GestorAcademia{
                 case 10:
                     mostrarTodasLasEntidades();
                     break;
-                case 11:
-                    menuMultilistas();
-                    break;
-                case 12:
-                    menuOrdenamientosConQuicksort();
-                break;
                 case 0:
                     System.out.println("Cerrando sesion...");
                     break;
@@ -369,19 +354,15 @@ public class GestorAcademia{
                 }
             }
             
-            private void eliminarEstudiante(){
+            private void eliminarEstudiante() {
                 System.out.print("Ingrese DNI del estudiante a eliminar: ");
-                String dni=scanner.nextLine();
-
-                for(int i=0;i<estudiantes.size();i++){
-                    if (estudiantes.containsKey(dni)){
-                        estudiantes.remove(dni);
-                        ArchivoUtil.guardarLista(new ArrayList<>(estudiantes.values()),"estudiantes.txt");
-                        System.out.println("Estudiante eliminado correctamente.");
-                        return;
-                    }
+                String dni = scanner.nextLine();
+                if (estudiantes.remove(dni) != null) {
+                    ArchivoUtil.guardarLista(new ArrayList<>(estudiantes.values()), "estudiantes.txt");
+                    System.out.println("Estudiante eliminado correctamente.");
+                } else {
+                    System.out.println("Estudiante no encontrado.");
                 }
-                System.out.println("Estudiante no encontrado.");
             }
             
     private void menuProfesores(){
@@ -459,7 +440,7 @@ public class GestorAcademia{
                    }
 
                    profesores.put(p.getDni(), p);
-                   ArchivoUtil.agregarEntidad(p, "profesores.dat");
+                   ArchivoUtil.agregarEntidad(p, "profesores.txt");
                    System.out.println("Profesor registrado exitosamente.");
 
                } catch (IllegalArgumentException e) {
@@ -502,7 +483,7 @@ public class GestorAcademia{
                }
 
                profesores.put(p.getDni(), p);
-               ArchivoUtil.guardarLista(new ArrayList<>(profesores.values()), "profesores.dat");
+               ArchivoUtil.guardarLista(new ArrayList<>(profesores.values()), "profesores.txt");
                System.out.println("Profesor modificado correctamente.");
             }
             
@@ -522,7 +503,7 @@ public class GestorAcademia{
                String dni = scanner.nextLine();
 
                if (profesores.remove(dni) != null) {
-                   ArchivoUtil.guardarLista(new ArrayList<>(profesores.values()), "profesores.dat");
+                   ArchivoUtil.guardarLista(new ArrayList<>(profesores.values()), "profesores.txt");
                    System.out.println("Profesor eliminado correctamente.");
                } else {
                    System.out.println("No se encontró un profesor con ese DNI.");
@@ -620,7 +601,7 @@ public class GestorAcademia{
                     }
 
                     cursos.put(c.getCodigo(), c);
-                    ArchivoUtil.agregarEntidad(c, "cursos.dat");
+                    ArchivoUtil.agregarEntidad(c, "cursos.txt");
                     System.out.println("Curso registrado correctamente.");
 
                 } catch (NumberFormatException e) {
@@ -661,7 +642,7 @@ public class GestorAcademia{
                 }
 
                 cursos.put(c.getCodigo(), c);
-                ArchivoUtil.guardarLista(new ArrayList<>(cursos.values()), "cursos.dat");
+                ArchivoUtil.guardarLista(new ArrayList<>(cursos.values()), "cursos.txt");
                 System.out.println("Curso modificado correctamente.");
             }
             
@@ -682,7 +663,7 @@ public class GestorAcademia{
                 String codigo = scanner.nextLine();
 
                 if (cursos.remove(codigo) != null) {
-                    ArchivoUtil.guardarLista(new ArrayList<>(cursos.values()), "cursos.dat");
+                    ArchivoUtil.guardarLista(new ArrayList<>(cursos.values()), "cursos.txt");
                     System.out.println("Curso eliminado correctamente.");
                 } else {
                     System.out.println("No se encontró un curso con ese código.");
@@ -774,7 +755,7 @@ public class GestorAcademia{
                 }
 
                 matriculas.add(m);
-                ArchivoUtil.agregarEntidad(m, "matriculas.dat");
+                ArchivoUtil.agregarEntidad(m, "matriculas.txt");
                 System.out.println("Matrícula registrada para " + estudiante.getNombres() + " en el curso " + cursoSeleccionado.getNombre());
             }
             
@@ -816,7 +797,7 @@ public class GestorAcademia{
                 }
 
                 calificaciones.add(c);
-                ArchivoUtil.agregarEntidad(c, "calificaciones.dat");
+                ArchivoUtil.agregarEntidad(c, "calificaciones.txt");
                 System.out.println("Calificación registrada correctamente.");
             }
             
@@ -838,7 +819,7 @@ public class GestorAcademia{
                 }
 
                 if (encontrada) {
-                    ArchivoUtil.guardarLista(matriculas, "matriculas.dat");
+                    ArchivoUtil.guardarLista(matriculas, "matriculas.txt");
                     System.out.println("Matrícula eliminada correctamente.");
                 } else {
                     System.out.println("Matrícula no encontrada.");
@@ -921,7 +902,7 @@ public class GestorAcademia{
                 System.out.print("Ingrese codigo del nivel de idioma a modificar: ");
                 String codigo=scanner.nextLine();
                 IdiomaNivel in=nivelesIdioma.get(codigo);
-                    if(in.getCodigo().equals(codigo)){
+                    if (in != null) {
                         System.out.println("Nivel encontrado:");
                         System.out.println(in.mostrarInfo());
 
@@ -1239,503 +1220,220 @@ public class GestorAcademia{
                 }
             }
 
-private String leerDNI(){
-    while(true){
-        try{
-            System.out.print("DNI: ");
-            String dni=scanner.nextLine().trim();
-            Validador.validarDNI(dni);
-            return dni;
-        }catch(IllegalArgumentException e){
-            System.out.println(e.getMessage());
-            System.out.println("Por favor, ingrese un DNI válido (8 dígitos).");
-        }
-    }
-}
+    private void buscarEnTodosLosArchivos() {
+        System.out.print("\nIngrese término de búsqueda global (mín. 3 caracteres): ");
+        String termino = scanner.nextLine().trim().toLowerCase();
 
-private String leerEmail(){
-    while(true){
-        try{
-            System.out.print("Correo electrónico: ");
-            String email=scanner.nextLine().trim();
-            Validador.validarEmail(email);
-            return email;
-        }catch(IllegalArgumentException e){
-            System.out.println(e.getMessage());
+        if (termino.length() < 3) {
+            System.out.println("El término debe tener al menos 3 caracteres.");
+            return;
         }
-    }
-}
 
-private String leerTelefono(){
-    while(true){
-        try{
-            System.out.print("Teléfono: ");
-            String telefono=scanner.nextLine().trim();
-            Validador.validarTelefono(telefono);
-            return telefono;
-        }catch(IllegalArgumentException e){
-            System.out.println(e.getMessage());
-        }
-    }
-}
+        long inicio = System.currentTimeMillis();
+        int totalResultados = 0;
 
-private String leerFecha(String mensaje){
-    while(true){
-        try{
-            System.out.print(mensaje);
-            String fecha=scanner.nextLine().trim();
-            Validador.validarFecha(fecha, "fecha");
-            return fecha;
-        }catch(IllegalArgumentException e){
-            System.out.println(e.getMessage());
-        }
-    }
-}
+        System.out.println("\n=== RESULTADOS DE BÚSQUEDA GLOBAL ===");
 
-private int leerEnteroValidado(String mensaje,int min,int max){
-    while(true){
-        try{
-            System.out.print(mensaje);
-            int valor=Integer.parseInt(scanner.nextLine().trim());
-            Validador.validarRangoEntero(valor, min, max, "valor");
-            return valor;
-        }catch(NumberFormatException e){
-            System.out.println("Error: Debe ingresar un número entero válido.");
-        }catch(IllegalArgumentException e){
-            System.out.println(e.getMessage());
+        // === Estudiantes ===
+        System.out.println("\nEstudiantes encontrados:");
+        boolean encontrado = false;
+        for (Estudiante e : estudiantes.values()) {
+            String nombreCompleto = (e.getNombres() + " " + e.getApellidos()).toLowerCase();
+            if (nombreCompleto.contains(termino) || e.getDni().equalsIgnoreCase(termino)) {
+                System.out.println(" - " + e.mostrarInfo());
+                totalResultados++;
+                encontrado = true;
+            }
         }
-    }
-}
-private double leerDoubleValidado(String mensaje,double min,double max){
-    while(true){
-        try{
-            System.out.print(mensaje);
-            double valor=Double.parseDouble(scanner.nextLine().trim());
-            Validador.validarRangoDouble(valor,min,max,"valor");
-            return valor;
-        }catch(NumberFormatException e){
-            System.out.println("Error: Debe ingresar un número válido.");
-        }catch(IllegalArgumentException e){
-            System.out.println(e.getMessage());
+        if (!encontrado) {
+            System.out.println("   No se encontraron estudiantes.");
         }
+
+        // === Profesores ===
+        System.out.println("\nProfesores encontrados:");
+        encontrado = false;
+        for (Profesor p : profesores.values()) {
+            if (p.getNombres().toLowerCase().contains(termino) ||
+                p.getApellidos().toLowerCase().contains(termino) ||
+                p.getDni().equalsIgnoreCase(termino) ||
+                p.getEspecialidad().toLowerCase().contains(termino)) {
+                System.out.println(" - " + p.mostrarInfo());
+                totalResultados++;
+                encontrado = true;
+            }
+        }
+        if (!encontrado) {
+            System.out.println("   No se encontraron profesores.");
+        }
+
+        // === Cursos ===
+        System.out.println("\nCursos encontrados:");
+        encontrado = false;
+        for (Curso c : cursos.values()) {
+            if (c.getNombre().toLowerCase().contains(termino) ||
+                c.getIdioma().toLowerCase().contains(termino) ||
+                c.getCodigo().equalsIgnoreCase(termino) ||
+                c.getNivel().toLowerCase().contains(termino)) {
+                System.out.println(" - " + c.mostrarInfo());
+                totalResultados++;
+                encontrado = true;
+            }
+        }
+        if (!encontrado) {
+            System.out.println("   No se encontraron cursos.");
+        }
+
+        long fin = System.currentTimeMillis();
+        System.out.println("\n=== RESUMEN ===");
+        System.out.println("Total de resultados: " + totalResultados);
+        System.out.println("Tiempo de búsqueda: " + (fin - inicio) + " ms");
     }
-}
+    
+    
 //polimorfismo
-private void validarTodasLasEntidades(){
-    System.out.println("\n=== VALIDACIÓN GENERAL DE ENTIDADES ===");
-    List<IValidable> todasLasEntidades=new ArrayList<>();
-    todasLasEntidades.addAll(estudiantes.values());
-    todasLasEntidades.addAll(profesores.values());
-    todasLasEntidades.addAll(cursos.values());
-    todasLasEntidades.addAll(nivelesIdioma.values());
-    todasLasEntidades.addAll(matriculas);
-    todasLasEntidades.addAll(calificaciones);
-    int validas=0,invalidas=0;
-    Map<String,Integer>invalidosPorTipo=new HashMap<>();
-    for(IValidable entidad:todasLasEntidades){
-        if(entidad.validar()){
-            validas++;
-        }else{
-            invalidas++;
-            if (entidad instanceof IEntidad){
-                IEntidad entidadConTipo=(IEntidad) entidad;
-                String tipo = entidadConTipo.getTipo();
-                System.out.println("" +tipo+" inválido: "+entidad.getMensajeError());
-                invalidosPorTipo.put(tipo,invalidosPorTipo.getOrDefault(tipo,0)+ 1);
+    private void validarTodasLasEntidades(){
+        System.out.println("\n=== VALIDACIÓN GENERAL DE ENTIDADES ===");
+        List<IValidable> todasLasEntidades=new ArrayList<>();
+        todasLasEntidades.addAll(estudiantes.values());
+        todasLasEntidades.addAll(profesores.values());
+        todasLasEntidades.addAll(cursos.values());
+        todasLasEntidades.addAll(nivelesIdioma.values());
+        todasLasEntidades.addAll(matriculas);
+        todasLasEntidades.addAll(calificaciones);
+        int validas=0,invalidas=0;
+        Map<String,Integer>invalidosPorTipo=new HashMap<>();
+        for(IValidable entidad:todasLasEntidades){
+            if(entidad.validar()){
+                validas++;
+            }else{
+                invalidas++;
+                if (entidad instanceof IEntidad){
+                    IEntidad entidadConTipo=(IEntidad) entidad;
+                    String tipo = entidadConTipo.getTipo();
+                    System.out.println("" +tipo+" inválido: "+entidad.getMensajeError());
+                    invalidosPorTipo.put(tipo,invalidosPorTipo.getOrDefault(tipo,0)+ 1);
+                }
+            }
+        }
+
+        System.out.println("\nResumen de validación:");
+        System.out.println("Entidades válidas: "+validas);
+        System.out.println("Entidades inválidas: " +invalidas);
+        System.out.println("Total: "+todasLasEntidades.size());
+        if (!invalidosPorTipo.isEmpty()){
+            System.out.println("\nDetalle de entidades inválidas por tipo:");
+            for (Map.Entry<String, Integer> entry:invalidosPorTipo.entrySet()){
+                System.out.println("   • "+entry.getKey()+ ": "+entry.getValue()+" inválidos");
+            }
+        }
+        System.out.println("\n?ESTADÍSTICAS POR TIPO:");
+        System.out.println("Estudiantes: "+estudiantes.size());
+        System.out.println("Profesores: "+profesores.size());
+        System.out.println("Cursos: "+cursos.size());
+        System.out.println("Niveles de Idioma: "+nivelesIdioma.size());
+        System.out.println("Matrículas: "+matriculas.size());
+        System.out.println("Calificaciones: "+calificaciones.size());
+    }
+    
+    private void mostrarTodasLasEntidades(){
+        System.out.println("\n=== INFORMACIÓN GENERAL DEL SISTEMA ===");
+
+        List<IEntidad> todasLasEntidades=new ArrayList<>();
+        todasLasEntidades.addAll(estudiantes.values());
+        todasLasEntidades.addAll(profesores.values());
+        todasLasEntidades.addAll(cursos.values());
+        todasLasEntidades.addAll(nivelesIdioma.values());
+        todasLasEntidades.addAll(matriculas);
+        todasLasEntidades.addAll(calificaciones);
+
+        for (IEntidad entidad:todasLasEntidades){
+            System.out.println("["+entidad.getTipo()+"] "+entidad.mostrarInfo());
+            System.out.println("------------------------------------------------------");
+        }
+        System.out.println("Total de entidades en el sistema: "+todasLasEntidades.size());
+    }
+    
+    private String leerDNI(){
+        while(true){
+            try{
+                System.out.print("DNI: ");
+                String dni=scanner.nextLine().trim();
+                Validador.validarDNI(dni);
+                return dni;
+            }catch(IllegalArgumentException e){
+                System.out.println(e.getMessage());
+                System.out.println("Por favor, ingrese un DNI válido (8 dígitos).");
+            }
+        }
+    }
+
+    private String leerEmail(){
+        while(true){
+            try{
+                System.out.print("Correo electrónico: ");
+                String email=scanner.nextLine().trim();
+                Validador.validarEmail(email);
+                return email;
+            }catch(IllegalArgumentException e){
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    private String leerTelefono(){
+        while(true){
+            try{
+                System.out.print("Teléfono: ");
+                String telefono=scanner.nextLine().trim();
+                Validador.validarTelefono(telefono);
+                return telefono;
+            }catch(IllegalArgumentException e){
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    private String leerFecha(String mensaje){
+        while(true){
+            try{
+                System.out.print(mensaje);
+                String fecha=scanner.nextLine().trim();
+                Validador.validarFecha(fecha, "fecha");
+                return fecha;
+            }catch(IllegalArgumentException e){
+                System.out.println(e.getMessage());
+            }
+        }
+    }
+
+    private int leerEnteroValidado(String mensaje,int min,int max){
+        while(true){
+            try{
+                System.out.print(mensaje);
+                int valor=Integer.parseInt(scanner.nextLine().trim());
+                Validador.validarRangoEntero(valor, min, max, "valor");
+                return valor;
+            }catch(NumberFormatException e){
+                System.out.println("Error: Debe ingresar un número entero válido.");
+            }catch(IllegalArgumentException e){
+                System.out.println(e.getMessage());
             }
         }
     }
     
-    System.out.println("\nResumen de validación:");
-    System.out.println("Entidades válidas: "+validas);
-    System.out.println("Entidades inválidas: " +invalidas);
-    System.out.println("Total: "+todasLasEntidades.size());
-    if (!invalidosPorTipo.isEmpty()){
-        System.out.println("\nDetalle de entidades inválidas por tipo:");
-        for (Map.Entry<String, Integer> entry:invalidosPorTipo.entrySet()){
-            System.out.println("   • "+entry.getKey()+ ": "+entry.getValue()+" inválidos");
-        }
-    }
-    System.out.println("\n?ESTADÍSTICAS POR TIPO:");
-    System.out.println("Estudiantes: "+estudiantes.size());
-    System.out.println("Profesores: "+profesores.size());
-    System.out.println("Cursos: "+cursos.size());
-    System.out.println("Niveles de Idioma: "+nivelesIdioma.size());
-    System.out.println("Matrículas: "+matriculas.size());
-    System.out.println("Calificaciones: "+calificaciones.size());
-}
-private void mostrarTodasLasEntidades(){
-    System.out.println("\n=== INFORMACIÓN GENERAL DEL SISTEMA ===");
-    
-    List<IEntidad> todasLasEntidades=new ArrayList<>();
-    todasLasEntidades.addAll(estudiantes.values());
-    todasLasEntidades.addAll(profesores.values());
-    todasLasEntidades.addAll(cursos.values());
-    todasLasEntidades.addAll(nivelesIdioma.values());
-    todasLasEntidades.addAll(matriculas);
-    todasLasEntidades.addAll(calificaciones);
-    
-    for (IEntidad entidad:todasLasEntidades){
-        System.out.println("["+entidad.getTipo()+"] "+entidad.mostrarInfo());
-        System.out.println("------------------------------------------------------");
-    }
-    System.out.println("Total de entidades en el sistema: "+todasLasEntidades.size());
-}
-private void inicializarMultilistas(){
-    System.out.println("Inicializando sistema de multilistas...");
-    estudiantesPorNivel=new HashMap<>();
-    estudiantesPorEdad=new HashMap<>();
-    int contador=0;
-    for(Estudiante e:estudiantes.values()){
-        // Multilista por nivel de estudios
-        String nivel=e.getNivelEstudios();
-        if(nivel!=null&&!nivel.trim().isEmpty()){
-            estudiantesPorNivel
-                .computeIfAbsent(nivel,k ->new LinkedList<>())
-                .add(e);
-            contador++;
-        }
-        // Multilista por rango de edad
-        try{
-            int edad=Validador.calcularEdad(e.getFechaNacimiento());
-            String rangoEdad=obtenerRangoEdad(edad);
-            estudiantesPorEdad
-                .computeIfAbsent(rangoEdad,k->new LinkedList<>())
-                .add(e);
-        }catch(Exception ex){
-            System.out.println("Error calculando edad para: "+e.getDni());
-        }
-    }
-    System.out.println("Multilistas inicializadas: "+contador+ " estudiantes procesados");
-    System.out.println("Niveles distintos: "+estudiantesPorNivel.size());
-    System.out.println("Rangos de edad: "+estudiantesPorEdad.size());
-}
-
-private String obtenerRangoEdad(int edad){
-    if(edad<=18)return "18 o menos";
-    else if(edad<=25)return "19-25";
-    else if(edad<=35)return "26-35";
-    else if(edad<=50)return "36-50";
-    else return "51 o más";
-}
-
-private void inicializarListasInvertidas(){
-    System.out.println("Inicializando listas invertidas...");
-    
-    indicePorNombre=new HashMap<>();
-    indicePorCurso=new HashMap<>();
-    
-    int palabrasIndexadas= 0;
-    int matriculasIndexadas=0;
-    for(Estudiante e:estudiantes.values()){
-        String nombreCompleto=(e.getNombres()+" "+e.getApellidos()).toLowerCase();
-        String[]palabras=nombreCompleto.split("\\s+"); // Dividir por espacios
-        
-        for(String palabra:palabras){
-            if(palabra.length()>2&&!palabra.equals("de")&&!palabra.equals("la")){
-                indicePorNombre
-                    .computeIfAbsent(palabra,k->new LinkedList<>())
-                    .add(e.getDni());
-                palabrasIndexadas++;
+    private double leerDoubleValidado(String mensaje,double min,double max){
+        while(true){
+            try{
+                System.out.print(mensaje);
+                double valor=Double.parseDouble(scanner.nextLine().trim());
+                Validador.validarRangoDouble(valor,min,max,"valor");
+                return valor;
+            }catch(NumberFormatException e){
+                System.out.println("Error: Debe ingresar un número válido.");
+            }catch(IllegalArgumentException e){
+                System.out.println(e.getMessage());
             }
         }
     }
-    for(Matricula m:matriculas){
-        String curso=m.getCodigoCurso();
-        if(curso!=null&&!curso.trim().isEmpty()){
-            indicePorCurso
-                .computeIfAbsent(curso,k->new LinkedList<>())
-                .add(m.getDniEstudiante());
-            matriculasIndexadas++;
-        }
-    }
     
-    System.out.println("Listas invertidas inicializadas:");
-    System.out.println("Palabras indexadas en nombres: "+indicePorNombre.size());
-    System.out.println("Matrículas indexadas por curso: "+matriculasIndexadas);
-}
-public void menuMultilistas(){
-    int opcion;
-    do{
-        System.out.println("\n=== SISTEMA DE MULTILISTAS ===");
-        System.out.println("1. Buscar Estudiantes por Nivel de Estudios");
-        System.out.println("2. Buscar por Palabra en Nombre (Lista Invertida)");
-        System.out.println("3. Mostrar Estadísticas de Multilistas");
-        System.out.println("0. Volver");
-        System.out.print("Seleccione: ");
-        opcion=Integer.parseInt(scanner.nextLine());
-        
-        switch(opcion){
-            case 1:buscarPorNivelMultilista();break;
-            case 2:buscarPorNombreInvertido();break;
-            case 3:mostrarEstadisticasMultilistas();break;
-        }
-    }while(opcion !=0);
-}
-
-private void buscarPorNivelMultilista(){
-    System.out.println("\n=== BUSCAR POR NIVEL (MULTILISTA) ===");
-    System.out.println("Niveles disponibles: "+estudiantesPorNivel.keySet());
-    System.out.print("Ingrese nivel: ");
-    String nivel=scanner.nextLine();
-    
-    LinkedList<Estudiante> lista=estudiantesPorNivel.get(nivel);
-    if(lista !=null && !lista.isEmpty()){
-        System.out.println("Estudiantes en nivel '"+nivel +"': "+lista.size());
-        for(Estudiante e:lista){
-            System.out.println(e.mostrarInfo());
-        }
-    }else{
-        System.out.println("No hay estudiantes en ese nivel");
-    }
-}
-
-private void buscarPorNombreInvertido(){
-    System.out.println("\n=== BUSCAR POR NOMBRE (LISTA INVERTIDA) ===");
-    System.out.print("Ingrese palabra del nombre: ");
-    String palabra=scanner.nextLine().toLowerCase();
-    long startTime=System.currentTimeMillis();
-    LinkedList<String> dnis=indicePorNombre.get(palabra);
-    if(dnis!= null){
-        System.out.println("Encontrados: "+dnis.size()+" estudiantes");
-        for(String dni:dnis){
-            Estudiante e = estudiantes.get(dni);
-            if(e!=null){
-                System.out.println(e.mostrarInfo());
-            }
-        }
-    }else{
-        System.out.println("No se encontraron estudiantes con esa palabra");
-    }
-    
-    long endTime=System.currentTimeMillis();
-    System.out.println("Tiempo búsqueda invertida: "+(endTime -startTime)+ " ms");
-}
-
-private void mostrarEstadisticasMultilistas(){
-    System.out.println("\n=== ESTADÍSTICAS MULTILISTAS ===");
-    
-    System.out.println("Estudiantes por Nivel:");
-    for(Map.Entry<String,LinkedList<Estudiante>> entry:estudiantesPorNivel.entrySet()){
-        System.out.println(entry.getKey()+": " +entry.getValue().size()+" estudiantes");
-    }
-    
-    System.out.println("\nÍndice Invertido por Nombre:");
-    System.out.println("Palabras indexadas: "+indicePorNombre.size());
-    int totalEntradas=indicePorNombre.values().stream().mapToInt(LinkedList::size).sum();
-    System.out.println("Total de entradas: "+totalEntradas);
-    
-    System.out.println("\nEficiencia del sistema:");
-    double factor=(double) totalEntradas/estudiantes.size();
-    System.out.println("Factor de indexación: "+String.format("%.2f",factor));
-}
- private void menuOrdenamientosConQuicksort(){
-        int opcion;
-        do{
-            System.out.println("\n=== SISTEMA DE ORDENAMIENTO - QUICKSORT ===");
-            System.out.println("1. Ordenar Estudiantes con Quicksort");
-            System.out.println("2. Ordenar Profesores con Quicksort");
-            System.out.println("3. Ordenar Cursos con Quicksort");
-            System.out.println("0. Volver al menú principal");
-            System.out.print("Seleccione una opción: ");
-             opcion=Integer.parseInt(scanner.nextLine());
-            switch(opcion){
-                case 1:
-                    ordenarEstudiantesQuicksort();
-                    break;
-                case 2:
-                    ordenarProfesoresQuicksort();
-                    break;
-                case 3:
-                    ordenarCursosQuicksort();
-                    break;
-                 case 0:
-                    System.out.println("Volviendo al menú principal...");
-                    break;
-                default:
-                    System.out.println("Opción inválida.");
-            }
-        }while(opcion!=0);
-    }
-    
-    private void ordenarEstudiantesQuicksort(){
-        if(estudiantes.isEmpty()){
-            System.out.println("No hay estudiantes registrados.");
-            return;
-        }
-        List<Estudiante> listaEstudiantes=new ArrayList<>(estudiantes.values());
-        System.out.println("\n=== ORDENAR ESTUDIANTES - QUICKSORT ===");
-        System.out.println("1. Por Apellidos (A-Z)");
-        System.out.println("2. Por Nombres (A-Z)");
-        System.out.println("3. Por DNI (Ascendente)");
-        System.out.print("Seleccione criterio: ");
-        int criterio=Integer.parseInt(scanner.nextLine());
-        
-        long startTime=System.currentTimeMillis();
-        
-        switch(criterio){
-            case 1:
-                SortUtil.sortBy(listaEstudiantes, Comparator.comparing(Estudiante::getApellidos));
-                System.out.println("Estudiantes ordenados por APELLIDOS (Quicksort)");
-                break;
-            case 2:
-                SortUtil.sortBy(listaEstudiantes, Comparator.comparing(Estudiante::getNombres));
-                System.out.println("Estudiantes ordenados por NOMBRES (Quicksort)");
-                break;
-            case 3:
-                SortUtil.sortBy(listaEstudiantes, Comparator.comparing(Estudiante::getDni));
-                System.out.println("Estudiantes ordenados por DNI (Quicksort)");
-                break;
-            default:
-                System.out.println("Criterio inválido.");
-                return;
-        }
-        long endTime=System.currentTimeMillis();
-        
-        System.out.println("Tiempo de ordenamiento (Quicksort): " +(endTime - startTime) + " ms");
-        System.out.println("Total de elementos ordenados: " +listaEstudiantes.size());
-        System.out.println("\n=== PRIMEROS 10 RESULTADOS ===");
-        for(int i=0;i<Math.min(10,listaEstudiantes.size());i++){
-            System.out.println((i+1)+ ". "+listaEstudiantes.get(i).mostrarInfo());
-        }
-    }
-    private void ordenarProfesoresQuicksort(){
-    if(profesores.isEmpty()){
-        System.out.println("No hay profesores registrados.");
-        return;
-    }
-    
-    List<Profesor> listaProfesores=new ArrayList<>(profesores.values());
-    
-    System.out.println("\n=== ORDENAR PROFESORES - QUICKSORT ===");
-    System.out.println("1. Por Apellidos (A-Z)");
-    System.out.println("2. Por Especialidad (A-Z)");
-    System.out.println("3. Por Experiencia (Mayor a menor)");
-    System.out.print("Seleccione criterio: ");
-    int criterio=Integer.parseInt(scanner.nextLine());
-    
-    long startTime=System.currentTimeMillis();
-    
-    switch(criterio){
-        case 1:
-            SortUtil.sortBy(listaProfesores,Comparator.comparing(Profesor::getApellidos));
-            System.out.println("Profesores ordenados por APELLIDOS (Quicksort)");
-            break;
-        case 2:
-            SortUtil.sortBy(listaProfesores,Comparator.comparing(Profesor::getEspecialidad));
-            System.out.println("Profesores ordenados por ESPECIALIDAD (Quicksort)");
-            break;
-        case 3:
-            SortUtil.sortBy(listaProfesores, 
-                Comparator.comparingInt(Profesor::getExperiencia).reversed());
-            System.out.println("Profesores ordenados por EXPERIENCIA (Quicksort)");
-            break;
-        default:
-            System.out.println("Criterio inválido.");
-            return;
-    }
-    
-    long endTime=System.currentTimeMillis();
-    System.out.println("Tiempo de ordenamiento (Quicksort): "+(endTime-startTime)+" ms");
-    
-    System.out.println("\n=== PRIMEROS 10 RESULTADOS ===");
-    for (int i=0;i< Math.min(10,listaProfesores.size());i++){
-        System.out.println((i+1)+". " +listaProfesores.get(i).mostrarInfo());
-    }
-}
-
-    private void ordenarCursosQuicksort(){
-    if(cursos.isEmpty()){
-        System.out.println("No hay cursos registrados.");
-        return;
-    }
-    List<Curso> listaCursos=new ArrayList<>(cursos.values());
-    
-    System.out.println("\n=== ORDENAR CURSOS - QUICKSORT ===");
-    System.out.println("1. Por Nombre (A-Z)");
-    System.out.println("2. Por Idioma (A-Z)");
-    System.out.println("3. Por Precio (Menor a mayor)");
-    System.out.print("Seleccione criterio: ");
-    int criterio=Integer.parseInt(scanner.nextLine());
-    long startTime=System.currentTimeMillis();
-    switch(criterio){
-        case 1:
-            SortUtil.sortBy(listaCursos,Comparator.comparing(Curso::getNombre));
-            System.out.println("Cursos ordenados por NOMBRE (Quicksort)");
-            break;
-        case 2:
-            SortUtil.sortBy(listaCursos,Comparator.comparing(Curso::getIdioma));
-            System.out.println("Cursos ordenados por IDIOMA (Quicksort)");
-            break;
-        case 3:
-            SortUtil.sortBy(listaCursos,Comparator.comparingDouble(Curso::getPrecio));
-            System.out.println("Cursos ordenados por PRECIO (Quicksort)");
-            break;
-        default:
-            System.out.println("Criterio inválido.");
-            return;
-    }
-    long endTime=System.currentTimeMillis();
-    System.out.println("Tiempo de ordenamiento (Quicksort): "+(endTime-startTime)+ " ms");
-    System.out.println("\n=== PRIMEROS 10 RESULTADOS ===");
-    for(int i=0;i<Math.min(10,listaCursos.size());i++){
-        System.out.println((i+1)+". " +listaCursos.get(i).mostrarInfo());
-        }
-    }
-private void buscarEnTodosLosArchivos() {
-    System.out.print("\nIngrese término de búsqueda global: ");
-    String termino = scanner.nextLine().toLowerCase().trim();
-
-    long inicio = System.currentTimeMillis();
-    int totalResultados = 0;
-
-    System.out.println("\n=== RESULTADOS DE BÚSQUEDA GLOBAL ===");
-
-    // --- Buscar en Estudiantes ---
-    System.out.println("\nEstudiantes encontrados:");
-    boolean encontrado = false;
-    for (Estudiante e : estudiantes.values()) {
-        if (e.getNombres().toLowerCase().contains(termino)
-                || e.getApellidos().toLowerCase().contains(termino)
-                || e.getDni().equalsIgnoreCase(termino)) {
-            System.out.println(" - " + e.mostrarInfo());
-            totalResultados++;
-            encontrado = true;
-        }
-    }
-    if (!encontrado) System.out.println("   No se encontraron estudiantes.");
-
-    // --- Buscar en Profesores ---
-    System.out.println("\nProfesores encontrados:");
-    encontrado = false;
-    for (Profesor p : profesores.values()) {
-        if (p.getNombres().toLowerCase().contains(termino)
-                || p.getApellidos().toLowerCase().contains(termino)
-                || p.getDni().equalsIgnoreCase(termino)) {
-            System.out.println(" - " + p.mostrarInfo());
-            totalResultados++;
-            encontrado = true;
-        }
-    }
-    if (!encontrado) System.out.println("   No se encontraron profesores.");
-
-    // --- Buscar en Cursos ---
-    System.out.println("\nCursos encontrados:");
-    encontrado = false;
-    for (Curso c : cursos.values()) {
-        if (c.getNombre().toLowerCase().contains(termino)
-                || c.getIdioma().toLowerCase().contains(termino)
-                || c.getCodigo().equalsIgnoreCase(termino)) {
-            System.out.println(" - " + c.mostrarInfo());
-            totalResultados++;
-            encontrado = true;
-        }
-    }
-    if (!encontrado) System.out.println("   No se encontraron cursos.");
-
-    long fin = System.currentTimeMillis();
-    System.out.println("\n=== RESUMEN ===");
-    System.out.println("Total de resultados: " + totalResultados);
-    System.out.println("Tiempo de búsqueda: " + (fin - inicio) + " ms");
-}
 }
