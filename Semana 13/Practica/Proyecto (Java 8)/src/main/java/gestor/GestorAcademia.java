@@ -41,7 +41,7 @@ public class GestorAcademia{
     private final Map<String,IdiomaNivel>nivelesIdioma=new HashMap<>();
     private Map<String,LinkedList<Estudiante>>estudiantesPorNivel;
     private Map<String,LinkedList<Estudiante>> estudiantesPorEdad;
-    private Map<String,LinkedList<String>> indicePorNombre; // nombre -> lista de DNI's
+    private Map<String,LinkedList<String>> indicePorNombre;
     private Map<String,LinkedList<String>> indicePorCurso;
     
     public GestorAcademia(){
@@ -54,1104 +54,1190 @@ public class GestorAcademia{
     inicializarMultilistas();
     inicializarListasInvertidas();
     }
-    private void cargarCursos(){
-    try(BufferedReader br=new BufferedReader(new FileReader("cursos.txt"))){
-        String linea;
-        while((linea=br.readLine())!=null){
-            String[]partes=linea.split(",");
-            if(partes.length>=10){
-                Curso c=new Curso(
-                    partes[0],partes[1],partes[2],partes[3],
-                    partes[4],partes[5],Integer.parseInt(partes[6]),
-                    Integer.parseInt(partes[7]),
-                    Double.parseDouble(partes[8]),
-                    partes[9]
-                );
-                cursos.put(c.getCodigo(),c);
+    
+        private void cargarEstudiantes(){
+            try(BufferedReader br=new BufferedReader(new FileReader("estudiantes.txt"))){
+                String linea;
+                while((linea=br.readLine())!= null){
+                    String[] partes=linea.split(",");
+                    if(partes.length>=8){
+                        Estudiante e=new Estudiante(
+                            partes[0],partes[1],partes[2],partes[3],
+                            partes[4],partes[5],partes[6],partes[7]
+                        );
+                    estudiantes.put(e.getDni(),e);
+                    }
+                }
+            }catch(IOException e){
+                System.out.println("Error al cargar estudiantes: "+e.getMessage());
             }
         }
-    }catch(IOException e){
-        System.out.println("Error al cargar cursos: "+e.getMessage());
-    }
-    }
-    private void cargarProfesores(){
-    try(BufferedReader br=new BufferedReader(new FileReader("profesores.txt"))){
-        String linea;
-        while((linea=br.readLine())!= null){
-            String[]partes=linea.split(",");
-            if (partes.length>=8) {
-                Profesor p=new Profesor(
-                    partes[0],partes[1],partes[2],partes[3],
-                    partes[4],partes[5],partes[6],
-                    Integer.parseInt(partes[7])
-                );
-                profesores.put(p.getDni(),p);
+        
+        private void cargarProfesores(){
+            try(BufferedReader br=new BufferedReader(new FileReader("profesores.txt"))){
+                String linea;
+                while((linea=br.readLine())!= null){
+                    String[]partes=linea.split(",");
+                    if (partes.length>=8) {
+                        Profesor p=new Profesor(
+                            partes[0],partes[1],partes[2],partes[3],
+                            partes[4],partes[5],partes[6],
+                            Integer.parseInt(partes[7])
+                        );
+                        profesores.put(p.getDni(),p);
+                    }
+                }
+            }catch(IOException e){
+                System.out.println("Error al cargar profesores: "+e.getMessage());
             }
         }
-    }catch(IOException e){
-        System.out.println("Error al cargar profesores: "+e.getMessage());
-    }
-}
-    private void cargarNivelesIdioma(){
-    try (BufferedReader br=new BufferedReader(new FileReader("idiomas.txt"))){
-        String linea;
-        while((linea=br.readLine())!= null){
-            String[] partes=linea.split(",");
-            if(partes.length>= 4){
-                IdiomaNivel in=new IdiomaNivel(partes[0],partes[1],partes[2], partes[3]);
-                nivelesIdioma.put(in.getCodigo(),in);
+        
+        private void cargarCursos(){
+            try(BufferedReader br=new BufferedReader(new FileReader("cursos.txt"))){
+                String linea;
+                while((linea=br.readLine())!=null){
+                    String[]partes=linea.split(",");
+                    if(partes.length>=10){
+                        Curso c=new Curso(
+                            partes[0],partes[1],partes[2],partes[3],
+                            partes[4],partes[5],Integer.parseInt(partes[6]),
+                            Integer.parseInt(partes[7]),
+                            Double.parseDouble(partes[8]),
+                            partes[9]
+                        );
+                        cursos.put(c.getCodigo(),c);
+                    }
+                }
+            }catch(IOException e){
+                System.out.println("Error al cargar cursos: "+e.getMessage());
             }
         }
-    }catch(IOException e){
-        System.out.println("Error al cargar niveles de idioma: " + e.getMessage());
-    }
-}
-    private void cargarEstudiantes(){
-    try(BufferedReader br=new BufferedReader(new FileReader("estudiantes.txt"))){
-        String linea;
-        while((linea=br.readLine())!= null){
-            String[] partes=linea.split(",");
-            if(partes.length>=8){
-                Estudiante e=new Estudiante(
-                    partes[0],partes[1],partes[2],partes[3],
-                    partes[4],partes[5],partes[6],partes[7]
-                );
-            estudiantes.put(e.getDni(),e);
+        
+        private void cargarMatriculas(){
+            try (BufferedReader br=new BufferedReader(new FileReader("matriculas.txt"))){
+                String linea;
+                while((linea=br.readLine())!=null){
+                    String[]partes=linea.split(",");
+                    if(partes.length>=4){
+                        Matricula m=new Matricula(
+                            partes[0],partes[1],partes[2],
+                            Double.parseDouble(partes[3])
+                        );
+                        matriculas.add(m);
+                    }
+                }
+            }catch(IOException e){
+                System.out.println("Error al cargar matrículas: "+e.getMessage());
             }
         }
-    }catch(IOException e){
-        System.out.println("Error al cargar estudiantes: "+e.getMessage());
-    }
-}
-    private void cargarMatriculas(){
-    try (BufferedReader br=new BufferedReader(new FileReader("matriculas.txt"))){
-        String linea;
-        while((linea=br.readLine())!=null){
-            String[]partes=linea.split(",");
-            if(partes.length>=4){
-                Matricula m=new Matricula(
-                    partes[0],partes[1],partes[2],
-                    Double.parseDouble(partes[3])
-                );
-                matriculas.add(m);
+        
+        private void cargarCalificaciones() {
+            try (BufferedReader br = new BufferedReader(new FileReader("calificaciones.txt"))) {
+                String linea;
+                while ((linea = br.readLine()) != null) {
+                    String[] partes = linea.split(",");
+                    if (partes.length >= 5) {
+                        Calificacion c = new Calificacion(
+                            partes[0].trim(),
+                            partes[1].trim(),
+                            partes[2].trim(),
+                            Double.parseDouble(partes[3].trim()),
+                            partes[4].trim()
+                        );
+                        calificaciones.add(c);
+                    }
+                }
+            } catch (IOException e) {
+                System.out.println("Error al cargar calificaciones: " + e.getMessage());
             }
         }
-    }catch(IOException e){
-        System.out.println("Error al cargar matrículas: "+e.getMessage());
-    }
-}
-private void cargarCalificaciones() {
-    try (BufferedReader br = new BufferedReader(new FileReader("calificaciones.txt"))) {
-        String linea;
-        while ((linea = br.readLine()) != null) {
-            String[] partes = linea.split(",");
-            if (partes.length >= 5) {
-                Calificacion c = new Calificacion(
-                    partes[0].trim(),
-                    partes[1].trim(),
-                    partes[2].trim(),
-                    Double.parseDouble(partes[3].trim()),
-                    partes[4].trim()
-                );
-                calificaciones.add(c);
+        
+        private void cargarNivelesIdioma(){
+            try (BufferedReader br=new BufferedReader(new FileReader("idiomas.txt"))){
+                String linea;
+                while((linea=br.readLine())!= null){
+                    String[] partes=linea.split(",");
+                    if(partes.length>= 4){
+                        IdiomaNivel in=new IdiomaNivel(partes[0],partes[1],partes[2], partes[3]);
+                        nivelesIdioma.put(in.getCodigo(),in);
+                    }
+                }
+            }catch(IOException e){
+                System.out.println("Error al cargar niveles de idioma: " + e.getMessage());
             }
         }
-    } catch (IOException e) {
-        System.out.println("Error al cargar calificaciones: " + e.getMessage());
-    }
-}
+
+    //MENU PRINCIPAL
+    
     public void mostrarMenu(){
-    int opcion;
-    do{
-        System.out.println("\n===== MENU PRINCIPAL =====");
-        System.out.println("1. Gestion de Estudiantes");
-        System.out.println("2. Gestion de Profesores");
-        System.out.println("3. Gestion de Cursos");
-        System.out.println("4. Matriculas y Calificaciones");
-        System.out.println("5. Niveles de Idioma");
-        System.out.println("6. Generar Reportes HTML");
-        System.out.println("7. Ordena Listas (Alumnos, Profesores, etc)");
-        System.out.println("8. Búsqueda en Archivos");
-        System.out.println("10. Validar Todas las Entidades");
-        System.out.println("11. Mostrar Todas las Entidades");
-        System.out.println("12. Sistema de Multilistas");
-        System.out.println("13. Ordenamiento con Quicksort");
-        System.out.println("0. Salir");
-        System.out.print("Seleccione una opcion: ");
-        opcion=Integer.parseInt(scanner.nextLine());
-
-        switch(opcion){
-            case 1:
-                menuEstudiantes();
-                break;
-            case 2:
-                menuProfesores();
-                break;
-            case 3:
-                menuCursos();
-                break;
-            case 4:
-                menuMatriculasNotas();
-                break;
-            case 5:
-                menuNivelesIdioma();
-                break;
-            case 6:
-                mostrarMenuReportesHTML();
-                break;
-            case 7:
-                menuOrdenamientos();
-                break;
-            case 8:
-                buscarEnTodosLosArchivos();
-                break;
-            case 9:
-                validarTodasLasEntidades();
-                break;
-            case 10:
-                mostrarTodasLasEntidades();
-                break;
-            case 11:
-                menuMultilistas();
-                break;
-            case 12:
-                menuOrdenamientosConQuicksort();
-            break;
-            case 0:
-                System.out.println("Cerrando sesion...");
-                break;
-            default:
-                System.out.println("Opcion invalida.");
-                break;
-        }
-    }while (opcion !=0);
-}
-
-private void menuEstudiantes(){
-    int opcion;
-    do{
-        System.out.println("\n--- GESTION DE ESTUDIANTES ---");
-        System.out.println("1. Registrar Estudiante");
-        System.out.println("2. Buscar Estudiante");
-        System.out.println("3. Modificar Estudiante");
-        System.out.println("4. Eliminar Estudiante");
-        System.out.println("0. Volver al menu principal");
-        System.out.print("Seleccione una opcion: ");
-        opcion=Integer.parseInt(scanner.nextLine());
-
-        switch(opcion){
-            case 1:
-                registrarEstudiante();
-                break;
-            case 2:
-                buscarEstudiante();
-                break;
-            case 3:
-                modificarEstudiante();
-                break;
-            case 4:
-                eliminarEstudiante();
-                break;
-            case 0:
-                System.out.println("Volviendo al menu principal...");
-                break;
-            default:
-                System.out.println("Opcion invalida.");
-                break;
-        }
-    }while(opcion!= 0);
-}
-
- private void registrarEstudiante(){
-        try{
-        System.out.println("\nREGISTRO DE NUEVO ESTUDIANTE");
-        String dni=leerDNI();
-        if(estudiantes.containsKey(dni)){
-            System.out.println("Ya existe un estudiante registrado con este DNI.");
-            return;
-        }
-        System.out.print("Nombres: ");
-        String nombres=Validador.formatearTexto(scanner.nextLine());
-        Validador.validarSoloLetras(nombres, "nombres");
-        System.out.print("Apellidos: ");
-        String apellidos=Validador.formatearTexto(scanner.nextLine());
-        Validador.validarSoloLetras(apellidos, "apellidos");
-        System.out.print("Dirección: ");
-        String direccion=scanner.nextLine().trim();
-        Validador.validarNoVacio(direccion, "dirección");     
-        String telefono=leerTelefono();
-        String correo=leerEmail();
-        String fechaNacimiento=leerFecha("Fecha de nacimiento (dd/MM/yyyy): ");
-        Validador.validarEdadEstudiante(fechaNacimiento,12,80);
-        System.out.print("Nivel de estudios: ");
-        String nivelEstudios=scanner.nextLine().trim();
-        Validador.validarNoVacio(nivelEstudios,"nivel de estudios");
-        Validador.validarDatosEstudiante(dni, nombres, apellidos, direccion, telefono, correo, fechaNacimiento, nivelEstudios);
-        Estudiante e=new Estudiante(dni, nombres, apellidos, direccion, telefono, correo, fechaNacimiento, nivelEstudios);
-            if(!e.validar()){
-            System.out.println("Error de validación: " + e.getMensajeError());
-            return;
-        }
-        estudiantes.put(e.getDni(), e);
-        ArchivoUtil.agregarEntidad(e,"estudiantes.txt");
-        System.out.println("Estudiante registrado y validado exitosamente!");
-    } catch (IllegalArgumentException e) {
-        System.out.println("Error de validación: " + e.getMessage());
-    } catch (Exception e) {
-        System.out.println("Error inesperado: " + e.getMessage());
-    }
-}
-    private void buscarEstudiante(){
-        System.out.print("Ingrese DNI del estudiante: ");
-        String dni=scanner.nextLine();
-        Estudiante e=estudiantes.get(dni);
-            if(e!= null){
-        System.out.println("Estudiante encontrado: " +e.mostrarInfo());
-            }else{
-    System.out.println("Estudiante no encontrado.");
-        }
-    }
-   private void modificarEstudiante(){
-    System.out.print("Ingrese DNI del estudiante a modificar: ");
-    String dni=scanner.nextLine();
-
-    Estudiante e=estudiantes.get(dni);
-        if(e != null){
-            System.out.println("Estudiante encontrado:");
-            System.out.println(e.mostrarInfo());
-
-            System.out.println("Que desea modificar?");
-            System.out.println("1. Direccion");
-            System.out.println("2. Telefono");
-            System.out.println("3. Nivel de estudios");
-            System.out.print("Opcion: ");
-            int opcion=Integer.parseInt(scanner.nextLine());
+        int opcion;
+        do{
+            System.out.println("\n===== MENU PRINCIPAL =====");
+            System.out.println("1. Gestion de Estudiantes");
+            System.out.println("2. Gestion de Profesores");
+            System.out.println("3. Gestion de Cursos");
+            System.out.println("4. Matriculas y Calificaciones");
+            System.out.println("5. Niveles de Idioma");
+            System.out.println("6. Generar Reportes HTML");
+            System.out.println("7. Ordena Listas (Alumnos, Profesores, etc)");
+            System.out.println("8. Búsqueda en Archivos");
+            System.out.println("10. Validar Todas las Entidades");
+            System.out.println("11. Mostrar Todas las Entidades");
+            System.out.println("12. Sistema de Multilistas");
+            System.out.println("13. Ordenamiento con Quicksort");
+            System.out.println("0. Salir");
+            System.out.print("Seleccione una opcion: ");
+            opcion=Integer.parseInt(scanner.nextLine());
 
             switch(opcion){
                 case 1:
-                    System.out.print("Nueva direccion: ");
-                    String nuevaDireccion=scanner.nextLine();
-                    e.setDireccion(nuevaDireccion);
+                    menuEstudiantes();
                     break;
                 case 2:
-                    System.out.print("Nuevo telefono: ");
-                    String nuevoTelefono=scanner.nextLine();
-                    e.setTelefono(nuevoTelefono);
+                    menuProfesores();
                     break;
                 case 3:
-                    System.out.print("Nuevo nivel de estudios: ");
-                    String nuevoNivel=scanner.nextLine();
-                    e.setNivelEstudios(nuevoNivel);
+                    menuCursos();
+                    break;
+                case 4:
+                    menuMatriculasNotas();
+                    break;
+                case 5:
+                    menuNivelesIdioma();
+                    break;
+                case 6:
+                    mostrarMenuReportesHTML();
+                    break;
+                case 7:
+                    menuOrdenamientos();
+                    break;
+                case 8:
+                    buscarEnTodosLosArchivos();
+                    break;
+                case 9:
+                    validarTodasLasEntidades();
+                    break;
+                case 10:
+                    mostrarTodasLasEntidades();
+                    break;
+                case 11:
+                    menuMultilistas();
+                    break;
+                case 12:
+                    menuOrdenamientosConQuicksort();
+                break;
+                case 0:
+                    System.out.println("Cerrando sesion...");
                     break;
                 default:
                     System.out.println("Opcion invalida.");
                     break;
             }
-            if(!e.validar()){
-            System.out.println("Error: Los datos modificados no son válidos: " + e.getMensajeError());
-            return;
-            }
-            ArchivoUtil.guardarLista(new ArrayList<>(estudiantes.values()),"estudiantes.txt");
-            System.out.println("Datos actualizados (solo en memoria).");
-        }else{
-        System.out.println("Estudiante no encontrado.");
-        }
-}
-private void eliminarEstudiante(){
-    System.out.print("Ingrese DNI del estudiante a eliminar: ");
-    String dni=scanner.nextLine();
-
-    for(int i=0;i<estudiantes.size();i++){
-        if (estudiantes.containsKey(dni)){
-            estudiantes.remove(dni);
-            ArchivoUtil.guardarLista(new ArrayList<>(estudiantes.values()),"estudiantes.txt");
-            System.out.println("Estudiante eliminado correctamente.");
-            return;
-        }
-    }
-    System.out.println("Estudiante no encontrado.");
-}
-private void menuProfesores(){
-    int opcion;
-    do{
-        System.out.println("\n--- GESTION DE PROFESORES ---");
-        System.out.println("1. Registrar Profesor");
-        System.out.println("2. Buscar Profesor");
-        System.out.println("3. Modificar Profesor");
-        System.out.println("4. Eliminar Profesor");
-        System.out.println("0. Volver al menu principal");
-        System.out.print("Seleccione una opcion: ");
-        opcion=Integer.parseInt(scanner.nextLine());
-
-        switch(opcion){
-            case 1:
-                registrarProfesor();
-                break;
-            case 2:
-                buscarProfesor();
-                break;
-            case 3:
-                modificarProfesor();
-                break;
-            case 4:
-                eliminarProfesor();
-                break;
-            case 0:
-                System.out.println("Volviendo al menu principal...");
-                break;
-            default:
-                System.out.println("Opcion invalida.");
-                break;
-        }
-    }while(opcion!= 0);
-}
- private void registrarProfesor() {
-    try {
-        System.out.println("\nREGISTRO DE NUEVO PROFESOR");
-        String dni = leerDNI();
-        if (profesores.containsKey(dni)) {
-            System.out.println("Ya existe un profesor con este DNI.");
-            return;
-        }
-
-        System.out.print("Nombres: ");
-        String nombres = Validador.formatearTexto(scanner.nextLine());
-        Validador.validarSoloLetras(nombres, "nombres");
-
-        System.out.print("Apellidos: ");
-        String apellidos = Validador.formatearTexto(scanner.nextLine());
-        Validador.validarSoloLetras(apellidos, "apellidos");
-
-        System.out.print("Dirección: ");
-        String direccion = scanner.nextLine().trim();
-        Validador.validarNoVacio(direccion, "dirección");
-
-        String telefono = leerTelefono();
-        String correo = leerEmail();
-
-        System.out.print("Especialidad: ");
-        String especialidad = scanner.nextLine().trim();
-        Validador.validarNoVacio(especialidad, "especialidad");
-
-        System.out.print("Años de experiencia: ");
-        int experiencia = Integer.parseInt(scanner.nextLine());
-        Validador.validarNumeroPositivo(experiencia, "experiencia");
-
-        Profesor p = new Profesor(dni, nombres, apellidos, direccion, telefono, correo, especialidad, experiencia);
-
-        if (!p.validar()) {
-            System.out.println("Error de validación: " + p.getMensajeError());
-            return;
-        }
-
-        profesores.put(p.getDni(), p);
-        ArchivoUtil.agregarEntidad(p, "profesores.dat");
-        System.out.println("Profesor registrado exitosamente.");
-
-    } catch (IllegalArgumentException e) {
-        System.out.println("Error de validación: " + e.getMessage());
-    } catch (Exception e) {
-        System.out.println("Error inesperado: " + e.getMessage());
-    }
-}
-private void modificarProfesor() {
-    System.out.print("Ingrese el DNI del profesor a modificar: ");
-    String dni = scanner.nextLine();
-
-    Profesor p = profesores.get(dni);
-    if (p == null) {
-        System.out.println("Profesor no encontrado.");
-        return;
+        }while (opcion !=0);
     }
 
-    System.out.println("Datos actuales: " + p.mostrarInfo());
-    System.out.print("Nuevo teléfono (ENTER para mantener): ");
-    String telefono = scanner.nextLine().trim();
-    if (!telefono.isEmpty()) p.setTelefono(telefono);
-
-    System.out.print("Nuevo correo (ENTER para mantener): ");
-    String correo = scanner.nextLine().trim();
-    if (!correo.isEmpty()) p.setCorreo(correo);
-
-    System.out.print("Nueva especialidad (ENTER para mantener): ");
-    String esp = scanner.nextLine().trim();
-    if (!esp.isEmpty()) p.setEspecialidad(esp);
-
-    System.out.print("Nueva experiencia (ENTER para mantener): ");
-    String expStr = scanner.nextLine().trim();
-    if (!expStr.isEmpty()) p.setExperiencia(Integer.parseInt(expStr));
-
-    if (!p.validar()) {
-        System.out.println("Error de validación: " + p.getMensajeError());
-        return;
-    }
-
-    profesores.put(p.getDni(), p);
-    ArchivoUtil.guardarLista(new ArrayList<>(profesores.values()), "profesores.dat");
-    System.out.println("Profesor modificado correctamente.");
-}
-private void buscarProfesor() {
-    System.out.print("Ingrese DNI del profesor: ");
-    String dni = scanner.nextLine();
-    Profesor p = profesores.get(dni);
-    if (p != null) {
-        System.out.println("Profesor encontrado: " + p.mostrarInfo());
-    } else {
-        System.out.println("Profesor no encontrado.");
-    }
-}
-private void eliminarProfesor() {
-    System.out.print("Ingrese el DNI del profesor a eliminar: ");
-    String dni = scanner.nextLine();
-
-    if (profesores.remove(dni) != null) {
-        ArchivoUtil.guardarLista(new ArrayList<>(profesores.values()), "profesores.dat");
-        System.out.println("Profesor eliminado correctamente.");
-    } else {
-        System.out.println("No se encontró un profesor con ese DNI.");
-    }
-}
-private void menuCursos(){
-    int opcion;
-    do{
-        System.out.println("\n--- GESTION DE CURSOS ---");
-        System.out.println("1. Registrar Curso");
-        System.out.println("2. Buscar Curso");
-        System.out.println("3. Modificar Curso");
-        System.out.println("4. Eliminar Curso");
-        System.out.println("0. Volver al menu principal");
-        System.out.print("Seleccione una opcion: ");
-        opcion=Integer.parseInt(scanner.nextLine());
-
-        switch(opcion){
-            case 1:
-                registrarCurso();
-                break;
-            case 2:
-                buscarCurso();
-                break;
-            case 3:
-                modificarCurso();
-                break;
-            case 4:
-                eliminarCurso();
-                break;
-            case 0:
-                System.out.println("Volviendo al menu principal...");
-                break;
-            default:
-                System.out.println("Opcion invalida.");
-        }
-    }while(opcion!=0);
-}
-private void registrarCurso() {
-    try {
-        System.out.println("\nREGISTRO DE NUEVO CURSO");
-        System.out.print("Código del curso: ");
-        String codigo = scanner.nextLine().trim();
-        if (cursos.containsKey(codigo)) {
-            System.out.println("Ya existe un curso con este código.");
-            return;
-        }
-
-        System.out.print("Nombre del curso: ");
-        String nombre = scanner.nextLine().trim();
-        Validador.validarNoVacio(nombre, "nombre del curso");
-
-        System.out.print("Idioma: ");
-        String idioma = scanner.nextLine().trim();
-        Validador.validarIdioma(idioma);
-
-        System.out.print("Nivel (Básico / Intermedio / Avanzado): ");
-        String nivel = scanner.nextLine().trim();
-        Validador.validarNivelIdioma(nivel);
-
-        System.out.print("DNI del profesor asignado: ");
-        String profesorDni = scanner.nextLine().trim();
-        if (!profesores.containsKey(profesorDni)) {
-            System.out.println("No existe un profesor con ese DNI.");
-            return;
-        }
-
-        System.out.print("Horario (ej. Lunes y Miércoles 8-10am): ");
-        String horario = scanner.nextLine().trim();
-        Validador.validarNoVacio(horario, "horario");
-
-        System.out.print("Duración (en semanas): ");
-        int duracion = Integer.parseInt(scanner.nextLine());
-        Validador.validarDuracionCurso(duracion);
-
-        System.out.print("Capacidad máxima: ");
-        int capacidad = Integer.parseInt(scanner.nextLine());
-        Validador.validarCapacidadCurso(capacidad);
-
-        System.out.print("Precio (S/): ");
-        double precio = Double.parseDouble(scanner.nextLine());
-        Validador.validarPrecio(precio);
-
-        System.out.print("Observaciones: ");
-        String obs = scanner.nextLine().trim();
-        Validador.validarNoVacio(obs, "observaciones");
-
-        Curso c = new Curso(codigo, nombre, idioma, nivel, profesorDni, horario, duracion, capacidad, precio, obs);
-
-        if (!c.validar()) {
-            System.out.println("Error de validación: " + c.getMensajeError());
-            return;
-        }
-
-        cursos.put(c.getCodigo(), c);
-        ArchivoUtil.agregarEntidad(c, "cursos.dat");
-        System.out.println("Curso registrado correctamente.");
-
-    } catch (NumberFormatException e) {
-        System.out.println("Error en formato numérico: " + e.getMessage());
-    } catch (IllegalArgumentException e) {
-        System.out.println("Error de validación: " + e.getMessage());
-    } catch (Exception e) {
-        System.out.println("Error inesperado: " + e.getMessage());
-    }
-}
-private void modificarCurso(){
-    System.out.print("Ingrese el código del curso a modificar: ");
-    String codigo = scanner.nextLine();
-
-    Curso c = cursos.get(codigo);
-    if (c == null) {
-        System.out.println("Curso no encontrado.");
-        return;
-    }
-
-    System.out.println("Datos actuales: " + c.mostrarInfo());
-    System.out.print("Nuevo horario (ENTER para mantener): ");
-    String horario = scanner.nextLine().trim();
-    if (!horario.isEmpty()) c.setHorario(horario);
-
-    System.out.print("Nuevo precio (ENTER para mantener): ");
-    String precioStr = scanner.nextLine().trim();
-    if (!precioStr.isEmpty()) c.setPrecio(Double.parseDouble(precioStr));
-
-    System.out.print("Nueva capacidad (ENTER para mantener): ");
-    String capStr = scanner.nextLine().trim();
-    if (!capStr.isEmpty()) c.setCapacidadMaxima(Integer.parseInt(capStr));
-
-    if (!c.validar()) {
-        System.out.println("Error de validación: " + c.getMensajeError());
-        return;
-    }
-
-    cursos.put(c.getCodigo(), c);
-    ArchivoUtil.guardarLista(new ArrayList<>(cursos.values()), "cursos.dat");
-    System.out.println("Curso modificado correctamente.");
-}
-private void buscarCurso() {
-    System.out.print("Ingrese el código del curso: ");
-    String codigo = scanner.nextLine();
-
-    Curso c = cursos.get(codigo);
-    if (c != null) {
-        System.out.println("Curso encontrado: " + c.mostrarInfo());
-    } else {
-        System.out.println("Curso no encontrado.");
-    }
-}
-private void eliminarCurso() {
-    System.out.print("Ingrese el código del curso a eliminar: ");
-    String codigo = scanner.nextLine();
-
-    if (cursos.remove(codigo) != null) {
-        ArchivoUtil.guardarLista(new ArrayList<>(cursos.values()), "cursos.dat");
-        System.out.println("Curso eliminado correctamente.");
-    } else {
-        System.out.println("No se encontró un curso con ese código.");
-    }
-}
-private void menuMatriculasNotas() {
-    int opcion;
-    do {
-        System.out.println("\n--- MATRÍCULAS Y CALIFICACIONES ---");
-        System.out.println("1. Registrar Matrícula");
-        System.out.println("2. Registrar Calificación");
-        System.out.println("3. Eliminar Matrícula");
-        System.out.println("4. Listar Calificaciones");
-        System.out.println("0. Volver al menú principal");
-        System.out.print("Seleccione una opción: ");
-        opcion = Integer.parseInt(scanner.nextLine());
-
-        switch (opcion) {
-            case 1:
-                registrarMatricula();
-                break;
-            case 2:
-                registrarCalificacion();
-                break;
-            case 3:
-                eliminarMatricula();
-                break;
-            case 4:
-                listarCalificaciones();
-                break;
-            case 0:
-                System.out.println("Volviendo al menú principal...");
-                break;
-            default:
-                System.out.println("Opción inválida.");
-                break;
-        }
-    } while (opcion != 0);
-}
-private void registrarMatricula() {
-    System.out.println("\n=== REGISTRO DE MATRÍCULA ===");
-
-    System.out.print("DNI del estudiante: ");
-    String dni = scanner.nextLine();
-    Estudiante estudiante = estudiantes.get(dni);
-
-    if (estudiante == null) {
-        System.out.println("Estudiante no encontrado. Regístrelo primero.");
-        return;
-    }
-
-    if (cursos.isEmpty()) {
-        System.out.println("No hay cursos disponibles. Registre al menos uno.");
-        return;
-    }
-
-    System.out.println("Cursos disponibles:");
-    for (Curso c : cursos.values()) {
-        System.out.println("- " + c.getCodigo() + ": " + c.getNombre());
-    }
-
-    System.out.print("Ingrese el código del curso: ");
-    String codigoCurso = scanner.nextLine();
-
-    Curso cursoSeleccionado = null;
-    for (Curso c : cursos.values()) {
-        if (c.getCodigo().equalsIgnoreCase(codigoCurso)) {
-            cursoSeleccionado = c;
-            break;
-        }
-    }
-
-    if (cursoSeleccionado == null) {
-        System.out.println("Curso no encontrado.");
-        return;
-    }
-
-    System.out.print("Fecha de matrícula (dd/MM/yyyy): ");
-    String fecha = scanner.nextLine();
-
-    double monto = cursoSeleccionado.getPrecio();
-    Matricula m = new Matricula(codigoCurso, dni, fecha, monto);
-
-    if (!m.validar()) {
-        System.out.println("Error de validación: " + m.getMensajeError());
-        return;
-    }
-
-    matriculas.add(m);
-    ArchivoUtil.agregarEntidad(m, "matriculas.dat");
-    System.out.println("Matrícula registrada para " + estudiante.getNombres() + " en el curso " + cursoSeleccionado.getNombre());
-}
-private void registrarCalificacion() {
-    System.out.println("\n=== REGISTRO DE CALIFICACIÓN ===");
-
-    System.out.print("DNI del estudiante: ");
-    String dni = scanner.nextLine();
-    Estudiante estudiante = estudiantes.get(dni);
-
-    if (estudiante == null) {
-        System.out.println("Estudiante no encontrado.");
-        return;
-    }
-
-    System.out.print("Código del curso: ");
-    String codigoCurso = scanner.nextLine();
-    Curso curso = cursos.get(codigoCurso);
-
-    if (curso == null) {
-        System.out.println("Curso no encontrado.");
-        return;
-    }
-
-    System.out.print("Fecha de calificación (dd/MM/yyyy): ");
-    String fecha = scanner.nextLine();
-
-    System.out.print("Nota (0 a 20): ");
-    double nota = Double.parseDouble(scanner.nextLine());
-
-    System.out.print("Observaciones: ");
-    String observaciones = scanner.nextLine();
-
-    Calificacion c = new Calificacion(codigoCurso, dni, fecha, nota, observaciones);
-
-    if (!c.validar()) {
-        System.out.println("Error de validación: " + c.getMensajeError());
-        return;
-    }
-
-    calificaciones.add(c);
-    ArchivoUtil.agregarEntidad(c, "calificaciones.dat");
-    System.out.println("Calificación registrada correctamente.");
-}
-private void eliminarMatricula() {
-    System.out.print("Ingrese código de curso de la matrícula a eliminar: ");
-    String codigoCurso = scanner.nextLine();
-
-    System.out.print("Ingrese DNI del estudiante: ");
-    String dni = scanner.nextLine();
-
-    boolean encontrada = false;
-    for (int i = 0; i < matriculas.size(); i++) {
-        Matricula m = matriculas.get(i);
-        if (m.getCodigoCurso().equalsIgnoreCase(codigoCurso) && m.getDniEstudiante().equalsIgnoreCase(dni)) {
-            matriculas.remove(i);
-            encontrada = true;
-            break;
-        }
-    }
-
-    if (encontrada) {
-        ArchivoUtil.guardarLista(matriculas, "matriculas.dat");
-        System.out.println("Matrícula eliminada correctamente.");
-    } else {
-        System.out.println("Matrícula no encontrada.");
-    }
-}
-private void listarCalificaciones() {
-    if (calificaciones.isEmpty()) {
-        System.out.println("No hay calificaciones registradas.");
-        return;
-    }
-
-    System.out.println("\n=== LISTA DE CALIFICACIONES ===");
-    for (Calificacion c : calificaciones) {
-        System.out.println(c.mostrarInfo());
-    }
-}
-private void menuNivelesIdioma(){
-    int opcion;
-    do{
-        System.out.println("\n--- GESTION DE NIVELES DE IDIOMA ---");
-        System.out.println("1. Registrar Nivel de Idioma");
-        System.out.println("2. Buscar Nivel de Idioma");
-        System.out.println("3. Modificar Nivel de Idioma");
-        System.out.println("4. Eliminar Nivel de Idioma");
-        System.out.println("0. Volver al menu principal");
-        System.out.print("Seleccione una opcion: ");
-        opcion=Integer.parseInt(scanner.nextLine());
-
-        switch(opcion){
-            case 1:
-                registrarNivelIdioma();
-                break;
-            case 2:
-                buscarNivelIdioma();
-                break;
-            case 3:
-                modificarNivelIdioma();
-                break;
-            case 4:
-                eliminarNivelIdioma();
-                break;
-            case 0:
-                System.out.println("Volviendo al menu principal...");
-                break;
-            default:
-                System.out.println("Opcion invalida.");
-        }
-    }while(opcion!=0);
-}
-private void registrarNivelIdioma(){
-    System.out.println("Registro de Nivel de Idioma:");
-    System.out.print("Codigo: ");
-    String codigo=scanner.nextLine();
-    if(nivelesIdioma.containsKey(codigo)){
-            System.out.println("Ya existe un nivel de idioma con este código.");
-            return;
-        }
-    System.out.print("Idioma: ");
-    String idioma =scanner.nextLine();
-    System.out.print("Nivel: ");
-    String nivel=scanner.nextLine();
-    System.out.print("Descripcion: ");
-    String descripcion=scanner.nextLine();
-
-    IdiomaNivel in =new IdiomaNivel(codigo,idioma,nivel,descripcion);
-    if(!in.validar()){
-            System.out.println("Error de validación: "+in.getMensajeError());
-            return;
-        }
-    nivelesIdioma.put(codigo,in);
-    ArchivoUtil.agregarEntidad(in,"idiomas.txt");
-
-    System.out.println("Nivel de idioma registrado.");
-}
-
-private void modificarNivelIdioma(){
-    System.out.print("Ingrese codigo del nivel de idioma a modificar: ");
-    String codigo=scanner.nextLine();
-    IdiomaNivel in=nivelesIdioma.get(codigo);
-        if(in.getCodigo().equals(codigo)){
-            System.out.println("Nivel encontrado:");
-            System.out.println(in.mostrarInfo());
-
-            System.out.println("Que desea modificar?");
-            System.out.println("1. Nivel");
-            System.out.println("2. Descripcion");
-            System.out.print("Opcion: ");
-            int opcion=Integer.parseInt(scanner.nextLine());
+    private void menuEstudiantes(){
+        int opcion;
+        do{
+            System.out.println("\n--- GESTION DE ESTUDIANTES ---");
+            System.out.println("1. Registrar Estudiante");
+            System.out.println("2. Buscar Estudiante");
+            System.out.println("3. Modificar Estudiante");
+            System.out.println("4. Eliminar Estudiante");
+            System.out.println("0. Volver al menu principal");
+            System.out.print("Seleccione una opcion: ");
+            opcion=Integer.parseInt(scanner.nextLine());
 
             switch(opcion){
                 case 1:
-                    System.out.print("Nuevo nivel: ");
-                    String nuevoNivel=scanner.nextLine();
-                    in.setNivel(nuevoNivel);
+                    registrarEstudiante();
                     break;
                 case 2:
-                    System.out.print("Nueva descripcion: ");
-                    String nuevaDesc=scanner.nextLine();
-                    in.setDescripcion(nuevaDesc);
+                    buscarEstudiante();
+                    break;
+                case 3:
+                    modificarEstudiante();
+                    break;
+                case 4:
+                    eliminarEstudiante();
+                    break;
+                case 0:
+                    System.out.println("Volviendo al menu principal...");
                     break;
                 default:
                     System.out.println("Opcion invalida.");
                     break;
             }
-            if(!in.validar()){
-            System.out.println("Error: Los datos modificados no son válidos: "+in.getMensajeError());
-            return;
+        }while(opcion!= 0);
+    }
+
+            private void registrarEstudiante(){
+                   try{
+                   System.out.println("\nREGISTRO DE NUEVO ESTUDIANTE");
+                   String dni=leerDNI();
+                   if(estudiantes.containsKey(dni)){
+                       System.out.println("Ya existe un estudiante registrado con este DNI.");
+                       return;
+                   }
+                   System.out.print("Nombres: ");
+                   String nombres=Validador.formatearTexto(scanner.nextLine());
+                   Validador.validarSoloLetras(nombres, "nombres");
+                   System.out.print("Apellidos: ");
+                   String apellidos=Validador.formatearTexto(scanner.nextLine());
+                   Validador.validarSoloLetras(apellidos, "apellidos");
+                   System.out.print("Dirección: ");
+                   String direccion=scanner.nextLine().trim();
+                   Validador.validarNoVacio(direccion, "dirección");     
+                   String telefono=leerTelefono();
+                   String correo=leerEmail();
+                   String fechaNacimiento=leerFecha("Fecha de nacimiento (dd/MM/yyyy): ");
+                   Validador.validarEdadEstudiante(fechaNacimiento,12,80);
+                   System.out.print("Nivel de estudios: ");
+                   String nivelEstudios=scanner.nextLine().trim();
+                   Validador.validarNoVacio(nivelEstudios,"nivel de estudios");
+                   Validador.validarDatosEstudiante(dni, nombres, apellidos, direccion, telefono, correo, fechaNacimiento, nivelEstudios);
+                   Estudiante e=new Estudiante(dni, nombres, apellidos, direccion, telefono, correo, fechaNacimiento, nivelEstudios);
+                       if(!e.validar()){
+                       System.out.println("Error de validación: " + e.getMensajeError());
+                       return;
+                   }
+                   estudiantes.put(e.getDni(), e);
+                   ArchivoUtil.agregarEntidad(e,"estudiantes.txt");
+                   System.out.println("Estudiante registrado y validado exitosamente!");
+               } catch (IllegalArgumentException e) {
+                   System.out.println("Error de validación: " + e.getMessage());
+               } catch (Exception e) {
+                   System.out.println("Error inesperado: " + e.getMessage());
+               }
+           }
+            
+            private void buscarEstudiante(){
+                System.out.print("Ingrese DNI del estudiante: ");
+                String dni=scanner.nextLine();
+                Estudiante e=estudiantes.get(dni);
+                    if(e!= null){
+                System.out.println("Estudiante encontrado: " +e.mostrarInfo());
+                    }else{
+            System.out.println("Estudiante no encontrado.");
+                }
             }
-            ArchivoUtil.guardarLista(new ArrayList<>(nivelesIdioma.values()),"idiomas.txt");
-            System.out.println("Nivel actualizado.");
-        }else{
-        System.out.println("Nivel no encontrado.");    
-    }
-}
+            
+            private void modificarEstudiante(){
+            System.out.print("Ingrese DNI del estudiante a modificar: ");
+            String dni=scanner.nextLine();
 
+            Estudiante e=estudiantes.get(dni);
+                if(e != null){
+                    System.out.println("Estudiante encontrado:");
+                    System.out.println(e.mostrarInfo());
 
-        
-private void buscarNivelIdioma(){
-    System.out.print("Ingrese codigo del nivel de idioma: ");
-    String codigo=scanner.nextLine();
-    IdiomaNivel in=nivelesIdioma.get(codigo);
-        if(in!=null){
-            System.out.println("Nivel encontrado:");
-            System.out.println(in.mostrarInfo());
-        }else{
-            System.out.println("Nivel no encontrado.");
-        }   
-}
+                    System.out.println("Que desea modificar?");
+                    System.out.println("1. Direccion");
+                    System.out.println("2. Telefono");
+                    System.out.println("3. Nivel de estudios");
+                    System.out.print("Opcion: ");
+                    int opcion=Integer.parseInt(scanner.nextLine());
 
+                    switch(opcion){
+                        case 1:
+                            System.out.print("Nueva direccion: ");
+                            String nuevaDireccion=scanner.nextLine();
+                            e.setDireccion(nuevaDireccion);
+                            break;
+                        case 2:
+                            System.out.print("Nuevo telefono: ");
+                            String nuevoTelefono=scanner.nextLine();
+                            e.setTelefono(nuevoTelefono);
+                            break;
+                        case 3:
+                            System.out.print("Nuevo nivel de estudios: ");
+                            String nuevoNivel=scanner.nextLine();
+                            e.setNivelEstudios(nuevoNivel);
+                            break;
+                        default:
+                            System.out.println("Opcion invalida.");
+                            break;
+                    }
+                    if(!e.validar()){
+                    System.out.println("Error: Los datos modificados no son válidos: " + e.getMensajeError());
+                    return;
+                    }
+                    ArchivoUtil.guardarLista(new ArrayList<>(estudiantes.values()),"estudiantes.txt");
+                    System.out.println("Datos actualizados (solo en memoria).");
+                }else{
+                System.out.println("Estudiante no encontrado.");
+                }
+            }
+            
+            private void eliminarEstudiante(){
+                System.out.print("Ingrese DNI del estudiante a eliminar: ");
+                String dni=scanner.nextLine();
 
-private void eliminarNivelIdioma(){
-    System.out.print("Ingrese codigo del nivel de idioma a eliminar: ");
-    String codigo=scanner.nextLine();
-        if (nivelesIdioma.remove(codigo) !=null) {
-            ArchivoUtil.guardarLista(new ArrayList<>(nivelesIdioma.values()),"idiomas.txt");
-            System.out.println("Nivel de idioma eliminado.");
-        }else{
-        System.out.println("Nivel de idioma no encontrado.");    
-    }   
-}
+                for(int i=0;i<estudiantes.size();i++){
+                    if (estudiantes.containsKey(dni)){
+                        estudiantes.remove(dni);
+                        ArchivoUtil.guardarLista(new ArrayList<>(estudiantes.values()),"estudiantes.txt");
+                        System.out.println("Estudiante eliminado correctamente.");
+                        return;
+                    }
+                }
+                System.out.println("Estudiante no encontrado.");
+            }
+            
+    private void menuProfesores(){
+        int opcion;
+        do{
+            System.out.println("\n--- GESTION DE PROFESORES ---");
+            System.out.println("1. Registrar Profesor");
+            System.out.println("2. Buscar Profesor");
+            System.out.println("3. Modificar Profesor");
+            System.out.println("4. Eliminar Profesor");
+            System.out.println("0. Volver al menu principal");
+            System.out.print("Seleccione una opcion: ");
+            opcion=Integer.parseInt(scanner.nextLine());
 
-private void mostrarMenuReportesHTML() {
-    int opcion;
-    do {
-        System.out.println("\n=== GENERAR REPORTES HTML ===");
-        System.out.println("1. Reporte de Estudiantes");
-        System.out.println("2. Reporte de Profesores");
-        System.out.println("3. Reporte de Cursos");
-        System.out.println("4. Reporte de Matrículas");
-        System.out.println("5. Reporte de Calificaciones");
-        System.out.println("0. Volver al menú principal");
-        System.out.print("Seleccione una opción: ");
-        opcion = Integer.parseInt(scanner.nextLine());
-
-        switch (opcion) {
-            case 1:
-                generarReporteEstudiantes();
-                break;
-            case 2:
-                generarReporteProfesores();
-                break;
-            case 3:
-                generarReporteCursos();
-                break;
-            case 4:
-                generarReporteMatriculas();
-                break;
-            case 5:
-                generarReporteCalificaciones();
-                break;
-            case 0:
-                System.out.println("Volviendo al menú principal...");
-                break;
-            default:
-                System.out.println("Opción inválida.");
-                break;
-        }
-    } while (opcion != 0);
-}
-private void menuOrdenamientos(){
-    int opcion;
-    do{
-        System.out.println("\n=== SISTEMA DE ORDENAMIENTO - MERGE SORT ===");
-        System.out.println("1. Ordenar Estudiantes");
-        System.out.println("2. Ordenar Profesores");
-        System.out.println("3. Ordenar Cursos");
-        System.out.println("0. Volver al menú principal");
-        System.out.print("Seleccione una opción: ");
-        opcion=Integer.parseInt(scanner.nextLine());
-
-        switch(opcion){
-            case 1:
-                ordenarEstudiantes();
-                break;
-            case 2:
-                ordenarProfesores();
-                break;
-            case 3:
-                ordenarCursos();
-                break;
-            case 0:
-                System.out.println("Volviendo al menú principal...");
-                break;
-            default:
-                System.out.println("Opción inválida.");
-        }
-    } while (opcion!=0);
-}
-
-private void ordenarEstudiantes(){
-    if(estudiantes.isEmpty()){
-        System.out.println("No hay estudiantes registrados.");
-        return;
+            switch(opcion){
+                case 1:
+                    registrarProfesor();
+                    break;
+                case 2:
+                    buscarProfesor();
+                    break;
+                case 3:
+                    modificarProfesor();
+                    break;
+                case 4:
+                    eliminarProfesor();
+                    break;
+                case 0:
+                    System.out.println("Volviendo al menu principal...");
+                    break;
+                default:
+                    System.out.println("Opcion invalida.");
+                    break;
+            }
+        }while(opcion!= 0);
     }
     
-    List<Estudiante>listaEstudiantes=new ArrayList<>(estudiantes.values());
-    
-    System.out.println("\n=== ORDENAR ESTUDIANTES - MERGE SORT ===");
-    System.out.println("1. Por Apellidos (A-Z)");
-    System.out.println("2. Por Nombres (A-Z)");
-    System.out.println("3. Por DNI (Ascendente)");
-    System.out.print("Seleccione criterio: ");
-    int criterio=Integer.parseInt(scanner.nextLine());
-    
-    long startTime=System.currentTimeMillis();
-    
-    switch(criterio){
-        case 1:
-            SortUtil.sortBy(listaEstudiantes,Comparator.comparing(Estudiante::getApellidos));
-            System.out.println("Estudiantes ordenados por APELLIDOS");
-            break;
-        case 2:
-            SortUtil.sortBy(listaEstudiantes,Comparator.comparing(Estudiante::getNombres));
-            System.out.println("Estudiantes ordenados por NOMBRES");
-            break;
-        case 3:
-            SortUtil.sortBy(listaEstudiantes,Comparator.comparing(Estudiante::getDni));
-            System.out.println("Estudiantes ordenados por DNI");
-            break;
-        default:
-            System.out.println("Criterio inválido.");
-            return;
-    }
-    
-    long endTime=System.currentTimeMillis();
-    
-    System.out.println("Tiempo de ordenamiento: "+(endTime-startTime)+" ms");
-    System.out.println("Total de elementos ordenados: "+listaEstudiantes.size());
-    System.out.println("\n=== RESULTADOS ORDENADOS ===");
-    for(int i=0;i<listaEstudiantes.size();i++){
-        System.out.println((i+1)+". "+listaEstudiantes.get(i).mostrarInfo());
-    }
-}
+            private void registrarProfesor() {
+               try {
+                   System.out.println("\nREGISTRO DE NUEVO PROFESOR");
+                   String dni = leerDNI();
+                   if (profesores.containsKey(dni)) {
+                       System.out.println("Ya existe un profesor con este DNI.");
+                       return;
+                   }
 
-private void ordenarProfesores(){
-    if(profesores.isEmpty()){
-        System.out.println("No hay profesores registrados.");
-        return;
-    }
-    
-    List<Profesor>listaProfesores=new ArrayList<>(profesores.values());
-    
-    System.out.println("\n=== ORDENAR PROFESORES - MERGE SORT ===");
-    System.out.println("1. Por Apellidos (A-Z)");
-    System.out.println("2. Por Especialidad (A-Z)");
-    System.out.println("3. Por Experiencia (Mayor a menor)");
-    System.out.print("Seleccione criterio: ");
-    int criterio=Integer.parseInt(scanner.nextLine());
-    
-    long startTime=System.currentTimeMillis();
-    
-    switch(criterio){
-        case 1:
-            SortUtil.sortBy(listaProfesores, Comparator.comparing(Profesor::getApellidos));
-            System.out.println("Profesores ordenados por APELLIDOS");
-            break;
-        case 2:
-            SortUtil.sortBy(listaProfesores, Comparator.comparing(Profesor::getEspecialidad));
-            System.out.println("Profesores ordenados por ESPECIALIDAD");
-            break;
-        case 3:
-            SortUtil.sortBy(listaProfesores, Comparator.comparingInt(Profesor::getExperiencia).reversed());
-            System.out.println("Profesores ordenados por EXPERIENCIA (Mayor a menor)");
-            break;
-        default:
-            System.out.println("Criterio inválido.");
-            return;
-    }
-    
-    long endTime=System.currentTimeMillis();
-    System.out.println("Tiempo de ordenamiento: "+(endTime-startTime)+" ms");
-    
-    System.out.println("\n=== RESULTADOS ORDENADOS ===");
-    for (int i=0; i<listaProfesores.size();i++){
-        System.out.println((i + 1) + ". " + listaProfesores.get(i).mostrarInfo());
-    }
-}
+                   System.out.print("Nombres: ");
+                   String nombres = Validador.formatearTexto(scanner.nextLine());
+                   Validador.validarSoloLetras(nombres, "nombres");
 
-private void ordenarCursos(){
-    if(cursos.isEmpty()){
-        System.out.println("No hay cursos registrados.");
-        return;
-    }
-    List<Curso>listaCursos=new ArrayList<>(cursos.values());
-    System.out.println("\n=== ORDENAR CURSOS - MERGE SORT ===");
-    System.out.println("1. Por Nombre (A-Z)");
-    System.out.println("2. Por Idioma (A-Z)");
-    System.out.println("3. Por Precio (Menor a mayor)");
-    System.out.print("Seleccione criterio: ");
-    int criterio=Integer.parseInt(scanner.nextLine());
-    
-    long startTime=System.currentTimeMillis();
-    
-    switch(criterio){
-        case 1:
-            SortUtil.sortBy(listaCursos,Comparator.comparing(Curso::getNombre));
-            System.out.println("Cursos ordenados por NOMBRE");
-            break;
-        case 2:
-            SortUtil.sortBy(listaCursos,Comparator.comparing(Curso::getIdioma));
-            System.out.println("Cursos ordenados por IDIOMA");
-            break;
-        case 3:
-            SortUtil.sortBy(listaCursos,Comparator.comparingDouble(Curso::getPrecio));
-            System.out.println("Cursos ordenados por PRECIO (Menor a mayor)");
-            break;
-        default:
-            System.out.println("Criterio inválido.");
-            return;
-    }
-    
-    long endTime=System.currentTimeMillis();
-    System.out.println("Tiempo de ordenamiento: "+(endTime-startTime)+" ms");
-    System.out.println("\n=== RESULTADOS ORDENADOS ===");
-    for(int i=0;i<listaCursos.size();i++){
-        System.out.println((i + 1)+". "+listaCursos.get(i).mostrarInfo());
-    }
-}
+                   System.out.print("Apellidos: ");
+                   String apellidos = Validador.formatearTexto(scanner.nextLine());
+                   Validador.validarSoloLetras(apellidos, "apellidos");
 
+                   System.out.print("Dirección: ");
+                   String direccion = scanner.nextLine().trim();
+                   Validador.validarNoVacio(direccion, "dirección");
+
+                   String telefono = leerTelefono();
+                   String correo = leerEmail();
+
+                   System.out.print("Especialidad: ");
+                   String especialidad = scanner.nextLine().trim();
+                   Validador.validarNoVacio(especialidad, "especialidad");
+
+                   System.out.print("Años de experiencia: ");
+                   int experiencia = Integer.parseInt(scanner.nextLine());
+                   Validador.validarNumeroPositivo(experiencia, "experiencia");
+
+                   Profesor p = new Profesor(dni, nombres, apellidos, direccion, telefono, correo, especialidad, experiencia);
+
+                   if (!p.validar()) {
+                       System.out.println("Error de validación: " + p.getMensajeError());
+                       return;
+                   }
+
+                   profesores.put(p.getDni(), p);
+                   ArchivoUtil.agregarEntidad(p, "profesores.dat");
+                   System.out.println("Profesor registrado exitosamente.");
+
+               } catch (IllegalArgumentException e) {
+                   System.out.println("Error de validación: " + e.getMessage());
+               } catch (Exception e) {
+                   System.out.println("Error inesperado: " + e.getMessage());
+               }
+            }
+            
+            private void modificarProfesor() {
+               System.out.print("Ingrese el DNI del profesor a modificar: ");
+               String dni = scanner.nextLine();
+
+               Profesor p = profesores.get(dni);
+               if (p == null) {
+                   System.out.println("Profesor no encontrado.");
+                   return;
+               }
+
+               System.out.println("Datos actuales: " + p.mostrarInfo());
+               System.out.print("Nuevo teléfono (ENTER para mantener): ");
+               String telefono = scanner.nextLine().trim();
+               if (!telefono.isEmpty()) p.setTelefono(telefono);
+
+               System.out.print("Nuevo correo (ENTER para mantener): ");
+               String correo = scanner.nextLine().trim();
+               if (!correo.isEmpty()) p.setCorreo(correo);
+
+               System.out.print("Nueva especialidad (ENTER para mantener): ");
+               String esp = scanner.nextLine().trim();
+               if (!esp.isEmpty()) p.setEspecialidad(esp);
+
+               System.out.print("Nueva experiencia (ENTER para mantener): ");
+               String expStr = scanner.nextLine().trim();
+               if (!expStr.isEmpty()) p.setExperiencia(Integer.parseInt(expStr));
+
+               if (!p.validar()) {
+                   System.out.println("Error de validación: " + p.getMensajeError());
+                   return;
+               }
+
+               profesores.put(p.getDni(), p);
+               ArchivoUtil.guardarLista(new ArrayList<>(profesores.values()), "profesores.dat");
+               System.out.println("Profesor modificado correctamente.");
+            }
+            
+            private void buscarProfesor() {
+               System.out.print("Ingrese DNI del profesor: ");
+               String dni = scanner.nextLine();
+               Profesor p = profesores.get(dni);
+               if (p != null) {
+                   System.out.println("Profesor encontrado: " + p.mostrarInfo());
+               } else {
+                   System.out.println("Profesor no encontrado.");
+               }
+            }
+           
+           private void eliminarProfesor() {
+               System.out.print("Ingrese el DNI del profesor a eliminar: ");
+               String dni = scanner.nextLine();
+
+               if (profesores.remove(dni) != null) {
+                   ArchivoUtil.guardarLista(new ArrayList<>(profesores.values()), "profesores.dat");
+                   System.out.println("Profesor eliminado correctamente.");
+               } else {
+                   System.out.println("No se encontró un profesor con ese DNI.");
+               }
+            }
+           
+    private void menuCursos(){
+        int opcion;
+        do{
+            System.out.println("\n--- GESTION DE CURSOS ---");
+            System.out.println("1. Registrar Curso");
+            System.out.println("2. Buscar Curso");
+            System.out.println("3. Modificar Curso");
+            System.out.println("4. Eliminar Curso");
+            System.out.println("0. Volver al menu principal");
+            System.out.print("Seleccione una opcion: ");
+            opcion=Integer.parseInt(scanner.nextLine());
+
+            switch(opcion){
+                case 1:
+                    registrarCurso();
+                    break;
+                case 2:
+                    buscarCurso();
+                    break;
+                case 3:
+                    modificarCurso();
+                    break;
+                case 4:
+                    eliminarCurso();
+                    break;
+                case 0:
+                    System.out.println("Volviendo al menu principal...");
+                    break;
+                default:
+                    System.out.println("Opcion invalida.");
+            }
+        }while(opcion!=0);
+    }
+    
+            private void registrarCurso() {
+                try {
+                    System.out.println("\nREGISTRO DE NUEVO CURSO");
+                    System.out.print("Código del curso: ");
+                    String codigo = scanner.nextLine().trim();
+                    if (cursos.containsKey(codigo)) {
+                        System.out.println("Ya existe un curso con este código.");
+                        return;
+                    }
+
+                    System.out.print("Nombre del curso: ");
+                    String nombre = scanner.nextLine().trim();
+                    Validador.validarNoVacio(nombre, "nombre del curso");
+
+                    System.out.print("Idioma: ");
+                    String idioma = scanner.nextLine().trim();
+                    Validador.validarIdioma(idioma);
+
+                    System.out.print("Nivel (Básico / Intermedio / Avanzado): ");
+                    String nivel = scanner.nextLine().trim();
+                    Validador.validarNivelIdioma(nivel);
+
+                    System.out.print("DNI del profesor asignado: ");
+                    String profesorDni = scanner.nextLine().trim();
+                    if (!profesores.containsKey(profesorDni)) {
+                        System.out.println("No existe un profesor con ese DNI.");
+                        return;
+                    }
+
+                    System.out.print("Horario (ej. Lunes y Miércoles 8-10am): ");
+                    String horario = scanner.nextLine().trim();
+                    Validador.validarNoVacio(horario, "horario");
+
+                    System.out.print("Duración (en semanas): ");
+                    int duracion = Integer.parseInt(scanner.nextLine());
+                    Validador.validarDuracionCurso(duracion);
+
+                    System.out.print("Capacidad máxima: ");
+                    int capacidad = Integer.parseInt(scanner.nextLine());
+                    Validador.validarCapacidadCurso(capacidad);
+
+                    System.out.print("Precio (S/): ");
+                    double precio = Double.parseDouble(scanner.nextLine());
+                    Validador.validarPrecio(precio);
+
+                    System.out.print("Observaciones: ");
+                    String obs = scanner.nextLine().trim();
+                    Validador.validarNoVacio(obs, "observaciones");
+
+                    Curso c = new Curso(codigo, nombre, idioma, nivel, profesorDni, horario, duracion, capacidad, precio, obs);
+
+                    if (!c.validar()) {
+                        System.out.println("Error de validación: " + c.getMensajeError());
+                        return;
+                    }
+
+                    cursos.put(c.getCodigo(), c);
+                    ArchivoUtil.agregarEntidad(c, "cursos.dat");
+                    System.out.println("Curso registrado correctamente.");
+
+                } catch (NumberFormatException e) {
+                    System.out.println("Error en formato numérico: " + e.getMessage());
+                } catch (IllegalArgumentException e) {
+                    System.out.println("Error de validación: " + e.getMessage());
+                } catch (Exception e) {
+                    System.out.println("Error inesperado: " + e.getMessage());
+                }
+            }
+            
+            private void modificarCurso(){
+                System.out.print("Ingrese el código del curso a modificar: ");
+                String codigo = scanner.nextLine();
+
+                Curso c = cursos.get(codigo);
+                if (c == null) {
+                    System.out.println("Curso no encontrado.");
+                    return;
+                }
+
+                System.out.println("Datos actuales: " + c.mostrarInfo());
+                System.out.print("Nuevo horario (ENTER para mantener): ");
+                String horario = scanner.nextLine().trim();
+                if (!horario.isEmpty()) c.setHorario(horario);
+
+                System.out.print("Nuevo precio (ENTER para mantener): ");
+                String precioStr = scanner.nextLine().trim();
+                if (!precioStr.isEmpty()) c.setPrecio(Double.parseDouble(precioStr));
+
+                System.out.print("Nueva capacidad (ENTER para mantener): ");
+                String capStr = scanner.nextLine().trim();
+                if (!capStr.isEmpty()) c.setCapacidadMaxima(Integer.parseInt(capStr));
+
+                if (!c.validar()) {
+                    System.out.println("Error de validación: " + c.getMensajeError());
+                    return;
+                }
+
+                cursos.put(c.getCodigo(), c);
+                ArchivoUtil.guardarLista(new ArrayList<>(cursos.values()), "cursos.dat");
+                System.out.println("Curso modificado correctamente.");
+            }
+            
+            private void buscarCurso() {
+                System.out.print("Ingrese el código del curso: ");
+                String codigo = scanner.nextLine();
+
+                Curso c = cursos.get(codigo);
+                if (c != null) {
+                    System.out.println("Curso encontrado: " + c.mostrarInfo());
+                } else {
+                    System.out.println("Curso no encontrado.");
+                }
+            }
+            
+            private void eliminarCurso() {
+                System.out.print("Ingrese el código del curso a eliminar: ");
+                String codigo = scanner.nextLine();
+
+                if (cursos.remove(codigo) != null) {
+                    ArchivoUtil.guardarLista(new ArrayList<>(cursos.values()), "cursos.dat");
+                    System.out.println("Curso eliminado correctamente.");
+                } else {
+                    System.out.println("No se encontró un curso con ese código.");
+                }
+            }
+            
+    private void menuMatriculasNotas() {
+        int opcion;
+        do {
+            System.out.println("\n--- MATRÍCULAS Y CALIFICACIONES ---");
+            System.out.println("1. Registrar Matrícula");
+            System.out.println("2. Registrar Calificación");
+            System.out.println("3. Eliminar Matrícula");
+            System.out.println("4. Listar Calificaciones");
+            System.out.println("0. Volver al menú principal");
+            System.out.print("Seleccione una opción: ");
+            opcion = Integer.parseInt(scanner.nextLine());
+
+            switch (opcion) {
+                case 1:
+                    registrarMatricula();
+                    break;
+                case 2:
+                    registrarCalificacion();
+                    break;
+                case 3:
+                    eliminarMatricula();
+                    break;
+                case 4:
+                    listarCalificaciones();
+                    break;
+                case 0:
+                    System.out.println("Volviendo al menú principal...");
+                    break;
+                default:
+                    System.out.println("Opción inválida.");
+                    break;
+            }
+        } while (opcion != 0);
+    }
+    
+            private void registrarMatricula() {
+                System.out.println("\n=== REGISTRO DE MATRÍCULA ===");
+
+                System.out.print("DNI del estudiante: ");
+                String dni = scanner.nextLine();
+                Estudiante estudiante = estudiantes.get(dni);
+
+                if (estudiante == null) {
+                    System.out.println("Estudiante no encontrado. Regístrelo primero.");
+                    return;
+                }
+
+                if (cursos.isEmpty()) {
+                    System.out.println("No hay cursos disponibles. Registre al menos uno.");
+                    return;
+                }
+
+                System.out.println("Cursos disponibles:");
+                for (Curso c : cursos.values()) {
+                    System.out.println("- " + c.getCodigo() + ": " + c.getNombre());
+                }
+
+                System.out.print("Ingrese el código del curso: ");
+                String codigoCurso = scanner.nextLine();
+
+                Curso cursoSeleccionado = null;
+                for (Curso c : cursos.values()) {
+                    if (c.getCodigo().equalsIgnoreCase(codigoCurso)) {
+                        cursoSeleccionado = c;
+                        break;
+                    }
+                }
+
+                if (cursoSeleccionado == null) {
+                    System.out.println("Curso no encontrado.");
+                    return;
+                }
+
+                System.out.print("Fecha de matrícula (dd/MM/yyyy): ");
+                String fecha = scanner.nextLine();
+
+                double monto = cursoSeleccionado.getPrecio();
+                Matricula m = new Matricula(codigoCurso, dni, fecha, monto);
+
+                if (!m.validar()) {
+                    System.out.println("Error de validación: " + m.getMensajeError());
+                    return;
+                }
+
+                matriculas.add(m);
+                ArchivoUtil.agregarEntidad(m, "matriculas.dat");
+                System.out.println("Matrícula registrada para " + estudiante.getNombres() + " en el curso " + cursoSeleccionado.getNombre());
+            }
+            
+            private void registrarCalificacion() {
+                System.out.println("\n=== REGISTRO DE CALIFICACIÓN ===");
+
+                System.out.print("DNI del estudiante: ");
+                String dni = scanner.nextLine();
+                Estudiante estudiante = estudiantes.get(dni);
+
+                if (estudiante == null) {
+                    System.out.println("Estudiante no encontrado.");
+                    return;
+                }
+
+                System.out.print("Código del curso: ");
+                String codigoCurso = scanner.nextLine();
+                Curso curso = cursos.get(codigoCurso);
+
+                if (curso == null) {
+                    System.out.println("Curso no encontrado.");
+                    return;
+                }
+
+                System.out.print("Fecha de calificación (dd/MM/yyyy): ");
+                String fecha = scanner.nextLine();
+
+                System.out.print("Nota (0 a 20): ");
+                double nota = Double.parseDouble(scanner.nextLine());
+
+                System.out.print("Observaciones: ");
+                String observaciones = scanner.nextLine();
+
+                Calificacion c = new Calificacion(codigoCurso, dni, fecha, nota, observaciones);
+
+                if (!c.validar()) {
+                    System.out.println("Error de validación: " + c.getMensajeError());
+                    return;
+                }
+
+                calificaciones.add(c);
+                ArchivoUtil.agregarEntidad(c, "calificaciones.dat");
+                System.out.println("Calificación registrada correctamente.");
+            }
+            
+            private void eliminarMatricula() {
+                System.out.print("Ingrese código de curso de la matrícula a eliminar: ");
+                String codigoCurso = scanner.nextLine();
+
+                System.out.print("Ingrese DNI del estudiante: ");
+                String dni = scanner.nextLine();
+
+                boolean encontrada = false;
+                for (int i = 0; i < matriculas.size(); i++) {
+                    Matricula m = matriculas.get(i);
+                    if (m.getCodigoCurso().equalsIgnoreCase(codigoCurso) && m.getDniEstudiante().equalsIgnoreCase(dni)) {
+                        matriculas.remove(i);
+                        encontrada = true;
+                        break;
+                    }
+                }
+
+                if (encontrada) {
+                    ArchivoUtil.guardarLista(matriculas, "matriculas.dat");
+                    System.out.println("Matrícula eliminada correctamente.");
+                } else {
+                    System.out.println("Matrícula no encontrada.");
+                }
+            }
+            
+            private void listarCalificaciones() {
+                if (calificaciones.isEmpty()) {
+                    System.out.println("No hay calificaciones registradas.");
+                    return;
+                }
+
+                System.out.println("\n=== LISTA DE CALIFICACIONES ===");
+                for (Calificacion c : calificaciones) {
+                    System.out.println(c.mostrarInfo());
+                }
+            }
+            
+    private void menuNivelesIdioma(){
+        int opcion;
+        do{
+            System.out.println("\n--- GESTION DE NIVELES DE IDIOMA ---");
+            System.out.println("1. Registrar Nivel de Idioma");
+            System.out.println("2. Buscar Nivel de Idioma");
+            System.out.println("3. Modificar Nivel de Idioma");
+            System.out.println("4. Eliminar Nivel de Idioma");
+            System.out.println("0. Volver al menu principal");
+            System.out.print("Seleccione una opcion: ");
+            opcion=Integer.parseInt(scanner.nextLine());
+
+            switch(opcion){
+                case 1:
+                    registrarNivelIdioma();
+                    break;
+                case 2:
+                    buscarNivelIdioma();
+                    break;
+                case 3:
+                    modificarNivelIdioma();
+                    break;
+                case 4:
+                    eliminarNivelIdioma();
+                    break;
+                case 0:
+                    System.out.println("Volviendo al menu principal...");
+                    break;
+                default:
+                    System.out.println("Opcion invalida.");
+            }
+        }while(opcion!=0);
+    }
+    
+            private void registrarNivelIdioma(){
+                System.out.println("Registro de Nivel de Idioma:");
+                System.out.print("Codigo: ");
+                String codigo=scanner.nextLine();
+                if(nivelesIdioma.containsKey(codigo)){
+                        System.out.println("Ya existe un nivel de idioma con este código.");
+                        return;
+                    }
+                System.out.print("Idioma: ");
+                String idioma =scanner.nextLine();
+                System.out.print("Nivel: ");
+                String nivel=scanner.nextLine();
+                System.out.print("Descripcion: ");
+                String descripcion=scanner.nextLine();
+
+                IdiomaNivel in =new IdiomaNivel(codigo,idioma,nivel,descripcion);
+                if(!in.validar()){
+                        System.out.println("Error de validación: "+in.getMensajeError());
+                        return;
+                    }
+                nivelesIdioma.put(codigo,in);
+                ArchivoUtil.agregarEntidad(in,"idiomas.txt");
+
+                System.out.println("Nivel de idioma registrado.");
+            }
+
+            private void modificarNivelIdioma(){
+                System.out.print("Ingrese codigo del nivel de idioma a modificar: ");
+                String codigo=scanner.nextLine();
+                IdiomaNivel in=nivelesIdioma.get(codigo);
+                    if(in.getCodigo().equals(codigo)){
+                        System.out.println("Nivel encontrado:");
+                        System.out.println(in.mostrarInfo());
+
+                        System.out.println("Que desea modificar?");
+                        System.out.println("1. Nivel");
+                        System.out.println("2. Descripcion");
+                        System.out.print("Opcion: ");
+                        int opcion=Integer.parseInt(scanner.nextLine());
+
+                        switch(opcion){
+                            case 1:
+                                System.out.print("Nuevo nivel: ");
+                                String nuevoNivel=scanner.nextLine();
+                                in.setNivel(nuevoNivel);
+                                break;
+                            case 2:
+                                System.out.print("Nueva descripcion: ");
+                                String nuevaDesc=scanner.nextLine();
+                                in.setDescripcion(nuevaDesc);
+                                break;
+                            default:
+                                System.out.println("Opcion invalida.");
+                                break;
+                        }
+                        if(!in.validar()){
+                        System.out.println("Error: Los datos modificados no son válidos: "+in.getMensajeError());
+                        return;
+                        }
+                        ArchivoUtil.guardarLista(new ArrayList<>(nivelesIdioma.values()),"idiomas.txt");
+                        System.out.println("Nivel actualizado.");
+                    }else{
+                    System.out.println("Nivel no encontrado.");    
+                }
+            }
+
+            private void buscarNivelIdioma(){
+                System.out.print("Ingrese codigo del nivel de idioma: ");
+                String codigo=scanner.nextLine();
+                IdiomaNivel in=nivelesIdioma.get(codigo);
+                    if(in!=null){
+                        System.out.println("Nivel encontrado:");
+                        System.out.println(in.mostrarInfo());
+                    }else{
+                        System.out.println("Nivel no encontrado.");
+                    }   
+            }
+
+            private void eliminarNivelIdioma(){
+                System.out.print("Ingrese codigo del nivel de idioma a eliminar: ");
+                String codigo=scanner.nextLine();
+                    if (nivelesIdioma.remove(codigo) !=null) {
+                        ArchivoUtil.guardarLista(new ArrayList<>(nivelesIdioma.values()),"idiomas.txt");
+                        System.out.println("Nivel de idioma eliminado.");
+                    }else{
+                    System.out.println("Nivel de idioma no encontrado.");    
+                }   
+            }
+
+    private void mostrarMenuReportesHTML() {
+        int opcion;
+        do {
+            System.out.println("\n=== GENERAR REPORTES HTML ===");
+            System.out.println("1. Reporte de Estudiantes");
+            System.out.println("2. Reporte de Profesores");
+            System.out.println("3. Reporte de Cursos");
+            System.out.println("4. Reporte de Matrículas");
+            System.out.println("5. Reporte de Calificaciones");
+            System.out.println("0. Volver al menú principal");
+            System.out.print("Seleccione una opción: ");
+            opcion = Integer.parseInt(scanner.nextLine());
+
+            switch (opcion) {
+                case 1:
+                    generarReporteEstudiantes();
+                    break;
+                case 2:
+                    generarReporteProfesores();
+                    break;
+                case 3:
+                    generarReporteCursos();
+                    break;
+                case 4:
+                    generarReporteMatriculas();
+                    break;
+                case 5:
+                    generarReporteCalificaciones();
+                    break;
+                case 0:
+                    System.out.println("Volviendo al menú principal...");
+                    break;
+                default:
+                    System.out.println("Opción inválida.");
+                    break;
+            }
+        } while (opcion != 0);
+    }
+    
+            private void generarReporteEstudiantes(){
+                if (estudiantes.isEmpty()) {
+                    System.out.println("No hay estudiantes registrados.");
+                    return;
+                }
+                GeneradorReportes.generarHTML(
+                    "Reporte de Estudiantes",
+                    new ArrayList<>(estudiantes.values()),
+                    "reporte_estudiantes"
+                );
+            }
+
+            private void generarReporteProfesores(){
+                if (profesores.isEmpty()) {
+                    System.out.println("No hay profesores registrados.");
+                    return;
+                }
+                GeneradorReportes.generarHTML(
+                    "Reporte de Profesores",
+                    new ArrayList<>(profesores.values()),
+                    "reporte_profesores"
+                );
+            }
+
+            private void generarReporteCursos(){
+                if (cursos.isEmpty()) {
+                    System.out.println("No hay cursos registrados.");
+                    return;
+                }
+                GeneradorReportes.generarHTML(
+                    "Reporte de Cursos",
+                    new ArrayList<>(cursos.values()),
+                    "reporte_cursos"
+                );
+            }
+
+            private void generarReporteMatriculas(){
+                if (matriculas.isEmpty()) {
+                    System.out.println("No hay matrículas registradas.");
+                    return;
+                }
+                GeneradorReportes.generarHTML(
+                    "Reporte de Matrículas",
+                    new ArrayList<>(matriculas),
+                    "reporte_matriculas"
+                );
+            }
+
+            private void generarReporteCalificaciones(){
+                if (calificaciones.isEmpty()) {
+                    System.out.println("No hay calificaciones registradas.");
+                    return;
+                }
+                GeneradorReportes.generarHTML(
+                    "Reporte de Calificaciones",
+                    new ArrayList<>(calificaciones),
+                    "reporte_calificaciones"
+                );
+            }
+            
+    private void menuOrdenamientos(){
+        int opcion;
+        do{
+            System.out.println("\n=== SISTEMA DE ORDENAMIENTO - MERGE SORT ===");
+            System.out.println("1. Ordenar Estudiantes");
+            System.out.println("2. Ordenar Profesores");
+            System.out.println("3. Ordenar Cursos");
+            System.out.println("0. Volver al menú principal");
+            System.out.print("Seleccione una opción: ");
+            opcion=Integer.parseInt(scanner.nextLine());
+
+            switch(opcion){
+                case 1:
+                    ordenarEstudiantes();
+                    break;
+                case 2:
+                    ordenarProfesores();
+                    break;
+                case 3:
+                    ordenarCursos();
+                    break;
+                case 0:
+                    System.out.println("Volviendo al menú principal...");
+                    break;
+                default:
+                    System.out.println("Opción inválida.");
+            }
+        } while (opcion!=0);
+    }
+
+            private void ordenarEstudiantes(){
+                if(estudiantes.isEmpty()){
+                    System.out.println("No hay estudiantes registrados.");
+                    return;
+                }
+
+                List<Estudiante>listaEstudiantes=new ArrayList<>(estudiantes.values());
+
+                System.out.println("\n=== ORDENAR ESTUDIANTES - MERGE SORT ===");
+                System.out.println("1. Por Apellidos (A-Z)");
+                System.out.println("2. Por Nombres (A-Z)");
+                System.out.println("3. Por DNI (Ascendente)");
+                System.out.print("Seleccione criterio: ");
+                int criterio=Integer.parseInt(scanner.nextLine());
+
+                long startTime=System.currentTimeMillis();
+
+                switch(criterio){
+                    case 1:
+                        SortUtil.sortBy(listaEstudiantes,Comparator.comparing(Estudiante::getApellidos));
+                        System.out.println("Estudiantes ordenados por APELLIDOS");
+                        break;
+                    case 2:
+                        SortUtil.sortBy(listaEstudiantes,Comparator.comparing(Estudiante::getNombres));
+                        System.out.println("Estudiantes ordenados por NOMBRES");
+                        break;
+                    case 3:
+                        SortUtil.sortBy(listaEstudiantes,Comparator.comparing(Estudiante::getDni));
+                        System.out.println("Estudiantes ordenados por DNI");
+                        break;
+                    default:
+                        System.out.println("Criterio inválido.");
+                        return;
+                }
+
+                long endTime=System.currentTimeMillis();
+
+                System.out.println("Tiempo de ordenamiento: "+(endTime-startTime)+" ms");
+                System.out.println("Total de elementos ordenados: "+listaEstudiantes.size());
+                System.out.println("\n=== RESULTADOS ORDENADOS ===");
+                for(int i=0;i<listaEstudiantes.size();i++){
+                    System.out.println((i+1)+". "+listaEstudiantes.get(i).mostrarInfo());
+                }
+            }
+
+            private void ordenarProfesores(){
+                if(profesores.isEmpty()){
+                    System.out.println("No hay profesores registrados.");
+                    return;
+                }
+
+                List<Profesor>listaProfesores=new ArrayList<>(profesores.values());
+
+                System.out.println("\n=== ORDENAR PROFESORES - MERGE SORT ===");
+                System.out.println("1. Por Apellidos (A-Z)");
+                System.out.println("2. Por Especialidad (A-Z)");
+                System.out.println("3. Por Experiencia (Mayor a menor)");
+                System.out.print("Seleccione criterio: ");
+                int criterio=Integer.parseInt(scanner.nextLine());
+
+                long startTime=System.currentTimeMillis();
+
+                switch(criterio){
+                    case 1:
+                        SortUtil.sortBy(listaProfesores, Comparator.comparing(Profesor::getApellidos));
+                        System.out.println("Profesores ordenados por APELLIDOS");
+                        break;
+                    case 2:
+                        SortUtil.sortBy(listaProfesores, Comparator.comparing(Profesor::getEspecialidad));
+                        System.out.println("Profesores ordenados por ESPECIALIDAD");
+                        break;
+                    case 3:
+                        SortUtil.sortBy(listaProfesores, Comparator.comparingInt(Profesor::getExperiencia).reversed());
+                        System.out.println("Profesores ordenados por EXPERIENCIA (Mayor a menor)");
+                        break;
+                    default:
+                        System.out.println("Criterio inválido.");
+                        return;
+                }
+
+                long endTime=System.currentTimeMillis();
+                System.out.println("Tiempo de ordenamiento: "+(endTime-startTime)+" ms");
+
+                System.out.println("\n=== RESULTADOS ORDENADOS ===");
+                for (int i=0; i<listaProfesores.size();i++){
+                    System.out.println((i + 1) + ". " + listaProfesores.get(i).mostrarInfo());
+                }
+            }
+
+            private void ordenarCursos(){
+                if(cursos.isEmpty()){
+                    System.out.println("No hay cursos registrados.");
+                    return;
+                }
+                List<Curso>listaCursos=new ArrayList<>(cursos.values());
+                System.out.println("\n=== ORDENAR CURSOS - MERGE SORT ===");
+                System.out.println("1. Por Nombre (A-Z)");
+                System.out.println("2. Por Idioma (A-Z)");
+                System.out.println("3. Por Precio (Menor a mayor)");
+                System.out.print("Seleccione criterio: ");
+                int criterio=Integer.parseInt(scanner.nextLine());
+
+                long startTime=System.currentTimeMillis();
+
+                switch(criterio){
+                    case 1:
+                        SortUtil.sortBy(listaCursos,Comparator.comparing(Curso::getNombre));
+                        System.out.println("Cursos ordenados por NOMBRE");
+                        break;
+                    case 2:
+                        SortUtil.sortBy(listaCursos,Comparator.comparing(Curso::getIdioma));
+                        System.out.println("Cursos ordenados por IDIOMA");
+                        break;
+                    case 3:
+                        SortUtil.sortBy(listaCursos,Comparator.comparingDouble(Curso::getPrecio));
+                        System.out.println("Cursos ordenados por PRECIO (Menor a mayor)");
+                        break;
+                    default:
+                        System.out.println("Criterio inválido.");
+                        return;
+                }
+
+                long endTime=System.currentTimeMillis();
+                System.out.println("Tiempo de ordenamiento: "+(endTime-startTime)+" ms");
+                System.out.println("\n=== RESULTADOS ORDENADOS ===");
+                for(int i=0;i<listaCursos.size();i++){
+                    System.out.println((i + 1)+". "+listaCursos.get(i).mostrarInfo());
+                }
+            }
 
 private String leerDNI(){
     while(true){
@@ -1652,64 +1738,4 @@ private void buscarEnTodosLosArchivos() {
     System.out.println("Total de resultados: " + totalResultados);
     System.out.println("Tiempo de búsqueda: " + (fin - inicio) + " ms");
 }
-private void generarReporteEstudiantes(){
-    if (estudiantes.isEmpty()) {
-        System.out.println("No hay estudiantes registrados.");
-        return;
-    }
-    GeneradorReportes.generarHTML(
-        "Reporte de Estudiantes",
-        new ArrayList<>(estudiantes.values()),
-        "reporte_estudiantes"
-    );
 }
-
-private void generarReporteProfesores(){
-    if (profesores.isEmpty()) {
-        System.out.println("No hay profesores registrados.");
-        return;
-    }
-    GeneradorReportes.generarHTML(
-        "Reporte de Profesores",
-        new ArrayList<>(profesores.values()),
-        "reporte_profesores"
-    );
-}
-
-private void generarReporteCursos(){
-    if (cursos.isEmpty()) {
-        System.out.println("No hay cursos registrados.");
-        return;
-    }
-    GeneradorReportes.generarHTML(
-        "Reporte de Cursos",
-        new ArrayList<>(cursos.values()),
-        "reporte_cursos"
-    );
-}
-
-private void generarReporteMatriculas(){
-    if (matriculas.isEmpty()) {
-        System.out.println("No hay matrículas registradas.");
-        return;
-    }
-    GeneradorReportes.generarHTML(
-        "Reporte de Matrículas",
-        new ArrayList<>(matriculas),
-        "reporte_matriculas"
-    );
-}
-
-private void generarReporteCalificaciones(){
-    if (calificaciones.isEmpty()) {
-        System.out.println("No hay calificaciones registradas.");
-        return;
-    }
-    GeneradorReportes.generarHTML(
-        "Reporte de Calificaciones",
-        new ArrayList<>(calificaciones),
-        "reporte_calificaciones"
-    );
-}
-}
-
