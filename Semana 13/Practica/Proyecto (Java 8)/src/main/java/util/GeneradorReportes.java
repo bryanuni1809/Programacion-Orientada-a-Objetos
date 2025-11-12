@@ -21,9 +21,7 @@ public class GeneradorReportes {
         if (!carpeta.exists()) {
             carpeta.mkdir();
         }
-
         File archivo = new File(carpeta, nombreArchivo + ".html");
-
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(archivo))) {
             writer.write("<!DOCTYPE html>");
             writer.write("<html><head><meta charset='UTF-8'><title>" + titulo + "</title>");
@@ -36,16 +34,13 @@ public class GeneradorReportes {
             writer.write("</style></head><body>");
             writer.write("<h1>" + titulo + "</h1>");
             writer.write("<table><tr><th>#</th><th>Información</th></tr>");
-
             int contador = 1;
             for (IEntidad e : lista) {
                 writer.write("<tr><td>" + contador++ + "</td><td>" + e.mostrarInfo() + "</td></tr>");
             }
-
             writer.write("</table>");
             writer.write("<p>Total de registros: " + lista.size() + "</p>");
             writer.write("</body></html>");
-
             System.out.println("Reporte generado: " + archivo.getAbsolutePath());
         } catch (IOException e) {
             System.out.println("Error al generar el reporte: " + e.getMessage());

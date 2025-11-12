@@ -48,82 +48,101 @@ public class GestorAcademia{
     cargarNivelesIdioma();
     }
     
-        private void cargarEstudiantes(){
-            try(BufferedReader br=new BufferedReader(new FileReader("estudiantes.txt"))){
+        private void cargarEstudiantes() {
+            try (BufferedReader br = new BufferedReader(new FileReader("estudiantes.txt"))) {
                 String linea;
-                while((linea=br.readLine())!= null){
-                    String[] partes=linea.split(",");
-                    if(partes.length>=8){
-                        Estudiante e=new Estudiante(
-                            partes[0],partes[1],partes[2],partes[3],
-                            partes[4],partes[5],partes[6],partes[7]
+                while ((linea = br.readLine()) != null) {
+                    String[] partes = linea.split(",");
+                    if (partes.length >= 8) {
+                        Estudiante e = new Estudiante(
+                            partes[0], partes[1], partes[2], partes[3],
+                            partes[4], partes[5], partes[6], partes[7]
                         );
-                    estudiantes.put(e.getDni(),e);
+                        if (e.validar()) {
+                            estudiantes.put(e.getDni().toUpperCase(), e);
+                        } else {
+                            System.err.println("Estudiante inválido ignorado (DNI: " + e.getDni() + "): " + e.getMensajeError());
+                        }
                     }
                 }
-            }catch(IOException e){
-                System.out.println("Error al cargar estudiantes: "+e.getMessage());
+            } catch (IOException e) {
+                System.out.println("Error al cargar estudiantes: " + e.getMessage());
             }
         }
-        
-        private void cargarProfesores(){
-            try(BufferedReader br=new BufferedReader(new FileReader("profesores.txt"))){
+
+        private void cargarProfesores() {
+            try (BufferedReader br = new BufferedReader(new FileReader("profesores.txt"))) {
                 String linea;
-                while((linea=br.readLine())!= null){
-                    String[]partes=linea.split(",");
-                    if (partes.length>=8) {
-                        Profesor p=new Profesor(
-                            partes[0],partes[1],partes[2],partes[3],
-                            partes[4],partes[5],partes[6],
+                while ((linea = br.readLine()) != null) {
+                    String[] partes = linea.split(",");
+                    if (partes.length >= 8) {
+                        Profesor p = new Profesor(
+                            partes[0], partes[1], partes[2], partes[3],
+                            partes[4], partes[5], partes[6],
                             Integer.parseInt(partes[7])
                         );
-                        profesores.put(p.getDni(),p);
+                        if (p.validar()) {
+                            profesores.put(p.getDni().toUpperCase(), p);
+                        } else {
+                            System.err.println("Profesor inválido ignorado (DNI: " + p.getDni() + "): " + p.getMensajeError());
+                        }
                     }
                 }
-            }catch(IOException e){
-                System.out.println("Error al cargar profesores: "+e.getMessage());
+            } catch (IOException e) {
+                System.out.println("Error al cargar profesores: " + e.getMessage());
             }
         }
-        
-        private void cargarCursos(){
-            try(BufferedReader br=new BufferedReader(new FileReader("cursos.txt"))){
+
+        private void cargarCursos() {
+            try (BufferedReader br = new BufferedReader(new FileReader("cursos.txt"))) {
                 String linea;
-                while((linea=br.readLine())!=null){
-                    String[]partes=linea.split(",");
-                    if(partes.length>=10){
-                        Curso c=new Curso(
-                            partes[0],partes[1],partes[2],partes[3],
-                            partes[4],partes[5],Integer.parseInt(partes[6]),
+                while ((linea = br.readLine()) != null) {
+                    String[] partes = linea.split(",");
+                    if (partes.length >= 10) {
+                        Curso c = new Curso(
+                            partes[0], partes[1], partes[2], partes[3],
+                            partes[4], partes[5], Integer.parseInt(partes[6]),
                             Integer.parseInt(partes[7]),
                             Double.parseDouble(partes[8]),
                             partes[9]
                         );
-                        cursos.put(c.getCodigo(),c);
+                        c.setProfesorDni(c.getProfesorDni().toUpperCase().trim());
+                        if (c.validar()) {
+                            cursos.put(c.getCodigo().toUpperCase().trim(), c);
+                        } else {
+                            System.err.println("Curso inválido ignorado (Código: " + c.getCodigo() + "): " + c.getMensajeError());
+                        }
                     }
                 }
-            }catch(IOException e){
-                System.out.println("Error al cargar cursos: "+e.getMessage());
+            } catch (IOException e) {
+                System.out.println("Error al cargar cursos: " + e.getMessage());
             }
         }
-        
-        private void cargarMatriculas(){
-            try (BufferedReader br=new BufferedReader(new FileReader("matriculas.txt"))){
+
+        private void cargarMatriculas() {
+            try (BufferedReader br = new BufferedReader(new FileReader("matriculas.txt"))) {
                 String linea;
-                while((linea=br.readLine())!=null){
-                    String[]partes=linea.split(",");
-                    if(partes.length>=4){
-                        Matricula m=new Matricula(
-                            partes[0],partes[1],partes[2],
+                while ((linea = br.readLine()) != null) {
+                    String[] partes = linea.split(",");
+                    if (partes.length >= 4) {
+                        Matricula m = new Matricula(
+                            partes[0].trim().toUpperCase(),
+                            partes[1].trim().toUpperCase(),
+                            partes[2].trim(),
                             Double.parseDouble(partes[3])
                         );
-                        matriculas.add(m);
+                        if (m.validar()) {
+                            matriculas.add(m);
+                        } else {
+                            System.err.println("Matrícula inválida ignorada (DNI=" + m.getDniEstudiante() + ", Curso=" + m.getCodigoCurso() + "): " + m.getMensajeError());
+                        }
                     }
                 }
-            }catch(IOException e){
-                System.out.println("Error al cargar matrículas: "+e.getMessage());
+            } catch (IOException e) {
+                System.out.println("Error al cargar matrículas: " + e.getMessage());
             }
         }
-        
+
         private void cargarCalificaciones() {
             try (BufferedReader br = new BufferedReader(new FileReader("calificaciones.txt"))) {
                 String linea;
@@ -131,31 +150,39 @@ public class GestorAcademia{
                     String[] partes = linea.split(",");
                     if (partes.length >= 5) {
                         Calificacion c = new Calificacion(
-                            partes[0].trim(),
-                            partes[1].trim(),
+                            partes[0].trim().toUpperCase(),
+                            partes[1].trim().toUpperCase(),
                             partes[2].trim(),
                             Double.parseDouble(partes[3].trim()),
                             partes[4].trim()
                         );
-                        calificaciones.add(c);
+                        if (c.validar()) {
+                            calificaciones.add(c);
+                        } else {
+                            System.err.println("Calificación inválida ignorada (DNI=" + c.getDniEstudiante() + ", Curso=" + c.getCodigoCurso() + "): " + c.getMensajeError());
+                        }
                     }
                 }
             } catch (IOException e) {
                 System.out.println("Error al cargar calificaciones: " + e.getMessage());
             }
         }
-        
-        private void cargarNivelesIdioma(){
-            try (BufferedReader br=new BufferedReader(new FileReader("idiomas.txt"))){
+
+        private void cargarNivelesIdioma() {
+            try (BufferedReader br = new BufferedReader(new FileReader("idiomas.txt"))) {
                 String linea;
-                while((linea=br.readLine())!= null){
-                    String[] partes=linea.split(",");
-                    if(partes.length>= 4){
-                        IdiomaNivel in=new IdiomaNivel(partes[0],partes[1],partes[2], partes[3]);
-                        nivelesIdioma.put(in.getCodigo(),in);
+                while ((linea = br.readLine()) != null) {
+                    String[] partes = linea.split(",");
+                    if (partes.length >= 4) {
+                        IdiomaNivel in = new IdiomaNivel(partes[0], partes[1], partes[2], partes[3]);
+                        if (in.validar()) {
+                            nivelesIdioma.put(in.getCodigo().toUpperCase(), in);
+                        } else {
+                            System.err.println("Nivel de idioma inválido ignorado (Código: " + in.getCodigo() + "): " + in.getMensajeError());
+                        }
                     }
                 }
-            }catch(IOException e){
+            } catch (IOException e) {
                 System.out.println("Error al cargar niveles de idioma: " + e.getMessage());
             }
         }
@@ -178,7 +205,7 @@ public class GestorAcademia{
             System.out.println("10. Mostrar Todas las Entidades");
             System.out.println("0. Salir");
             System.out.print("Seleccione una opcion: ");
-            opcion=Integer.parseInt(scanner.nextLine());
+            opcion = leerOpcion(0, 10);
 
             switch(opcion){
                 case 1:
@@ -231,7 +258,7 @@ public class GestorAcademia{
             System.out.println("4. Eliminar Estudiante");
             System.out.println("0. Volver al menu principal");
             System.out.print("Seleccione una opcion: ");
-            opcion=Integer.parseInt(scanner.nextLine());
+            opcion = leerOpcion(0, 4);
 
             switch(opcion){
                 case 1:
@@ -259,7 +286,7 @@ public class GestorAcademia{
             private void registrarEstudiante(){
                    try{
                    System.out.println("\nREGISTRO DE NUEVO ESTUDIANTE");
-                   String dni=leerDNI();
+                   String dni = leerDNI().toUpperCase();
                    if(estudiantes.containsKey(dni)){
                        System.out.println("Ya existe un estudiante registrado con este DNI.");
                        return;
@@ -286,7 +313,7 @@ public class GestorAcademia{
                        System.out.println("Error de validación: " + e.getMensajeError());
                        return;
                    }
-                   estudiantes.put(e.getDni(), e);
+                   estudiantes.put(dni, e);
                    ArchivoUtil.agregarEntidad(e,"estudiantes.txt");
                    System.out.println("Estudiante registrado y validado exitosamente!");
                } catch (IllegalArgumentException e) {
@@ -298,20 +325,20 @@ public class GestorAcademia{
             
             private void buscarEstudiante(){
                 System.out.print("Ingrese DNI del estudiante: ");
-                String dni=scanner.nextLine();
-                Estudiante e=estudiantes.get(dni);
+                String dni = scanner.nextLine().trim().toUpperCase();
+                Estudiante e = estudiantes.get(dni);
                     if(e!= null){
                 System.out.println("Estudiante encontrado: " +e.mostrarInfo());
                     }else{
-            System.out.println("Estudiante no encontrado.");
+                System.out.println("Estudiante no encontrado.");
                 }
             }
             
             private void modificarEstudiante(){
             System.out.print("Ingrese DNI del estudiante a modificar: ");
-            String dni=scanner.nextLine();
+            String dni = scanner.nextLine().trim().toUpperCase();
 
-            Estudiante e=estudiantes.get(dni);
+            Estudiante e = estudiantes.get(dni);
                 if(e != null){
                     System.out.println("Estudiante encontrado:");
                     System.out.println(e.mostrarInfo());
@@ -356,7 +383,7 @@ public class GestorAcademia{
             
             private void eliminarEstudiante() {
                 System.out.print("Ingrese DNI del estudiante a eliminar: ");
-                String dni = scanner.nextLine();
+                String dni = scanner.nextLine().trim().toUpperCase();
                 if (estudiantes.remove(dni) != null) {
                     ArchivoUtil.guardarLista(new ArrayList<>(estudiantes.values()), "estudiantes.txt");
                     System.out.println("Estudiante eliminado correctamente.");
@@ -375,7 +402,7 @@ public class GestorAcademia{
             System.out.println("4. Eliminar Profesor");
             System.out.println("0. Volver al menu principal");
             System.out.print("Seleccione una opcion: ");
-            opcion=Integer.parseInt(scanner.nextLine());
+            opcion = leerOpcion(0, 4);
 
             switch(opcion){
                 case 1:
@@ -403,7 +430,7 @@ public class GestorAcademia{
             private void registrarProfesor() {
                try {
                    System.out.println("\nREGISTRO DE NUEVO PROFESOR");
-                   String dni = leerDNI();
+                   String dni = leerDNI().toUpperCase();
                    if (profesores.containsKey(dni)) {
                        System.out.println("Ya existe un profesor con este DNI.");
                        return;
@@ -439,7 +466,7 @@ public class GestorAcademia{
                        return;
                    }
 
-                   profesores.put(p.getDni(), p);
+                   profesores.put(dni, p);
                    ArchivoUtil.agregarEntidad(p, "profesores.txt");
                    System.out.println("Profesor registrado exitosamente.");
 
@@ -452,7 +479,7 @@ public class GestorAcademia{
             
             private void modificarProfesor() {
                System.out.print("Ingrese el DNI del profesor a modificar: ");
-               String dni = scanner.nextLine();
+               String dni = scanner.nextLine().trim().toUpperCase();
 
                Profesor p = profesores.get(dni);
                if (p == null) {
@@ -489,7 +516,7 @@ public class GestorAcademia{
             
             private void buscarProfesor() {
                System.out.print("Ingrese DNI del profesor: ");
-               String dni = scanner.nextLine();
+               String dni = scanner.nextLine().trim().toUpperCase();
                Profesor p = profesores.get(dni);
                if (p != null) {
                    System.out.println("Profesor encontrado: " + p.mostrarInfo());
@@ -500,7 +527,7 @@ public class GestorAcademia{
            
            private void eliminarProfesor() {
                System.out.print("Ingrese el DNI del profesor a eliminar: ");
-               String dni = scanner.nextLine();
+               String dni = scanner.nextLine().trim().toUpperCase();
 
                if (profesores.remove(dni) != null) {
                    ArchivoUtil.guardarLista(new ArrayList<>(profesores.values()), "profesores.txt");
@@ -520,7 +547,7 @@ public class GestorAcademia{
             System.out.println("4. Eliminar Curso");
             System.out.println("0. Volver al menu principal");
             System.out.print("Seleccione una opcion: ");
-            opcion=Integer.parseInt(scanner.nextLine());
+            opcion = leerOpcion(0, 4);
 
             switch(opcion){
                 case 1:
@@ -548,7 +575,7 @@ public class GestorAcademia{
                 try {
                     System.out.println("\nREGISTRO DE NUEVO CURSO");
                     System.out.print("Código del curso: ");
-                    String codigo = scanner.nextLine().trim();
+                    String codigo = scanner.nextLine().trim().toUpperCase();
                     if (cursos.containsKey(codigo)) {
                         System.out.println("Ya existe un curso con este código.");
                         return;
@@ -567,7 +594,7 @@ public class GestorAcademia{
                     Validador.validarNivelIdioma(nivel);
 
                     System.out.print("DNI del profesor asignado: ");
-                    String profesorDni = scanner.nextLine().trim();
+                    String profesorDni = scanner.nextLine().trim().toUpperCase();
                     if (!profesores.containsKey(profesorDni)) {
                         System.out.println("No existe un profesor con ese DNI.");
                         return;
@@ -578,15 +605,15 @@ public class GestorAcademia{
                     Validador.validarNoVacio(horario, "horario");
 
                     System.out.print("Duración (en semanas): ");
-                    int duracion = Integer.parseInt(scanner.nextLine());
+                    int duracion = leerEnteroValidado("Duración (en semanas): ", 1, 100);
                     Validador.validarDuracionCurso(duracion);
 
                     System.out.print("Capacidad máxima: ");
-                    int capacidad = Integer.parseInt(scanner.nextLine());
+                    int capacidad = leerEnteroValidado("Capacidad máxima: ", 1, 100);
                     Validador.validarCapacidadCurso(capacidad);
 
                     System.out.print("Precio (S/): ");
-                    double precio = Double.parseDouble(scanner.nextLine());
+                    double precio = leerDoubleValidado("Precio (S/): ", 0.0, 10000.0);
                     Validador.validarPrecio(precio);
 
                     System.out.print("Observaciones: ");
@@ -600,7 +627,7 @@ public class GestorAcademia{
                         return;
                     }
 
-                    cursos.put(c.getCodigo(), c);
+                    cursos.put(codigo, c);
                     ArchivoUtil.agregarEntidad(c, "cursos.txt");
                     System.out.println("Curso registrado correctamente.");
 
@@ -613,9 +640,9 @@ public class GestorAcademia{
                 }
             }
             
-            private void modificarCurso(){
+            private void modificarCurso() {
                 System.out.print("Ingrese el código del curso a modificar: ");
-                String codigo = scanner.nextLine();
+                String codigo = scanner.nextLine().trim().toUpperCase();
 
                 Curso c = cursos.get(codigo);
                 if (c == null) {
@@ -626,29 +653,52 @@ public class GestorAcademia{
                 System.out.println("Datos actuales: " + c.mostrarInfo());
                 System.out.print("Nuevo horario (ENTER para mantener): ");
                 String horario = scanner.nextLine().trim();
-                if (!horario.isEmpty()) c.setHorario(horario);
+                if (!horario.isEmpty()) {
+                    try {
+                        Validador.validarNoVacio(horario, "horario");
+                        c.setHorario(horario);
+                    } catch (IllegalArgumentException e) {
+                        System.out.println("Horario no válido: " + e.getMessage());
+                        return;
+                    }
+                }
 
                 System.out.print("Nuevo precio (ENTER para mantener): ");
                 String precioStr = scanner.nextLine().trim();
-                if (!precioStr.isEmpty()) c.setPrecio(Double.parseDouble(precioStr));
+                if (!precioStr.isEmpty()) {
+                    try {
+                        double nuevoPrecio = leerDoubleValidado("Confirme nuevo precio (S/): ", 0.0, 10000.0);
+                        c.setPrecio(nuevoPrecio);
+                    } catch (Exception e) {
+                        System.out.println("Precio no válido.");
+                        return;
+                    }
+                }
 
-                System.out.print("Nueva capacidad (ENTER para mantener): ");
+
+                System.out.print("Nueva capacidad máxima (ENTER para mantener): ");
                 String capStr = scanner.nextLine().trim();
-                if (!capStr.isEmpty()) c.setCapacidadMaxima(Integer.parseInt(capStr));
+                if (!capStr.isEmpty()) {
+                    try {
+                        int nuevaCapacidad = leerEnteroValidado("Confirme nueva capacidad: ", 1, 100);
+                        c.setCapacidadMaxima(nuevaCapacidad);
+                    } catch (Exception e) {
+                        System.out.println("Capacidad no válida.");
+                        return;
+                    }
+                }
 
                 if (!c.validar()) {
                     System.out.println("Error de validación: " + c.getMensajeError());
                     return;
                 }
-
-                cursos.put(c.getCodigo(), c);
                 ArchivoUtil.guardarLista(new ArrayList<>(cursos.values()), "cursos.txt");
                 System.out.println("Curso modificado correctamente.");
             }
             
             private void buscarCurso() {
                 System.out.print("Ingrese el código del curso: ");
-                String codigo = scanner.nextLine();
+                String codigo = scanner.nextLine().trim().toUpperCase();
 
                 Curso c = cursos.get(codigo);
                 if (c != null) {
@@ -660,7 +710,7 @@ public class GestorAcademia{
             
             private void eliminarCurso() {
                 System.out.print("Ingrese el código del curso a eliminar: ");
-                String codigo = scanner.nextLine();
+                String codigo = scanner.nextLine().trim().toUpperCase();
 
                 if (cursos.remove(codigo) != null) {
                     ArchivoUtil.guardarLista(new ArrayList<>(cursos.values()), "cursos.txt");
@@ -680,7 +730,7 @@ public class GestorAcademia{
             System.out.println("4. Listar Calificaciones");
             System.out.println("0. Volver al menú principal");
             System.out.print("Seleccione una opción: ");
-            opcion = Integer.parseInt(scanner.nextLine());
+            opcion = leerOpcion(0, 4);
 
             switch (opcion) {
                 case 1:
@@ -709,7 +759,7 @@ public class GestorAcademia{
                 System.out.println("\n=== REGISTRO DE MATRÍCULA ===");
 
                 System.out.print("DNI del estudiante: ");
-                String dni = scanner.nextLine();
+                String dni = scanner.nextLine().trim().toUpperCase();
                 Estudiante estudiante = estudiantes.get(dni);
 
                 if (estudiante == null) {
@@ -728,15 +778,8 @@ public class GestorAcademia{
                 }
 
                 System.out.print("Ingrese el código del curso: ");
-                String codigoCurso = scanner.nextLine();
-
-                Curso cursoSeleccionado = null;
-                for (Curso c : cursos.values()) {
-                    if (c.getCodigo().equalsIgnoreCase(codigoCurso)) {
-                        cursoSeleccionado = c;
-                        break;
-                    }
-                }
+                String codigoCurso = scanner.nextLine().trim().toUpperCase();
+                Curso cursoSeleccionado = cursos.get(codigoCurso);
 
                 if (cursoSeleccionado == null) {
                     System.out.println("Curso no encontrado.");
@@ -744,7 +787,7 @@ public class GestorAcademia{
                 }
 
                 System.out.print("Fecha de matrícula (dd/MM/yyyy): ");
-                String fecha = scanner.nextLine();
+                String fecha = scanner.nextLine().trim();
 
                 double monto = cursoSeleccionado.getPrecio();
                 Matricula m = new Matricula(codigoCurso, dni, fecha, monto);
@@ -763,7 +806,7 @@ public class GestorAcademia{
                 System.out.println("\n=== REGISTRO DE CALIFICACIÓN ===");
 
                 System.out.print("DNI del estudiante: ");
-                String dni = scanner.nextLine();
+                String dni = scanner.nextLine().trim().toUpperCase();
                 Estudiante estudiante = estudiantes.get(dni);
 
                 if (estudiante == null) {
@@ -772,7 +815,7 @@ public class GestorAcademia{
                 }
 
                 System.out.print("Código del curso: ");
-                String codigoCurso = scanner.nextLine();
+                String codigoCurso = scanner.nextLine().trim().toUpperCase();
                 Curso curso = cursos.get(codigoCurso);
 
                 if (curso == null) {
@@ -784,7 +827,7 @@ public class GestorAcademia{
                 String fecha = scanner.nextLine();
 
                 System.out.print("Nota (0 a 20): ");
-                double nota = Double.parseDouble(scanner.nextLine());
+                double nota = leerDoubleValidado("Nota (0 a 20): ", 0.0, 20.0);
 
                 System.out.print("Observaciones: ");
                 String observaciones = scanner.nextLine();
@@ -803,17 +846,17 @@ public class GestorAcademia{
             
             private void eliminarMatricula() {
                 System.out.print("Ingrese código de curso de la matrícula a eliminar: ");
-                String codigoCurso = scanner.nextLine();
+                String codigoCurso = scanner.nextLine().trim().toUpperCase();
 
                 System.out.print("Ingrese DNI del estudiante: ");
-                String dni = scanner.nextLine();
+                String dni = scanner.nextLine().trim().toUpperCase();
 
                 boolean encontrada = false;
                 for (int i = 0; i < matriculas.size(); i++) {
                     Matricula m = matriculas.get(i);
-                    if (m.getCodigoCurso().equalsIgnoreCase(codigoCurso) && m.getDniEstudiante().equalsIgnoreCase(dni)) {
-                        matriculas.remove(i);
-                        encontrada = true;
+                        if (m.getCodigoCurso().equals(codigoCurso) && m.getDniEstudiante().equals(dni)) {
+                            matriculas.remove(i);
+                            encontrada = true;
                         break;
                     }
                 }
@@ -848,7 +891,7 @@ public class GestorAcademia{
             System.out.println("4. Eliminar Nivel de Idioma");
             System.out.println("0. Volver al menu principal");
             System.out.print("Seleccione una opcion: ");
-            opcion=Integer.parseInt(scanner.nextLine());
+            opcion = leerOpcion(0, 4);
 
             switch(opcion){
                 case 1:
@@ -875,7 +918,7 @@ public class GestorAcademia{
             private void registrarNivelIdioma(){
                 System.out.println("Registro de Nivel de Idioma:");
                 System.out.print("Codigo: ");
-                String codigo=scanner.nextLine();
+                String codigo = scanner.nextLine().trim().toUpperCase();
                 if(nivelesIdioma.containsKey(codigo)){
                         System.out.println("Ya existe un nivel de idioma con este código.");
                         return;
@@ -892,7 +935,7 @@ public class GestorAcademia{
                         System.out.println("Error de validación: "+in.getMensajeError());
                         return;
                     }
-                nivelesIdioma.put(codigo,in);
+                nivelesIdioma.put(codigo, in);
                 ArchivoUtil.agregarEntidad(in,"idiomas.txt");
 
                 System.out.println("Nivel de idioma registrado.");
@@ -900,7 +943,7 @@ public class GestorAcademia{
 
             private void modificarNivelIdioma(){
                 System.out.print("Ingrese codigo del nivel de idioma a modificar: ");
-                String codigo=scanner.nextLine();
+                String codigo = scanner.nextLine().trim().toUpperCase();
                 IdiomaNivel in=nivelesIdioma.get(codigo);
                     if (in != null) {
                         System.out.println("Nivel encontrado:");
@@ -940,7 +983,7 @@ public class GestorAcademia{
 
             private void buscarNivelIdioma(){
                 System.out.print("Ingrese codigo del nivel de idioma: ");
-                String codigo=scanner.nextLine();
+                String codigo = scanner.nextLine().trim().toUpperCase();
                 IdiomaNivel in=nivelesIdioma.get(codigo);
                     if(in!=null){
                         System.out.println("Nivel encontrado:");
@@ -952,7 +995,7 @@ public class GestorAcademia{
 
             private void eliminarNivelIdioma(){
                 System.out.print("Ingrese codigo del nivel de idioma a eliminar: ");
-                String codigo=scanner.nextLine();
+                String codigo = scanner.nextLine().trim().toUpperCase();
                     if (nivelesIdioma.remove(codigo) !=null) {
                         ArchivoUtil.guardarLista(new ArrayList<>(nivelesIdioma.values()),"idiomas.txt");
                         System.out.println("Nivel de idioma eliminado.");
@@ -972,7 +1015,7 @@ public class GestorAcademia{
             System.out.println("5. Reporte de Calificaciones");
             System.out.println("0. Volver al menú principal");
             System.out.print("Seleccione una opción: ");
-            opcion = Integer.parseInt(scanner.nextLine());
+            opcion = leerOpcion(0, 5);
 
             switch (opcion) {
                 case 1:
@@ -1069,7 +1112,7 @@ public class GestorAcademia{
             System.out.println("3. Ordenar Cursos");
             System.out.println("0. Volver al menú principal");
             System.out.print("Seleccione una opción: ");
-            opcion=Integer.parseInt(scanner.nextLine());
+            opcion = leerOpcion(0, 3);;
 
             switch(opcion){
                 case 1:
@@ -1436,4 +1479,17 @@ public class GestorAcademia{
         }
     }
     
+    private int leerOpcion(int min, int max) {
+    while (true) {
+        try {
+            String input = scanner.nextLine().trim();
+            if (input.isEmpty()) continue;
+            int valor = Integer.parseInt(input);
+            if (valor >= min && valor <= max) return valor;
+            System.out.println("Opción fuera de rango. Intente de nuevo.");
+        } catch (NumberFormatException e) {
+            System.out.println("Entrada inválida. Ingrese un número.");
+        }
+    }
+}
 }

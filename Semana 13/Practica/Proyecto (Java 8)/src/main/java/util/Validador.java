@@ -28,7 +28,7 @@ public class Validador{
         Pattern.compile("^[a-zA-ZáéíóúÁÉÍÓÚñÑ\\s]+$");
     
     private static final Pattern CODIGO_CURSO_REGEX = 
-        Pattern.compile("^[A-Z]{3}-[0-9]{3}$");
+        Pattern.compile("^C[0-9]{3}$"); 
     
     private static final Pattern SOLO_NUMEROS_REGEX= 
         Pattern.compile("^[0-9]+$");
@@ -99,7 +99,7 @@ public class Validador{
         validarNoVacio(codigo,"código de curso");
         
         if(!CODIGO_CURSO_REGEX.matcher(codigo).matches()){
-            throw new IllegalArgumentException("Formato de código de curso inválido. Use: XXX-999 (ej: ENG-101)");
+            throw new IllegalArgumentException("Formato de código de curso inválido. Use: C101, C102, etc.");
         }
     }
     
@@ -173,44 +173,55 @@ public class Validador{
     }
     
     public static void validarNivelIdioma(String nivel){
-        validarNoVacio(nivel,"nivel de idioma");
-        
-        String[] nivelesValidos={"A1","A2","B1","B2","C1","C2","Principiante","Intermedio","Avanzado"};
-        boolean valido=false;
-        
-        for(String n:nivelesValidos){
-            if(n.equalsIgnoreCase(nivel)){
-                valido=true;
-                break;
+        validarNoVacio(nivel, "nivel de idioma");
+    
+            String normalizado = nivel.trim().toLowerCase()
+                .replace("á", "a")
+                .replace("é", "e")
+                .replace("í", "i")
+                .replace("ó", "o")
+                .replace("ú", "u");
+
+            String[] nivelesValidos = {
+                "a1", "a2", "b1", "b2", "c1", "c2",
+                "principiante", "intermedio", "avanzado",
+                "Básico", "Basico"
+            };
+
+            for (String n : nivelesValidos) {
+                if (n.equals(normalizado)) {
+                    return;
+                }
             }
-        }
-        
-        if(!valido){
+
             throw new IllegalArgumentException(
-                "Nivel de idioma inválido. Use: A1, A2, B1, B2, C1, C2, Principiante, Intermedio o Avanzado"
+                "Nivel de idioma inválido. Use: A1, A2, B1, B2, C1, C2, Principiante, Intermedio, Avanzado o Básico"
             );
         }
-    }
     
     public static void validarIdioma(String idioma){
         validarSoloLetras(idioma,"idioma");
+        String normalizado = idioma.trim().toLowerCase()
+        .replace("á", "a")
+        .replace("é", "e")
+        .replace("í", "i")
+        .replace("ó", "o")
+        .replace("ú", "u")
+        .replace("ñ", "n");
+    
+        String[] idiomasValidos = {
+            "ingles", "frances", "aleman", "italiano", "portugues", "chino", "japones", "Coreano", "Ruso" 
+        };
         
-        String[] idiomasValidos={"Inglés","Francés","Alemán","Italiano","Portugués","Chino","Japonés"};
-        boolean valido=false;
-        
-        for(String i :idiomasValidos){
-            if(i.equalsIgnoreCase(idioma)){
-                valido=true;
-                break;
-            }
+        for (String i : idiomasValidos) {
+            if (i.equals(normalizado)) {
+                    return;
+                }
         }
-        
-        if(!valido){
             throw new IllegalArgumentException(
-                "Idioma no soportado. Idiomas disponibles: "+String.join(", ",idiomasValidos)
+                "Idioma no soportado. Idiomas disponibles: Inglés, Francés, Alemán, Italiano, Portugués, Chino, Japonés"
             );
         }
-    }
     
     // ========== VALIDACIONES DE EDAD A PARTIR DE FECHA ==========
     
