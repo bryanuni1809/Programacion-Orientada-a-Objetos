@@ -20,8 +20,8 @@ public class Profesor extends Persona implements Serializable {
     public Profesor(String dni, String nombres, String apellidos, String direccion,
                     String telefono, String correo, String especialidad, int experiencia) {
         super(dni, nombres, apellidos, direccion, telefono, correo);
-        this.especialidad = especialidad;
-        this.experiencia = experiencia;
+        this.especialidad =especialidad;
+        this.experiencia =experiencia;
     }
 
     public String getEspecialidad() { return especialidad; }

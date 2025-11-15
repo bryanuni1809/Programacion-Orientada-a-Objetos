@@ -15,7 +15,7 @@ import java.util.Map;
  *
  * @author BRYAN
  */
-public class Autenticacion {
+public class Autenticacion{
 
     private static final String ARCHIVO="usuarios.txt";
 
