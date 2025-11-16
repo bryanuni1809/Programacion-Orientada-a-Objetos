@@ -27,15 +27,15 @@ public class Curso extends EntidadAcademica implements Serializable {
     public Curso(String codigo, String nombre, String idioma, String nivel, String profesorDni,
                  String horario, int duracion, int capacidadMaxima, double precio, String observaciones) {
         super(codigo);
-        this.nombre = nombre.trim();
-        this.idioma = idioma.trim();
-        this.nivel = nivel.trim();
-        this.profesorDni = profesorDni.trim();
-        this.horario = horario.trim();
-        this.duracion = duracion;
-        this.capacidadMaxima = capacidadMaxima;
-        this.precio = precio;
-        this.observaciones = observaciones.trim();
+        this.nombre=nombre.trim();
+        this.idioma=idioma.trim();
+        this.nivel=nivel.trim();
+        this.profesorDni=profesorDni.trim();
+        this.horario=horario.trim();
+        this.duracion=duracion;
+        this.capacidadMaxima=capacidadMaxima;
+        this.precio=precio;
+        this.observaciones=observaciones.trim();
     }
 
     // Getters y Setters
