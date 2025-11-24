@@ -4,8 +4,6 @@
  */
 package entidades;
 
-import interfaces.IEntidad;
-import interfaces.IValidable;
 import java.io.Serializable;
 import util.Validador;
 
@@ -13,20 +11,18 @@ import util.Validador;
  *
  * @author BRYAN
  */
-public class IdiomaNivel implements IEntidad, IValidable, Serializable {
+public class IdiomaNivel extends EntidadAcademica implements Serializable {
     private static final long serialVersionUID = 1L;
-    private String codigo;
+    
     private String idioma;
     private String nivel;
     private String descripcion;
-    private String mensajeError;
 
     public IdiomaNivel(String codigo, String idioma, String nivel, String descripcion) {
-        this.codigo = codigo.trim();
+        super(codigo);
         this.idioma = idioma.trim();
         this.nivel = nivel.trim();
         this.descripcion = descripcion.trim();
-        this.mensajeError = "";
     }
 
     // Getters y Setters

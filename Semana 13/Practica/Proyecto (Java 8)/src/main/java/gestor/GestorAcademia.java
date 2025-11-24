@@ -4,11 +4,19 @@
  */
 package gestor;
 
+import dao.CalificacionDAO;
+import dao.CursoDAO;
 import entidades.Calificacion;
+import dao.EstudianteDAO; 
+import dao.IdiomaNivelDAO;
+import dao.MatriculaDAO;
+import dao.ProfesorDAO;
 import entidades.Curso;
+import entidades.EntidadAcademica;
 import entidades.Estudiante;
 import entidades.IdiomaNivel;
 import entidades.Matricula;
+import entidades.Persona;
 import entidades.Profesor;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -22,6 +30,8 @@ import interfaces.IValidable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 import util.GeneradorReportes;
 import util.SortUtil;
 import util.Validador;
@@ -38,15 +48,36 @@ public class GestorAcademia{
     private final ArrayList<Matricula>matriculas=new ArrayList<>();
     private final ArrayList<Calificacion>calificaciones=new ArrayList<>();
     private final Map<String,IdiomaNivel>nivelesIdioma=new HashMap<>();
+    private final Map<String, Persona> personas = new HashMap<>();
+    private final Map<String, EntidadAcademica> entidadesAcademicas = new HashMap<>();
+    private final EstudianteDAO estudianteDAO = new EstudianteDAO();
+    private final ProfesorDAO profesorDAO = new ProfesorDAO();
+    private final CursoDAO cursoDAO = new CursoDAO();
+    private final MatriculaDAO matriculaDAO = new MatriculaDAO();
+    private final CalificacionDAO calificacionDAO = new CalificacionDAO();
+    private final IdiomaNivelDAO idiomaNivelDAO = new IdiomaNivelDAO();
     
-    public GestorAcademia(){
-    cargarEstudiantes();
-    cargarProfesores();
-    cargarCursos();
-    cargarMatriculas();
-    cargarCalificaciones();
-    cargarNivelesIdioma();
+public GestorAcademia(){
+    estudianteDAO.crearTabla();
+    profesorDAO.crearTabla();
+    cursoDAO.crearTabla();
+    matriculaDAO.crearTabla();
+    calificacionDAO.crearTabla();
+    idiomaNivelDAO.crearTabla();
+    
+    if (new java.io.File("academia.db").exists()) {
+        System.out.println("[DB] Cargando datos desde base de datos...");
+        cargarDesdeBD();
+    } else {
+        System.out.println("[ARCHIVO] Base de datos no encontrada. Cargando desde archivos...");
+        cargarEstudiantes();
+        cargarProfesores();
+        cargarCursos();
+        cargarMatriculas();
+        cargarCalificaciones();
+        cargarNivelesIdioma();
     }
+}
     
         private void cargarEstudiantes() {
             try (BufferedReader br = new BufferedReader(new FileReader("estudiantes.txt"))) {
@@ -60,6 +91,7 @@ public class GestorAcademia{
                         );
                         if (e.validar()) {
                             estudiantes.put(e.getDni().toUpperCase(), e);
+                            personas.put(e.getDni().toUpperCase(), e);
                         } else {
                             System.err.println("Estudiante inválido ignorado (DNI: " + e.getDni() + "): " + e.getMensajeError());
                         }
@@ -83,6 +115,7 @@ public class GestorAcademia{
                         );
                         if (p.validar()) {
                             profesores.put(p.getDni().toUpperCase(), p);
+                            personas.put(p.getDni().toUpperCase(), p);
                         } else {
                             System.err.println("Profesor inválido ignorado (DNI: " + p.getDni() + "): " + p.getMensajeError());
                         }
@@ -109,6 +142,7 @@ public class GestorAcademia{
                         c.setProfesorDni(c.getProfesorDni().toUpperCase().trim());
                         if (c.validar()) {
                             cursos.put(c.getCodigo().toUpperCase().trim(), c);
+                            entidadesAcademicas.put(c.getCodigo().toUpperCase().trim(), c);
                         } else {
                             System.err.println("Curso inválido ignorado (Código: " + c.getCodigo() + "): " + c.getMensajeError());
                         }
@@ -177,6 +211,7 @@ public class GestorAcademia{
                         IdiomaNivel in = new IdiomaNivel(partes[0], partes[1], partes[2], partes[3]);
                         if (in.validar()) {
                             nivelesIdioma.put(in.getCodigo().toUpperCase(), in);
+                            entidadesAcademicas.put(in.getCodigo().toUpperCase(), in);   
                         } else {
                             System.err.println("Nivel de idioma inválido ignorado (Código: " + in.getCodigo() + "): " + in.getMensajeError());
                         }
@@ -203,6 +238,9 @@ public class GestorAcademia{
             System.out.println("8. Búsqueda en Archivos");
             System.out.println("9. Validar Todas las Entidades");
             System.out.println("10. Mostrar Todas las Entidades");
+            System.out.println("11. Listar Estudiantes por Nivel");
+            System.out.println("12. Cursos con Más de 3 Matrículas");
+            System.out.println("13. Estudiantes sin Calificaciones");
             System.out.println("0. Salir");
             System.out.print("Seleccione una opcion: ");
             opcion = leerOpcion(0, 10);
@@ -238,6 +276,15 @@ public class GestorAcademia{
                 case 10:
                     mostrarTodasLasEntidades();
                     break;
+                case 11: 
+                    listarEstudiantesPorNivel(); 
+                    break;
+                case 12: 
+                    mostrarCursosConMasMatriculas(); 
+                    break;
+                case 13: 
+                    listarEstudiantesSinCalificaciones(); 
+                    break;
                 case 0:
                     System.out.println("Cerrando sesion...");
                     break;
@@ -256,6 +303,7 @@ public class GestorAcademia{
             System.out.println("2. Buscar Estudiante");
             System.out.println("3. Modificar Estudiante");
             System.out.println("4. Eliminar Estudiante");
+            System.out.println("5. Estudiantes menores de 18 años (Lambda)");
             System.out.println("0. Volver al menu principal");
             System.out.print("Seleccione una opcion: ");
             opcion = leerOpcion(0, 4);
@@ -272,6 +320,9 @@ public class GestorAcademia{
                     break;
                 case 4:
                     eliminarEstudiante();
+                    break;
+                case 5: 
+                    listarEstudiantesJovenes(); 
                     break;
                 case 0:
                     System.out.println("Volviendo al menu principal...");
@@ -314,8 +365,15 @@ public class GestorAcademia{
                        return;
                    }
                    estudiantes.put(dni, e);
-                   ArchivoUtil.agregarEntidad(e,"estudiantes.txt");
-                   System.out.println("Estudiante registrado y validado exitosamente!");
+                   personas.put(dni, e);
+                   if (estudianteDAO.insertar(e)) {
+                        ArchivoUtil.agregarEntidad(e, "estudiantes.txt");
+                        System.out.println("Estudiante registrado en BD y archivo.");
+                    } else {
+                        System.out.println("Error en base de datos.");
+                        estudiantes.remove(dni);
+                        return;
+                    }
                } catch (IllegalArgumentException e) {
                    System.out.println("Error de validación: " + e.getMessage());
                } catch (Exception e) {
@@ -384,13 +442,37 @@ public class GestorAcademia{
             private void eliminarEstudiante() {
                 System.out.print("Ingrese DNI del estudiante a eliminar: ");
                 String dni = scanner.nextLine().trim().toUpperCase();
-                if (estudiantes.remove(dni) != null) {
+                if (estudianteDAO.eliminar(dni)) {
+                    estudiantes.remove(dni);
                     ArchivoUtil.guardarLista(new ArrayList<>(estudiantes.values()), "estudiantes.txt");
-                    System.out.println("Estudiante eliminado correctamente.");
+                    System.out.println("Estudiante eliminado de la BD y archivo.");
                 } else {
-                    System.out.println("Estudiante no encontrado.");
+                    System.out.println("Estudiante no encontrado en la base de datos.");
                 }
             }
+            
+            
+            private void listarEstudiantesJovenes() {
+                System.out.println("\n=== ESTUDIANTES MENORES DE 18 AÑOS ===");
+
+                List<Estudiante> jovenes = estudiantes.values().stream()
+                    .filter(e -> Validador.calcularEdad(e.getFechaNacimiento()) < 18)
+                    .sorted(Comparator.comparing(Estudiante::getApellidos))
+                    .collect(Collectors.toList());
+
+                if (jovenes.isEmpty()) {
+                    System.out.println("No hay estudiantes menores de 18 años.");
+                } else {
+                    System.out.println("Total: " + jovenes.size() + " estudiantes");
+                    jovenes.forEach(e -> 
+                        System.out.printf("• %s, %s | Edad: %d | DNI: %s%n",
+                            e.getApellidos(), e.getNombres(),
+                            Validador.calcularEdad(e.getFechaNacimiento()),
+                            e.getDni())
+                    );
+                }
+            }
+            
             
     private void menuProfesores(){
         int opcion;
@@ -400,6 +482,7 @@ public class GestorAcademia{
             System.out.println("2. Buscar Profesor");
             System.out.println("3. Modificar Profesor");
             System.out.println("4. Eliminar Profesor");
+            System.out.println("5. Profesores con experiencia mínima (Lambda)");
             System.out.println("0. Volver al menu principal");
             System.out.print("Seleccione una opcion: ");
             opcion = leerOpcion(0, 4);
@@ -416,6 +499,9 @@ public class GestorAcademia{
                     break;
                 case 4:
                     eliminarProfesor();
+                    break;
+                case 5: 
+                    listarProfesoresConExperienciaMinima(); 
                     break;
                 case 0:
                     System.out.println("Volviendo al menu principal...");
@@ -467,8 +553,16 @@ public class GestorAcademia{
                    }
 
                    profesores.put(dni, p);
-                   ArchivoUtil.agregarEntidad(p, "profesores.txt");
-                   System.out.println("Profesor registrado exitosamente.");
+                   personas.put(dni, p);
+                   if (profesorDAO.insertar(p)) {
+                        // También respaldo en .txt (modo híbrido)
+                        ArchivoUtil.agregarEntidad(p, "profesores.txt");
+                        System.out.println("Profesor registrado en BD y archivo.");
+                    } else {
+                        System.out.println("Error en base de datos.");
+                        profesores.remove(dni); // revertir
+                        return;
+                    }
 
                } catch (IllegalArgumentException e) {
                    System.out.println("Error de validación: " + e.getMessage());
@@ -529,13 +623,45 @@ public class GestorAcademia{
                System.out.print("Ingrese el DNI del profesor a eliminar: ");
                String dni = scanner.nextLine().trim().toUpperCase();
 
-               if (profesores.remove(dni) != null) {
-                   ArchivoUtil.guardarLista(new ArrayList<>(profesores.values()), "profesores.txt");
-                   System.out.println("Profesor eliminado correctamente.");
-               } else {
-                   System.out.println("No se encontró un profesor con ese DNI.");
-               }
+               if (profesorDAO.eliminar(dni)) {
+                    profesores.remove(dni);
+                    ArchivoUtil.guardarLista(new ArrayList<>(profesores.values()), "profesores.txt");
+                    System.out.println("Profesor eliminado de la base de datos y archivo.");
+                } else {
+                    System.out.println("Profesor no encontrado en la base de datos.");
+                }
             }
+           
+           
+           private void listarProfesoresConExperienciaMinima() {
+                System.out.print("\nIngrese años mínimos de experiencia: ");
+                try {
+                    int minExp = Integer.parseInt(scanner.nextLine().trim());
+                    if (minExp < 0) {
+                        System.out.println("La experiencia mínima no puede ser negativa.");
+                        return;
+                    }
+
+                    List<Profesor> experimentados = profesores.values().stream()
+                        .filter(p -> p.getExperiencia() >= minExp)
+                        .sorted(Comparator.comparingInt(Profesor::getExperiencia).reversed())
+                        .collect(Collectors.toList());
+
+                    System.out.println("\n=== PROFESORES CON ≥ " + minExp + " AÑOS DE EXPERIENCIA ===");
+                    if (experimentados.isEmpty()) {
+                        System.out.println("Ningún profesor cumple con ese criterio.");
+                    } else {
+                        experimentados.forEach(p -> 
+                            System.out.printf("• %s, %s | %d años | %s%n",
+                                p.getApellidos(), p.getNombres(),
+                                p.getExperiencia(), p.getEspecialidad())
+                        );
+                    }
+                } catch (NumberFormatException e) {
+                    System.out.println("Debe ingresar un número entero válido.");
+                }
+            }
+           
            
     private void menuCursos(){
         int opcion;
@@ -545,6 +671,7 @@ public class GestorAcademia{
             System.out.println("2. Buscar Curso");
             System.out.println("3. Modificar Curso");
             System.out.println("4. Eliminar Curso");
+            System.out.println("5. Cursos por idioma (Streams + Grouping)");
             System.out.println("0. Volver al menu principal");
             System.out.print("Seleccione una opcion: ");
             opcion = leerOpcion(0, 4);
@@ -561,6 +688,9 @@ public class GestorAcademia{
                     break;
                 case 4:
                     eliminarCurso();
+                    break;
+                case 5: 
+                    agruparCursosPorIdioma(); 
                     break;
                 case 0:
                     System.out.println("Volviendo al menu principal...");
@@ -628,8 +758,15 @@ public class GestorAcademia{
                     }
 
                     cursos.put(codigo, c);
-                    ArchivoUtil.agregarEntidad(c, "cursos.txt");
-                    System.out.println("Curso registrado correctamente.");
+                    entidadesAcademicas.put(codigo, c);
+                    if (cursoDAO.insertar(c)) {
+                        ArchivoUtil.agregarEntidad(c, "cursos.txt");
+                        System.out.println("Curso registrado en BD y archivo.");
+                    } else {
+                        System.out.println("Error en base de datos.");
+                        cursos.remove(codigo);
+                        return;
+                    }
 
                 } catch (NumberFormatException e) {
                     System.out.println("Error en formato numérico: " + e.getMessage());
@@ -712,13 +849,47 @@ public class GestorAcademia{
                 System.out.print("Ingrese el código del curso a eliminar: ");
                 String codigo = scanner.nextLine().trim().toUpperCase();
 
-                if (cursos.remove(codigo) != null) {
+                if (cursoDAO.eliminar(codigo)) {
+                    cursos.remove(codigo);
                     ArchivoUtil.guardarLista(new ArrayList<>(cursos.values()), "cursos.txt");
-                    System.out.println("Curso eliminado correctamente.");
+                    System.out.println("Curso eliminado de la base de datos y archivo.");
                 } else {
-                    System.out.println("No se encontró un curso con ese código.");
+                    System.out.println("Curso no encontrado en la base de datos.");
                 }
             }
+            
+            
+            private void agruparCursosPorIdioma() {
+                System.out.println("\n=== CURSOS AGRUPADOS POR IDIOMA ===");
+
+                Map<String, Long> conteoPorIdioma = cursos.values().stream()
+                    .collect(Collectors.groupingBy(Curso::getIdioma, Collectors.counting()));
+
+                if (conteoPorIdioma.isEmpty()) {
+                    System.out.println("No hay cursos registrados.");
+                    return;
+                }
+
+                conteoPorIdioma.entrySet().stream()
+                    .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                    .forEach(entry -> 
+                        System.out.println("• " + entry.getKey() + ": " + entry.getValue() + " curso(s)")
+                    );
+
+                // Opcional: Mostrar listado detallado
+                System.out.print("\n¿Mostrar listado detallado? (s/n): ");
+                if (scanner.nextLine().trim().toLowerCase().startsWith("s")) {
+                    System.out.println("\n--- LISTADO DETALLADO ---");
+                    cursos.values().stream()
+                        .sorted(Comparator.comparing(Curso::getIdioma)
+                                           .thenComparing(Curso::getNombre))
+                        .forEach(c -> 
+                            System.out.printf("  %s | %s | %s%n",
+                                c.getIdioma(), c.getNombre(), c.getCodigo())
+                        );
+                }
+            }
+            
             
     private void menuMatriculasNotas() {
         int opcion;
@@ -727,7 +898,8 @@ public class GestorAcademia{
             System.out.println("1. Registrar Matrícula");
             System.out.println("2. Registrar Calificación");
             System.out.println("3. Eliminar Matrícula");
-            System.out.println("4. Listar Calificaciones");
+            System.out.println("4. Eliminar Calificación");
+            System.out.println("5. Listar Calificaciones");
             System.out.println("0. Volver al menú principal");
             System.out.print("Seleccione una opción: ");
             opcion = leerOpcion(0, 4);
@@ -743,6 +915,9 @@ public class GestorAcademia{
                     eliminarMatricula();
                     break;
                 case 4:
+                    eliminarCalificacion();
+                    break;
+                case 5:
                     listarCalificaciones();
                     break;
                 case 0:
@@ -798,8 +973,14 @@ public class GestorAcademia{
                 }
 
                 matriculas.add(m);
-                ArchivoUtil.agregarEntidad(m, "matriculas.txt");
-                System.out.println("Matrícula registrada para " + estudiante.getNombres() + " en el curso " + cursoSeleccionado.getNombre());
+                if (matriculaDAO.insertar(m)) {
+                    ArchivoUtil.agregarEntidad(m, "matriculas.txt");
+                    System.out.println("Matrícula registrada en BD y archivo.");
+                } else {
+                    System.out.println("Error en base de datos.");
+                    matriculas.remove(m);
+                    return;
+                }
             }
             
             private void registrarCalificacion() {
@@ -840,35 +1021,58 @@ public class GestorAcademia{
                 }
 
                 calificaciones.add(c);
-                ArchivoUtil.agregarEntidad(c, "calificaciones.txt");
-                System.out.println("Calificación registrada correctamente.");
+                if (calificacionDAO.insertar(c)) {
+                    ArchivoUtil.agregarEntidad(c, "calificaciones.txt");
+                    System.out.println("Calificacion registrada en BD y archivo.");
+                } else {
+                    System.out.println("Error en base de datos.");
+                    calificaciones.remove(c);
+                    return;
+                }
             }
             
             private void eliminarMatricula() {
                 System.out.print("Ingrese código de curso de la matrícula a eliminar: ");
                 String codigoCurso = scanner.nextLine().trim().toUpperCase();
-
                 System.out.print("Ingrese DNI del estudiante: ");
                 String dni = scanner.nextLine().trim().toUpperCase();
 
-                boolean encontrada = false;
-                for (int i = 0; i < matriculas.size(); i++) {
-                    Matricula m = matriculas.get(i);
-                        if (m.getCodigoCurso().equals(codigoCurso) && m.getDniEstudiante().equals(dni)) {
-                            matriculas.remove(i);
-                            encontrada = true;
-                        break;
-                    }
-                }
-
-                if (encontrada) {
+                if (matriculaDAO.eliminar(codigoCurso, dni)) {
+                    boolean eliminadoEnMemoria = matriculas.removeIf(m -> 
+                        m.getCodigoCurso().equals(codigoCurso) && 
+                        m.getDniEstudiante().equals(dni)
+                    );
                     ArchivoUtil.guardarLista(matriculas, "matriculas.txt");
-                    System.out.println("Matrícula eliminada correctamente.");
+                    if (eliminadoEnMemoria) {
+                        System.out.println("Matrícula eliminada de la BD, memoria y archivo.");
+                    } else {
+                        System.out.println("⚠Matrícula eliminada de la BD, pero no estaba en memoria.");
+                    }
                 } else {
-                    System.out.println("Matrícula no encontrada.");
+                    System.out.println("Matrícula no encontrada en la base de datos.");
                 }
             }
             
+            private void eliminarCalificacion() {
+                System.out.print("Ingrese código de curso: ");
+                String codigoCurso = scanner.nextLine().trim().toUpperCase();
+                System.out.print("Ingrese DNI del estudiante: ");
+                String dni = scanner.nextLine().trim().toUpperCase();
+                System.out.print("Ingrese fecha de calificación (dd/MM/yyyy): ");
+                String fecha = scanner.nextLine().trim();
+
+                if (calificacionDAO.eliminar(codigoCurso, dni, fecha)) {
+                    calificaciones.removeIf(cal -> 
+                        cal.getCodigoCurso().equals(codigoCurso) &&
+                        cal.getDniEstudiante().equals(dni) &&
+                        cal.getFecha().equals(fecha)
+                    );
+                    ArchivoUtil.guardarLista(calificaciones, "calificaciones.txt");
+                    System.out.println("Calificación eliminada de la BD y archivo.");
+                } else {
+                    System.out.println("Calificación no encontrada en la base de datos.");
+                }
+            }
             private void listarCalificaciones() {
                 if (calificaciones.isEmpty()) {
                     System.out.println("No hay calificaciones registradas.");
@@ -936,9 +1140,15 @@ public class GestorAcademia{
                         return;
                     }
                 nivelesIdioma.put(codigo, in);
-                ArchivoUtil.agregarEntidad(in,"idiomas.txt");
-
-                System.out.println("Nivel de idioma registrado.");
+                entidadesAcademicas.put(codigo, in);
+                if (idiomaNivelDAO.insertar(in)) {
+                    ArchivoUtil.agregarEntidad(in, "idiomas.txt");
+                    System.out.println("Nivel de idioma registrado en BD y archivo.");
+                } else {
+                    System.out.println("Error en base de datos.");
+                    nivelesIdioma.remove(codigo);
+                    return;
+                }
             }
 
             private void modificarNivelIdioma(){
@@ -996,12 +1206,13 @@ public class GestorAcademia{
             private void eliminarNivelIdioma(){
                 System.out.print("Ingrese codigo del nivel de idioma a eliminar: ");
                 String codigo = scanner.nextLine().trim().toUpperCase();
-                    if (nivelesIdioma.remove(codigo) !=null) {
-                        ArchivoUtil.guardarLista(new ArrayList<>(nivelesIdioma.values()),"idiomas.txt");
-                        System.out.println("Nivel de idioma eliminado.");
-                    }else{
-                    System.out.println("Nivel de idioma no encontrado.");    
-                }   
+                if (idiomaNivelDAO.eliminar(codigo)) {
+                    nivelesIdioma.remove(codigo);
+                    ArchivoUtil.guardarLista(new ArrayList<>(nivelesIdioma.values()), "idiomas.txt");
+                    System.out.println("Nivel de idioma eliminado de la BD y archivo.");
+                } else {
+                    System.out.println("Nivel de idioma no encontrado en la base de datos.");
+                }
             }
 
     private void mostrarMenuReportesHTML() {
@@ -1112,7 +1323,7 @@ public class GestorAcademia{
             System.out.println("3. Ordenar Cursos");
             System.out.println("0. Volver al menú principal");
             System.out.print("Seleccione una opción: ");
-            opcion = leerOpcion(0, 3);;
+            opcion = leerOpcion(0, 3);
 
             switch(opcion){
                 case 1:
@@ -1492,4 +1703,199 @@ public class GestorAcademia{
         }
     }
 }
-}
+    
+            private void listarEstudiantesPorNivel() {
+            System.out.println("\n=== ESTUDIANTES AGRUPADOS POR NIVEL DE ESTUDIOS ===");
+
+            Map<String, List<Estudiante>> agrupados = estudiantes.values().stream()
+                .collect(Collectors.groupingBy(Estudiante::getNivelEstudios));
+
+            if (agrupados.isEmpty()) {
+                System.out.println("No hay estudiantes registrados.");
+                return;
+            }
+
+            agrupados.entrySet().stream()
+                .sorted(Map.Entry.comparingByKey())
+                .forEach(entry -> {
+                    System.out.println("\n🔹 " + entry.getKey() + " (" + entry.getValue().size() + " estudiantes):");
+                    entry.getValue().stream()
+                        .sorted(Comparator.comparing(Estudiante::getApellidos))
+                        .forEach(e -> System.out.println("   • " + e.getApellidos() + ", " + e.getNombres() + " (DNI: " + e.getDni() + ")"));
+                });
+        }
+            
+            private void mostrarCursosConMasMatriculas() {
+                System.out.println("\n=== CURSOS CON MÁS DE 3 MATRÍCULAS ===");
+
+                // Contar matrículas por curso
+                Map<String, Long> conteoMatriculas = matriculas.stream()
+                    .collect(Collectors.groupingBy(Matricula::getCodigoCurso, Collectors.counting()));
+
+                // Filtrar y ordenar
+                conteoMatriculas.entrySet().stream()
+                    .filter(entry -> entry.getValue() > 3)
+                    .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
+                    .forEach(entry -> {
+                        Curso c = cursos.get(entry.getKey());
+                        String nombre = (c != null) ? c.getNombre() : "Curso no encontrado";
+                        System.out.printf("• %s (%s): %d matrículas%n", entry.getKey(), nombre, entry.getValue());
+                    });
+
+                if (conteoMatriculas.values().stream().noneMatch(c -> c > 3)) {
+                    System.out.println("Ningún curso tiene más de 3 matrículas.");
+                }
+            }
+            
+            private void listarEstudiantesSinCalificaciones() {
+                System.out.println("\n=== ESTUDIANTES SIN CALIFICACIONES REGISTRADAS ===");
+
+                Set<String> dnisConCalificaciones = calificaciones.stream()
+                    .map(Calificacion::getDniEstudiante)
+                    .collect(Collectors.toSet());
+
+                List<Estudiante> sinCalif = estudiantes.values().stream()
+                    .filter(e -> !dnisConCalificaciones.contains(e.getDni()))
+                    .sorted(Comparator.comparing(Estudiante::getApellidos))
+                    .collect(Collectors.toList());
+
+                if (sinCalif.isEmpty()) {
+                    System.out.println("✅ Todos los estudiantes tienen al menos una calificación.");
+                } else {
+                    System.out.println("Estudiantes sin calificaciones (" + sinCalif.size() + "):");
+                    sinCalif.forEach(e -> 
+                        System.out.println("• " + e.getApellidos() + ", " + e.getNombres() + " — DNI: " + e.getDni())
+                    );
+                }
+            }
+        
+            private void cargarDesdeBD() {
+               estudiantes.clear();
+                try (BufferedReader br = new BufferedReader(new FileReader("estudiantes.txt"))) {
+                    String linea;
+                    while ((linea = br.readLine()) != null) {
+                        String[] partes = linea.split(",");
+                        if (partes.length >= 8) {
+                            Estudiante e = new Estudiante(
+                                partes[0], partes[1], partes[2], partes[3],
+                                partes[4], partes[5], partes[6], partes[7]
+                            );
+                            if (e.validar()) {
+                                estudiantes.put(e.getDni().toUpperCase(), e);
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    System.out.println("Advertencia: archivo estudiantes.txt no encontrado o vacío.");
+                }
+
+                // Profesores
+                profesores.clear();
+                try (BufferedReader br = new BufferedReader(new FileReader("profesores.txt"))) {
+                    String linea;
+                    while ((linea = br.readLine()) != null) {
+                        String[] partes = linea.split(",");
+                        if (partes.length >= 8) {
+                            Profesor p = new Profesor(
+                                partes[0], partes[1], partes[2], partes[3],
+                                partes[4], partes[5], partes[6],
+                                Integer.parseInt(partes[7])
+                            );
+                            if (p.validar()) {
+                                profesores.put(p.getDni().toUpperCase(), p);
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    System.out.println("Advertencia: archivo profesores.txt no encontrado o vacío.");
+                }
+
+                // Cursos
+                cursos.clear();
+                try (BufferedReader br = new BufferedReader(new FileReader("cursos.txt"))) {
+                    String linea;
+                    while ((linea = br.readLine()) != null) {
+                        String[] partes = linea.split(",");
+                        if (partes.length >= 10) {
+                            Curso c = new Curso(
+                                partes[0], partes[1], partes[2], partes[3],
+                                partes[4], partes[5], Integer.parseInt(partes[6]),
+                                Integer.parseInt(partes[7]),
+                                Double.parseDouble(partes[8]),
+                                partes[9]
+                            );
+                            c.setProfesorDni(c.getProfesorDni().toUpperCase().trim());
+                            if (c.validar()) {
+                                cursos.put(c.getCodigo().toUpperCase().trim(), c);
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    System.out.println("Advertencia: archivo cursos.txt no encontrado o vacío.");
+                }
+
+                // Matrículas
+                matriculas.clear();
+                try (BufferedReader br = new BufferedReader(new FileReader("matriculas.txt"))) {
+                    String linea;
+                    while ((linea = br.readLine()) != null) {
+                        String[] partes = linea.split(",");
+                        if (partes.length >= 4) {
+                            Matricula m = new Matricula(
+                                partes[0].trim().toUpperCase(),
+                                partes[1].trim().toUpperCase(),
+                                partes[2].trim(),
+                                Double.parseDouble(partes[3])
+                            );
+                            if (m.validar()) {
+                                matriculas.add(m);
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    System.out.println("Advertencia: archivo matriculas.txt no encontrado o vacío.");
+                }
+
+                // Calificaciones
+                calificaciones.clear();
+                try (BufferedReader br = new BufferedReader(new FileReader("calificaciones.txt"))) {
+                    String linea;
+                    while ((linea = br.readLine()) != null) {
+                        String[] partes = linea.split(",");
+                        if (partes.length >= 5) {
+                            Calificacion c = new Calificacion(
+                                partes[0].trim().toUpperCase(),
+                                partes[1].trim().toUpperCase(),
+                                partes[2].trim(),
+                                Double.parseDouble(partes[3].trim()),
+                                partes[4].trim()
+                            );
+                            if (c.validar()) {
+                                calificaciones.add(c);
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    System.out.println("Advertencia: archivo calificaciones.txt no encontrado o vacío.");
+                }
+
+                // Niveles de idioma
+                nivelesIdioma.clear();
+                try (BufferedReader br = new BufferedReader(new FileReader("idiomas.txt"))) {
+                    String linea;
+                    while ((linea = br.readLine()) != null) {
+                        String[] partes = linea.split(",");
+                        if (partes.length >= 4) {
+                            IdiomaNivel in = new IdiomaNivel(partes[0], partes[1], partes[2], partes[3]);
+                            if (in.validar()) {
+                                nivelesIdioma.put(in.getCodigo().toUpperCase(), in);
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    System.out.println("Advertencia: archivo idiomas.txt no encontrado o vacío.");
+                }
+
+                System.out.println("[DB] Datos cargados desde archivos (modo híbrido).");
+            }
+            }

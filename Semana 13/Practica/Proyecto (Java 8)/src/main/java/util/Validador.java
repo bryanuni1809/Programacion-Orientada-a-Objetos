@@ -172,32 +172,29 @@ public class Validador{
         validarRangoEntero(duracion,1,52,"duración del curso (semanas)");
     }
     
-    public static void validarNivelIdioma(String nivel){
+    public static void validarNivelIdioma(String nivel) {
         validarNoVacio(nivel, "nivel de idioma");
-    
-            String normalizado = nivel.trim().toLowerCase()
-                .replace("á", "a")
-                .replace("é", "e")
-                .replace("í", "i")
-                .replace("ó", "o")
-                .replace("ú", "u");
+        String normalizado = nivel.trim().toLowerCase()
+            .replace("á", "a")
+            .replace("é", "e")
+            .replace("í", "i")
+            .replace("ó", "o")
+            .replace("ú", "u");
 
-            String[] nivelesValidos = {
-                "a1", "a2", "b1", "b2", "c1", "c2",
-                "principiante", "intermedio", "avanzado",
-                "Básico", "Basico"
-            };
+        String[] nivelesValidos = {
+            "a1", "a2", "b1", "b2", "c1", "c2",
+            "principiante", "intermedio", "avanzado", "basico"
+        };
 
-            for (String n : nivelesValidos) {
-                if (n.equals(normalizado)) {
-                    return;
-                }
+        for (String n : nivelesValidos) {
+            if (n.equals(normalizado)) {
+                return;
             }
-
-            throw new IllegalArgumentException(
-                "Nivel de idioma inválido. Use: A1, A2, B1, B2, C1, C2, Principiante, Intermedio, Avanzado o Básico"
-            );
         }
+        throw new IllegalArgumentException(
+            "Nivel de idioma inválido. Use: A1, A2, B1, B2, C1, C2, Principiante, Intermedio, Avanzado o Básico"
+        );
+    }
     
     public static void validarIdioma(String idioma){
         validarSoloLetras(idioma,"idioma");
@@ -347,5 +344,14 @@ public class Validador{
         throw new IllegalArgumentException("El campo '" + campo + "' debe ser un número positivo.");
     }
     }
+    
+    public static void validarFormatoHora(String hora, String nombreCampo) {
+    validarNoVacio(hora, nombreCampo);
+    if (!hora.matches("^([01]\\d|2[0-3]):[0-5]\\d$")) {
+        throw new IllegalArgumentException(
+            "Formato de '" + nombreCampo + "' inválido. Use HH:mm (ej. 08:30, 15:45)"
+        );
+    }
+}
 }
 

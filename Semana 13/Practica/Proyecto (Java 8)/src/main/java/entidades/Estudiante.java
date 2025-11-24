@@ -41,12 +41,10 @@ public class Estudiante extends Persona implements Serializable {
     public String getTipo() { return "Estudiante"; }
 
     @Override
-    public boolean validar() {
-        if (!super.validar()) return false;
+    protected boolean validarDatosEspecificos() {
         try {
             Validador.validarNoVacio(nivelEstudios, "nivel de estudios");
             Validador.validarEdadEstudiante(fechaNacimiento, 12, 80);
-            mensajeError = "";
             return true;
         } catch (IllegalArgumentException e) {
             mensajeError = e.getMessage();

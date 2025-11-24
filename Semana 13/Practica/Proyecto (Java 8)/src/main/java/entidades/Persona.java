@@ -57,8 +57,17 @@ public abstract class Persona implements IEntidad, IValidable, Serializable {
         return "DNI: " + dni + " | Nombre: " + nombres + " " + apellidos;
     }
 
+
     @Override
-    public boolean validar() {
+    public final boolean validar() {  // ← 'final' evita que subclases cambien el flujo
+        if (!validarDatosBasicos()) return false;
+        if (!validarDatosEspecificos()) return false;
+        mensajeError = "";
+        return true;
+    }
+    
+    
+    protected boolean validarDatosBasicos() {
         try {
             Validador.validarDNI(dni);
             Validador.validarSoloLetras(nombres, "nombres");
@@ -66,13 +75,16 @@ public abstract class Persona implements IEntidad, IValidable, Serializable {
             Validador.validarNoVacio(direccion, "dirección");
             Validador.validarTelefono(telefono);
             Validador.validarEmail(correo);
-            mensajeError = "";
             return true;
         } catch (IllegalArgumentException e) {
             mensajeError = e.getMessage();
             return false;
         }
     }
+
+    // Paso 2: validación específica (a implementar por subclases)
+    protected abstract boolean validarDatosEspecificos();
+    
 
     @Override
     public String getMensajeError() {

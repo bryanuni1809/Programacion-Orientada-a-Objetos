@@ -41,14 +41,12 @@ public class Profesor extends Persona implements Serializable {
     public String getTipo() { return "Profesor"; }
 
     @Override
-    public boolean validar() {
-        if (!super.validar()) return false;
+    protected boolean validarDatosEspecificos() {
         try {
             Validador.validarNoVacio(especialidad, "especialidad");
             if (experiencia < 0 || experiencia > 60) {
                 throw new IllegalArgumentException("La experiencia debe estar entre 0 y 60 años.");
             }
-            mensajeError = "";
             return true;
         } catch (IllegalArgumentException e) {
             mensajeError = e.getMessage();

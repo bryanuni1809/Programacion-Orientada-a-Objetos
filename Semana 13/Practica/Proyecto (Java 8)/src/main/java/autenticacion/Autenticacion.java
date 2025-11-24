@@ -4,12 +4,10 @@
  */
 package autenticacion;
 
-import java.io.*;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
-import java.util.HashMap;
-import java.util.Map;
+import dao.UsuarioDAO;
 
 /**
  *
@@ -17,56 +15,35 @@ import java.util.Map;
  */
 public class Autenticacion{
 
-    private static final String ARCHIVO="usuarios.txt";
+    private static final Autenticacion INSTANCIA = new Autenticacion();
+    private final UsuarioDAO usuarioDAO = new UsuarioDAO();
 
-    public Autenticacion(){
-        File archivo=new File(ARCHIVO);
-        try{
-            if(archivo.createNewFile()){
-                System.out.println("[AUTENTICACION] Archivo de usuarios creado.");
-            }
-        }catch(IOException e){
-            System.out.println("[AUTENTICACION] Error al crear archivo: "+e.getMessage());
-        }
+    public static Autenticacion getInstance() {
+        return INSTANCIA;
     }
-    private Map<String,String>cargarUsuarios(){
-        Map<String,String> usuarios=new HashMap<>();
-        try(BufferedReader reader=new BufferedReader(new FileReader(ARCHIVO))){
-            String linea;
-            while((linea=reader.readLine())!=null){
-                String[]partes=linea.split(",");
-                if(partes.length==2){
-                    usuarios.put(partes[0].trim(),partes[1].trim());
-                }
-            }
-        }catch(IOException e){
-            System.out.println("[AUTENTICACION] Error al leer usuarios: " + e.getMessage());
-        }
-        return usuarios;
+    
+    private Autenticacion() {
+         usuarioDAO.crearTabla();
+    }
+    
+    
+    public boolean validarCredenciales(String usuario, String contrasena) {
+        String hashGuardado = usuarioDAO.obtenerHashPorUsuario(usuario);
+        if (hashGuardado == null) return false;
+        String hashIngresado = hash(contrasena);
+        return hashIngresado.equals(hashGuardado);
     }
 
-    public boolean validarCredenciales(String usuario,String contrasena){
-        Map<String,String>usuarios=cargarUsuarios();
-        String hashIngresado=hash(contrasena);
-        return hashIngresado.equals(usuarios.get(usuario));
-    }
-
-    private boolean usuarioExiste(String usuario){
-        return cargarUsuarios().containsKey(usuario);
-    }
-
-    public void registrarUsuario(String usuario,String contrasena) {
-        if(usuarioExiste(usuario)){
-            System.out.println("[AUTENTICACION] El usuario '"+usuario+"' ya existe.");
+    
+    public void registrarUsuario(String usuario, String contrasena) {
+        if (usuarioDAO.obtenerHashPorUsuario(usuario) != null) {
+            System.out.println("[AUTENTICACION] El usuario '" + usuario + "' ya existe.");
             return;
         }
-
-        try(BufferedWriter writer=new BufferedWriter(new FileWriter(ARCHIVO,true))){
-            writer.write(usuario+","+hash(contrasena));
-            writer.newLine();
+        if (usuarioDAO.registrar(usuario, hash(contrasena))) {
             System.out.println("[AUTENTICACION] Usuario registrado con éxito.");
-        }catch(IOException e){
-            System.out.println("[AUTENTICACION] Error al registrar usuario: "+e.getMessage());
+        } else {
+            System.out.println("[AUTENTICACION] Error al registrar usuario.");
         }
     }
 

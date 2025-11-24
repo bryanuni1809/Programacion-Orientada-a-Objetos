@@ -15,7 +15,7 @@ public class Main{
 
     public static void main(String[] args){
         Scanner scanner=new Scanner(System.in);
-        Autenticacion auth=new Autenticacion();
+        Autenticacion auth = Autenticacion.getInstance();
         int opcion;
         do{
             mostrarMenu();
