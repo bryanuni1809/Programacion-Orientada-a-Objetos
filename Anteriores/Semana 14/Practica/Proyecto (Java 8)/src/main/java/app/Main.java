@@ -5,6 +5,7 @@
 package app;
 
 import autenticacion.Autenticacion;
+import java.io.File;
 import java.util.Scanner;
 
 /**
@@ -14,7 +15,9 @@ import java.util.Scanner;
 public class Main{
 
     public static void main(String[] args){
-        
+        System.out.println("Directorio de trabajo actual: " + System.getProperty("user.dir"));
+System.out.println("Ruta absoluta de academia.db: " + new File("academia.db").getAbsolutePath());
+System.out.println("¿academia.db existe? " + new File("academia.db").exists());
         Scanner scanner=new Scanner(System.in);
         Autenticacion auth = Autenticacion.getInstance();
         int opcion;

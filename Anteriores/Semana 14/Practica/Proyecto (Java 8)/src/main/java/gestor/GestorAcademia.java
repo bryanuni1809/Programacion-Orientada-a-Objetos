@@ -243,7 +243,7 @@ public GestorAcademia(){
             System.out.println("13. Estudiantes sin Calificaciones");
             System.out.println("0. Salir");
             System.out.print("Seleccione una opcion: ");
-            opcion = leerOpcion(0, 20);
+            opcion = leerOpcion(0, 10);
 
             switch(opcion){
                 case 1:
@@ -306,7 +306,7 @@ public GestorAcademia(){
             System.out.println("5. Estudiantes menores de 18 años (Lambda)");
             System.out.println("0. Volver al menu principal");
             System.out.print("Seleccione una opcion: ");
-            opcion = leerOpcion(0, 5);
+            opcion = leerOpcion(0, 4);
 
             switch(opcion){
                 case 1:
@@ -1770,44 +1770,132 @@ public GestorAcademia(){
             }
         
             private void cargarDesdeBD() {
-                // ✅ Cargar estudiantes desde BD
-                estudiantes.clear();
-                personas.clear();
-                for (Estudiante e : estudianteDAO.listarTodos()) {
-                    estudiantes.put(e.getDni().toUpperCase(), e);
-                    personas.put(e.getDni().toUpperCase(), e);
+               estudiantes.clear();
+                try (BufferedReader br = new BufferedReader(new FileReader("estudiantes.txt"))) {
+                    String linea;
+                    while ((linea = br.readLine()) != null) {
+                        String[] partes = linea.split(",");
+                        if (partes.length >= 8) {
+                            Estudiante e = new Estudiante(
+                                partes[0], partes[1], partes[2], partes[3],
+                                partes[4], partes[5], partes[6], partes[7]
+                            );
+                            if (e.validar()) {
+                                estudiantes.put(e.getDni().toUpperCase(), e);
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    System.out.println("Advertencia: archivo estudiantes.txt no encontrado o vacío.");
                 }
 
-                // ✅ Profesores
+                // Profesores
                 profesores.clear();
-                for (Profesor p : profesorDAO.listarTodos()) {
-                    profesores.put(p.getDni().toUpperCase(), p);
-                    personas.put(p.getDni().toUpperCase(), p);
+                try (BufferedReader br = new BufferedReader(new FileReader("profesores.txt"))) {
+                    String linea;
+                    while ((linea = br.readLine()) != null) {
+                        String[] partes = linea.split(",");
+                        if (partes.length >= 8) {
+                            Profesor p = new Profesor(
+                                partes[0], partes[1], partes[2], partes[3],
+                                partes[4], partes[5], partes[6],
+                                Integer.parseInt(partes[7])
+                            );
+                            if (p.validar()) {
+                                profesores.put(p.getDni().toUpperCase(), p);
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    System.out.println("Advertencia: archivo profesores.txt no encontrado o vacío.");
                 }
 
-                // ✅ Cursos
+                // Cursos
                 cursos.clear();
-                entidadesAcademicas.clear();
-                for (Curso c : cursoDAO.listarTodos()) {
-                    cursos.put(c.getCodigo().toUpperCase().trim(), c);
-                    entidadesAcademicas.put(c.getCodigo().toUpperCase().trim(), c);
+                try (BufferedReader br = new BufferedReader(new FileReader("cursos.txt"))) {
+                    String linea;
+                    while ((linea = br.readLine()) != null) {
+                        String[] partes = linea.split(",");
+                        if (partes.length >= 10) {
+                            Curso c = new Curso(
+                                partes[0], partes[1], partes[2], partes[3],
+                                partes[4], partes[5], Integer.parseInt(partes[6]),
+                                Integer.parseInt(partes[7]),
+                                Double.parseDouble(partes[8]),
+                                partes[9]
+                            );
+                            c.setProfesorDni(c.getProfesorDni().toUpperCase().trim());
+                            if (c.validar()) {
+                                cursos.put(c.getCodigo().toUpperCase().trim(), c);
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    System.out.println("Advertencia: archivo cursos.txt no encontrado o vacío.");
                 }
 
-                // ✅ Matrículas
+                // Matrículas
                 matriculas.clear();
-                matriculas.addAll(matriculaDAO.listarTodas());
-
-                // ✅ Calificaciones
-                calificaciones.clear();
-                calificaciones.addAll(calificacionDAO.listarTodas());
-
-                // ✅ Niveles de idioma
-                nivelesIdioma.clear();
-                for (IdiomaNivel in : idiomaNivelDAO.listarTodos()) {
-                    nivelesIdioma.put(in.getCodigo().toUpperCase(), in);
-                    entidadesAcademicas.put(in.getCodigo().toUpperCase(), in);
+                try (BufferedReader br = new BufferedReader(new FileReader("matriculas.txt"))) {
+                    String linea;
+                    while ((linea = br.readLine()) != null) {
+                        String[] partes = linea.split(",");
+                        if (partes.length >= 4) {
+                            Matricula m = new Matricula(
+                                partes[0].trim().toUpperCase(),
+                                partes[1].trim().toUpperCase(),
+                                partes[2].trim(),
+                                Double.parseDouble(partes[3])
+                            );
+                            if (m.validar()) {
+                                matriculas.add(m);
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    System.out.println("Advertencia: archivo matriculas.txt no encontrado o vacío.");
                 }
 
-                System.out.println("[DB] ✅ Datos cargados correctamente desde SQLite.");
+                // Calificaciones
+                calificaciones.clear();
+                try (BufferedReader br = new BufferedReader(new FileReader("calificaciones.txt"))) {
+                    String linea;
+                    while ((linea = br.readLine()) != null) {
+                        String[] partes = linea.split(",");
+                        if (partes.length >= 5) {
+                            Calificacion c = new Calificacion(
+                                partes[0].trim().toUpperCase(),
+                                partes[1].trim().toUpperCase(),
+                                partes[2].trim(),
+                                Double.parseDouble(partes[3].trim()),
+                                partes[4].trim()
+                            );
+                            if (c.validar()) {
+                                calificaciones.add(c);
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    System.out.println("Advertencia: archivo calificaciones.txt no encontrado o vacío.");
+                }
+
+                // Niveles de idioma
+                nivelesIdioma.clear();
+                try (BufferedReader br = new BufferedReader(new FileReader("idiomas.txt"))) {
+                    String linea;
+                    while ((linea = br.readLine()) != null) {
+                        String[] partes = linea.split(",");
+                        if (partes.length >= 4) {
+                            IdiomaNivel in = new IdiomaNivel(partes[0], partes[1], partes[2], partes[3]);
+                            if (in.validar()) {
+                                nivelesIdioma.put(in.getCodigo().toUpperCase(), in);
+                            }
+                        }
+                    }
+                } catch (IOException e) {
+                    System.out.println("Advertencia: archivo idiomas.txt no encontrado o vacío.");
+                }
+
+                System.out.println("[DB] Datos cargados desde archivos (modo híbrido).");
             }
 }
