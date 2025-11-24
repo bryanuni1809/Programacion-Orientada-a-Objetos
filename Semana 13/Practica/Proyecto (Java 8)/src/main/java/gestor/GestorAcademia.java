@@ -243,7 +243,7 @@ public GestorAcademia(){
             System.out.println("13. Estudiantes sin Calificaciones");
             System.out.println("0. Salir");
             System.out.print("Seleccione una opcion: ");
-            opcion = leerOpcion(0, 20);
+            opcion = leerOpcion(0, 14);
 
             switch(opcion){
                 case 1:
@@ -284,6 +284,10 @@ public GestorAcademia(){
                     break;
                 case 13: 
                     listarEstudiantesSinCalificaciones(); 
+                    break;
+                    
+                case 14:
+                    migrarDatosDesdeArchivos();
                     break;
                 case 0:
                     System.out.println("Cerrando sesion...");
@@ -372,7 +376,6 @@ public GestorAcademia(){
                     } else {
                         System.out.println("Error en base de datos.");
                         estudiantes.remove(dni);
-                        return;
                     }
                } catch (IllegalArgumentException e) {
                    System.out.println("Error de validación: " + e.getMessage());
@@ -485,7 +488,7 @@ public GestorAcademia(){
             System.out.println("5. Profesores con experiencia mínima (Lambda)");
             System.out.println("0. Volver al menu principal");
             System.out.print("Seleccione una opcion: ");
-            opcion = leerOpcion(0, 4);
+            opcion = leerOpcion(0, 5);
 
             switch(opcion){
                 case 1:
@@ -561,7 +564,6 @@ public GestorAcademia(){
                     } else {
                         System.out.println("Error en base de datos.");
                         profesores.remove(dni); // revertir
-                        return;
                     }
 
                } catch (IllegalArgumentException e) {
@@ -674,7 +676,7 @@ public GestorAcademia(){
             System.out.println("5. Cursos por idioma (Streams + Grouping)");
             System.out.println("0. Volver al menu principal");
             System.out.print("Seleccione una opcion: ");
-            opcion = leerOpcion(0, 4);
+            opcion = leerOpcion(0, 5);
 
             switch(opcion){
                 case 1:
@@ -765,7 +767,6 @@ public GestorAcademia(){
                     } else {
                         System.out.println("Error en base de datos.");
                         cursos.remove(codigo);
-                        return;
                     }
 
                 } catch (NumberFormatException e) {
@@ -902,7 +903,7 @@ public GestorAcademia(){
             System.out.println("5. Listar Calificaciones");
             System.out.println("0. Volver al menú principal");
             System.out.print("Seleccione una opción: ");
-            opcion = leerOpcion(0, 4);
+            opcion = leerOpcion(0, 5);
 
             switch (opcion) {
                 case 1:
@@ -979,7 +980,6 @@ public GestorAcademia(){
                 } else {
                     System.out.println("Error en base de datos.");
                     matriculas.remove(m);
-                    return;
                 }
             }
             
@@ -1027,7 +1027,6 @@ public GestorAcademia(){
                 } else {
                     System.out.println("Error en base de datos.");
                     calificaciones.remove(c);
-                    return;
                 }
             }
             
@@ -1147,7 +1146,6 @@ public GestorAcademia(){
                 } else {
                     System.out.println("Error en base de datos.");
                     nivelesIdioma.remove(codigo);
-                    return;
                 }
             }
 
@@ -1718,7 +1716,7 @@ public GestorAcademia(){
             agrupados.entrySet().stream()
                 .sorted(Map.Entry.comparingByKey())
                 .forEach(entry -> {
-                    System.out.println("\n🔹 " + entry.getKey() + " (" + entry.getValue().size() + " estudiantes):");
+                    System.out.println(entry.getKey() + " (" + entry.getValue().size() + " estudiantes):");
                     entry.getValue().stream()
                         .sorted(Comparator.comparing(Estudiante::getApellidos))
                         .forEach(e -> System.out.println("   • " + e.getApellidos() + ", " + e.getNombres() + " (DNI: " + e.getDni() + ")"));
@@ -1727,12 +1725,9 @@ public GestorAcademia(){
             
             private void mostrarCursosConMasMatriculas() {
                 System.out.println("\n=== CURSOS CON MÁS DE 3 MATRÍCULAS ===");
-
-                // Contar matrículas por curso
                 Map<String, Long> conteoMatriculas = matriculas.stream()
                     .collect(Collectors.groupingBy(Matricula::getCodigoCurso, Collectors.counting()));
 
-                // Filtrar y ordenar
                 conteoMatriculas.entrySet().stream()
                     .filter(entry -> entry.getValue() > 3)
                     .sorted(Map.Entry.<String, Long>comparingByValue().reversed())
@@ -1760,7 +1755,7 @@ public GestorAcademia(){
                     .collect(Collectors.toList());
 
                 if (sinCalif.isEmpty()) {
-                    System.out.println("✅ Todos los estudiantes tienen al menos una calificación.");
+                    System.out.println("Todos los estudiantes tienen al menos una calificación.");
                 } else {
                     System.out.println("Estudiantes sin calificaciones (" + sinCalif.size() + "):");
                     sinCalif.forEach(e -> 
@@ -1770,44 +1765,286 @@ public GestorAcademia(){
             }
         
             private void cargarDesdeBD() {
-                // ✅ Cargar estudiantes desde BD
                 estudiantes.clear();
                 personas.clear();
                 for (Estudiante e : estudianteDAO.listarTodos()) {
                     estudiantes.put(e.getDni().toUpperCase(), e);
                     personas.put(e.getDni().toUpperCase(), e);
                 }
-
-                // ✅ Profesores
                 profesores.clear();
                 for (Profesor p : profesorDAO.listarTodos()) {
                     profesores.put(p.getDni().toUpperCase(), p);
                     personas.put(p.getDni().toUpperCase(), p);
                 }
-
-                // ✅ Cursos
                 cursos.clear();
                 entidadesAcademicas.clear();
                 for (Curso c : cursoDAO.listarTodos()) {
                     cursos.put(c.getCodigo().toUpperCase().trim(), c);
                     entidadesAcademicas.put(c.getCodigo().toUpperCase().trim(), c);
                 }
-
-                // ✅ Matrículas
                 matriculas.clear();
                 matriculas.addAll(matriculaDAO.listarTodas());
 
-                // ✅ Calificaciones
                 calificaciones.clear();
                 calificaciones.addAll(calificacionDAO.listarTodas());
 
-                // ✅ Niveles de idioma
                 nivelesIdioma.clear();
                 for (IdiomaNivel in : idiomaNivelDAO.listarTodos()) {
                     nivelesIdioma.put(in.getCodigo().toUpperCase(), in);
                     entidadesAcademicas.put(in.getCodigo().toUpperCase(), in);
                 }
 
-                System.out.println("[DB] ✅ Datos cargados correctamente desde SQLite.");
+                System.out.println("[DB]Datos cargados correctamente desde SQLite.");
             }
+            
+            
+            
+            private void migrarDatosDesdeArchivos() {
+    System.out.println("🔄 Iniciando migración desde archivos .txt a SQLite...");
+
+    migrarEstudiantes();
+    migrarProfesores();
+    migrarCursos();
+    migrarMatriculas();
+    migrarCalificaciones();
+    migrarNivelesIdioma();
+
+    System.out.println("✅ Migración completada. Reinicia la app para cargar desde BD.");
+}
+
+// --- Métodos auxiliares de migración ---
+
+private void migrarEstudiantes() {
+    try (BufferedReader br = new BufferedReader(new FileReader("estudiantes.txt"))) {
+        String linea;
+        int ok = 0, fail = 0;
+        while ((linea = br.readLine()) != null) {
+            String[] p = linea.split(",", -1); // -1 para preservar campos vacíos
+            if (p.length >= 8) {
+                try {
+                    Estudiante e = new Estudiante(
+                        p[0].trim(),
+                        p[1].trim(),
+                        p[2].trim(),
+                        p[3].trim(),
+                        p[4].trim(),
+                        p[5].trim(),
+                        p[6].trim(),
+                        p[7].trim()
+                    );
+                    if (e.validar() && estudianteDAO.insertar(e)) {
+                        ok++;
+                    } else {
+                        System.err.println("[Estudiante fallido] DNI=" + e.getDni() + " | Error: " + e.getMensajeError());
+                        fail++;
+                    }
+                } catch (Exception ex) {
+                    System.err.println("[Error parsing estudiante] línea: " + linea + " → " + ex.getMessage());
+                    fail++;
+                }
+            } else {
+                System.err.println("[Formato inválido estudiante] línea: " + linea);
+                fail++;
+            }
+        }
+        System.out.printf("✅ Estudiantes migrados: %d | ❌ Fallidos: %d%n", ok, fail);
+    } catch (IOException e) {
+        System.err.println("⚠ Error al leer estudiantes.txt: " + e.getMessage());
+    }
+}
+
+private void migrarProfesores() {
+    try (BufferedReader br = new BufferedReader(new FileReader("profesores.txt"))) {
+        String linea;
+        int ok = 0, fail = 0;
+        while ((linea = br.readLine()) != null) {
+            String[] p = linea.split(",", -1);
+            if (p.length >= 8) {
+                try {
+                    Profesor pfs = new Profesor(
+                        p[0].trim(),
+                        p[1].trim(),
+                        p[2].trim(),
+                        p[3].trim(),
+                        p[4].trim(),
+                        p[5].trim(),
+                        p[6].trim(),
+                        Integer.parseInt(p[7].trim())
+                    );
+                    if (pfs.validar() && profesorDAO.insertar(pfs)) {
+                        ok++;
+                    } else {
+                        System.err.println("[Profesor fallido] DNI=" + pfs.getDni() + " | Error: " + pfs.getMensajeError());
+                        fail++;
+                    }
+                } catch (Exception ex) {
+                    System.err.println("[Error parsing profesor] línea: " + linea + " → " + ex.getMessage());
+                    fail++;
+                }
+            } else {
+                System.err.println("[Formato inválido profesor] línea: " + linea);
+                fail++;
+            }
+        }
+        System.out.printf("✅ Profesores migrados: %d | ❌ Fallidos: %d%n", ok, fail);
+    } catch (IOException e) {
+        System.err.println("⚠ Error al leer profesores.txt: " + e.getMessage());
+    }
+}
+
+private void migrarCursos() {
+    try (BufferedReader br = new BufferedReader(new FileReader("cursos.txt"))) {
+        String linea;
+        int ok = 0, fail = 0;
+        while ((linea = br.readLine()) != null) {
+            String[] p = linea.split(",", -1);
+            if (p.length >= 10) {
+                try {
+                    Curso c = new Curso(
+                        p[0].trim(),
+                        p[1].trim(),
+                        p[2].trim(),
+                        p[3].trim(),
+                        p[4].trim(),
+                        p[5].trim(),
+                        Integer.parseInt(p[6].trim()),
+                        Integer.parseInt(p[7].trim()),
+                        Double.parseDouble(p[8].trim()),
+                        p[9].trim()
+                    );
+                    if (c.validar() && cursoDAO.insertar(c)) {
+                        ok++;
+                    } else {
+                        System.err.println("[Curso fallido] Código=" + c.getCodigo() + " | Error: " + c.getMensajeError());
+                        fail++;
+                    }
+                } catch (Exception ex) {
+                    System.err.println("[Error parsing curso] línea: \"" + linea + "\" → " + ex.getMessage());
+                    fail++;
+                }
+            } else {
+                System.err.println("[Formato inválido curso] línea: \"" + linea + "\" (campos: " + p.length + ")");
+                fail++;
+            }
+        }
+        System.out.printf("✅ Cursos migrados: %d | ❌ Fallidos: %d%n", ok, fail);
+    } catch (IOException e) {
+        System.err.println("⚠ Error al leer cursos.txt: " + e.getMessage());
+    }
+}
+
+private void migrarMatriculas() {
+    try (BufferedReader br = new BufferedReader(new FileReader("matriculas.txt"))) {
+        String linea;
+        int ok = 0, fail = 0;
+        while ((linea = br.readLine()) != null) {
+            String[] p = linea.split(",", -1);
+            if (p.length >= 4) {
+                try {
+                    Matricula m = new Matricula(
+                        p[0].trim(),
+                        p[1].trim(),
+                        p[2].trim(),
+                        Double.parseDouble(p[3].trim())
+                    );
+                    if (m.validar() && matriculaDAO.insertar(m)) {
+                        ok++;
+                    } else {
+                        System.err.println("[Matrícula fallida] Est=" + m.getDniEstudiante() + ", Curso=" + m.getCodigoCurso() + " | Error: " + m.getMensajeError());
+                        fail++;
+                    }
+                } catch (Exception ex) {
+                    System.err.println("[Error parsing matrícula] línea: \"" + linea + "\" → " + ex.getMessage());
+                    fail++;
+                }
+            } else {
+                System.err.println("[Formato inválido matrícula] línea: \"" + linea + "\"");
+                fail++;
+            }
+        }
+        System.out.printf("✅ Matrículas migradas: %d | ❌ Fallidas: %d%n", ok, fail);
+    } catch (IOException e) {
+        System.err.println("⚠ Error al leer matriculas.txt: " + e.getMessage());
+    }
+}
+
+private void migrarCalificaciones() {
+    try (BufferedReader br = new BufferedReader(new FileReader("calificaciones.txt"))) {
+        String linea;
+        int ok = 0, fail = 0;
+        while ((linea = br.readLine()) != null) {
+            String[] p = linea.split(",", -1);
+            if (p.length >= 5) {
+                try {
+                    // Manejar casos donde la observación contiene comas (ej: "Buen rendimiento" vs "En proceso")
+                    // Como el formato es fijo: Cxxx, DNI, fecha, nota, observación → juntamos el resto si hay más campos
+                    String codigo = p[0].trim();
+                    String dni = p[1].trim();
+                    String fecha = p[2].trim();
+                    String notaStr = p[3].trim();
+                    String observacion = p.length > 4 ? String.join(",", java.util.Arrays.copyOfRange(p, 4, p.length)).trim() : "";
+
+                    Calificacion c = new Calificacion(
+                        codigo,
+                        dni,
+                        fecha,
+                        Double.parseDouble(notaStr),
+                        observacion
+                    );
+                    if (c.validar() && calificacionDAO.insertar(c)) {
+                        ok++;
+                    } else {
+                        System.err.println("[Calificación fallida] Est=" + c.getDniEstudiante() + ", Curso=" + c.getCodigoCurso() + " | Error: " + c.getMensajeError());
+                        fail++;
+                    }
+                } catch (Exception ex) {
+                    System.err.println("[Error parsing calificación] línea: \"" + linea + "\" → " + ex.getMessage());
+                    fail++;
+                }
+            } else {
+                System.err.println("[Formato inválido calificación] línea: \"" + linea + "\"");
+                fail++;
+            }
+        }
+        System.out.printf("✅ Calificaciones migradas: %d | ❌ Fallidas: %d%n", ok, fail);
+    } catch (IOException e) {
+        System.err.println("⚠ Error al leer calificaciones.txt: " + e.getMessage());
+    }
+}
+
+private void migrarNivelesIdioma() {
+    try (BufferedReader br = new BufferedReader(new FileReader("idiomas.txt"))) {
+        String linea;
+        int ok = 0, fail = 0;
+        while ((linea = br.readLine()) != null) {
+            String[] p = linea.split(",", -1);
+            if (p.length >= 4) {
+                try {
+                    String descripcion = p.length > 3 ? String.join(",", java.util.Arrays.copyOfRange(p, 3, p.length)).trim() : "";
+                    IdiomaNivel in = new IdiomaNivel(
+                        p[0].trim(),
+                        p[1].trim(),
+                        p[2].trim(),
+                        descripcion
+                    );
+                    if (in.validar() && idiomaNivelDAO.insertar(in)) {
+                        ok++;
+                    } else {
+                        System.err.println("[Nivel de idioma fallido] Código=" + in.getCodigo() + " | Error: " + in.getMensajeError());
+                        fail++;
+                    }
+                } catch (Exception ex) {
+                    System.err.println("[Error parsing nivel idioma] línea: \"" + linea + "\" → " + ex.getMessage());
+                    fail++;
+                }
+            } else {
+                System.err.println("[Formato inválido nivel idioma] línea: \"" + linea + "\"");
+                fail++;
+            }
+        }
+        System.out.printf("✅ Niveles de idioma migrados: %d | ❌ Fallidos: %d%n", ok, fail);
+    } catch (IOException e) {
+        System.err.println("⚠ Error al leer idiomas.txt: " + e.getMessage());
+    }
+}
 }
