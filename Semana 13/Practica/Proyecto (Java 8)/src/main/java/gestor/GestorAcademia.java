@@ -1800,251 +1800,251 @@ public GestorAcademia(){
             
             
             private void migrarDatosDesdeArchivos() {
-    System.out.println("🔄 Iniciando migración desde archivos .txt a SQLite...");
+            System.out.println("Iniciando migración desde archivos .txt a SQLite...");
 
-    migrarEstudiantes();
-    migrarProfesores();
-    migrarCursos();
-    migrarMatriculas();
-    migrarCalificaciones();
-    migrarNivelesIdioma();
+            migrarEstudiantes();
+            migrarProfesores();
+            migrarCursos();
+            migrarMatriculas();
+            migrarCalificaciones();
+            migrarNivelesIdioma();
 
-    System.out.println("✅ Migración completada. Reinicia la app para cargar desde BD.");
-}
+            System.out.println("Migración completada. Reinicia la app para cargar desde BD.");
+        }
 
-// --- Métodos auxiliares de migración ---
+        // --- Métodos auxiliares de migración ---
 
-private void migrarEstudiantes() {
-    try (BufferedReader br = new BufferedReader(new FileReader("estudiantes.txt"))) {
-        String linea;
-        int ok = 0, fail = 0;
-        while ((linea = br.readLine()) != null) {
-            String[] p = linea.split(",", -1); // -1 para preservar campos vacíos
-            if (p.length >= 8) {
-                try {
-                    Estudiante e = new Estudiante(
-                        p[0].trim(),
-                        p[1].trim(),
-                        p[2].trim(),
-                        p[3].trim(),
-                        p[4].trim(),
-                        p[5].trim(),
-                        p[6].trim(),
-                        p[7].trim()
-                    );
-                    if (e.validar() && estudianteDAO.insertar(e)) {
-                        ok++;
+        private void migrarEstudiantes() {
+            try (BufferedReader br = new BufferedReader(new FileReader("estudiantes.txt"))) {
+                String linea;
+                int ok = 0, fail = 0;
+                while ((linea = br.readLine()) != null) {
+                    String[] p = linea.split(",", -1); // -1 para preservar campos vacíos
+                    if (p.length >= 8) {
+                        try {
+                            Estudiante e = new Estudiante(
+                                p[0].trim(),
+                                p[1].trim(),
+                                p[2].trim(),
+                                p[3].trim(),
+                                p[4].trim(),
+                                p[5].trim(),
+                                p[6].trim(),
+                                p[7].trim()
+                            );
+                            if (e.validar() && estudianteDAO.insertar(e)) {
+                                ok++;
+                            } else {
+                                System.err.println("[Estudiante fallido] DNI=" + e.getDni() + " | Error: " + e.getMensajeError());
+                                fail++;
+                            }
+                        } catch (Exception ex) {
+                            System.err.println("[Error parsing estudiante] línea: " + linea + " → " + ex.getMessage());
+                            fail++;
+                        }
                     } else {
-                        System.err.println("[Estudiante fallido] DNI=" + e.getDni() + " | Error: " + e.getMensajeError());
+                        System.err.println("[Formato inválido estudiante] línea: " + linea);
                         fail++;
                     }
-                } catch (Exception ex) {
-                    System.err.println("[Error parsing estudiante] línea: " + linea + " → " + ex.getMessage());
-                    fail++;
                 }
-            } else {
-                System.err.println("[Formato inválido estudiante] línea: " + linea);
-                fail++;
+                System.out.printf("Estudiantes migrados: %d | Fallidos: %d%n", ok, fail);
+            } catch (IOException e) {
+                System.err.println("Error al leer estudiantes.txt: " + e.getMessage());
             }
         }
-        System.out.printf("✅ Estudiantes migrados: %d | ❌ Fallidos: %d%n", ok, fail);
-    } catch (IOException e) {
-        System.err.println("⚠ Error al leer estudiantes.txt: " + e.getMessage());
-    }
-}
 
-private void migrarProfesores() {
-    try (BufferedReader br = new BufferedReader(new FileReader("profesores.txt"))) {
-        String linea;
-        int ok = 0, fail = 0;
-        while ((linea = br.readLine()) != null) {
-            String[] p = linea.split(",", -1);
-            if (p.length >= 8) {
-                try {
-                    Profesor pfs = new Profesor(
-                        p[0].trim(),
-                        p[1].trim(),
-                        p[2].trim(),
-                        p[3].trim(),
-                        p[4].trim(),
-                        p[5].trim(),
-                        p[6].trim(),
-                        Integer.parseInt(p[7].trim())
-                    );
-                    if (pfs.validar() && profesorDAO.insertar(pfs)) {
-                        ok++;
+        private void migrarProfesores() {
+            try (BufferedReader br = new BufferedReader(new FileReader("profesores.txt"))) {
+                String linea;
+                int ok = 0, fail = 0;
+                while ((linea = br.readLine()) != null) {
+                    String[] p = linea.split(",", -1);
+                    if (p.length >= 8) {
+                        try {
+                            Profesor pfs = new Profesor(
+                                p[0].trim(),
+                                p[1].trim(),
+                                p[2].trim(),
+                                p[3].trim(),
+                                p[4].trim(),
+                                p[5].trim(),
+                                p[6].trim(),
+                                Integer.parseInt(p[7].trim())
+                            );
+                            if (pfs.validar() && profesorDAO.insertar(pfs)) {
+                                ok++;
+                            } else {
+                                System.err.println("[Profesor fallido] DNI=" + pfs.getDni() + " | Error: " + pfs.getMensajeError());
+                                fail++;
+                            }
+                        } catch (Exception ex) {
+                            System.err.println("[Error parsing profesor] línea: " + linea + " → " + ex.getMessage());
+                            fail++;
+                        }
                     } else {
-                        System.err.println("[Profesor fallido] DNI=" + pfs.getDni() + " | Error: " + pfs.getMensajeError());
+                        System.err.println("[Formato inválido profesor] línea: " + linea);
                         fail++;
                     }
-                } catch (Exception ex) {
-                    System.err.println("[Error parsing profesor] línea: " + linea + " → " + ex.getMessage());
-                    fail++;
                 }
-            } else {
-                System.err.println("[Formato inválido profesor] línea: " + linea);
-                fail++;
+                System.out.printf("Profesores migrados: %d | Fallidos: %d%n", ok, fail);
+            } catch (IOException e) {
+                System.err.println("Error al leer profesores.txt: " + e.getMessage());
             }
         }
-        System.out.printf("✅ Profesores migrados: %d | ❌ Fallidos: %d%n", ok, fail);
-    } catch (IOException e) {
-        System.err.println("⚠ Error al leer profesores.txt: " + e.getMessage());
-    }
-}
 
-private void migrarCursos() {
-    try (BufferedReader br = new BufferedReader(new FileReader("cursos.txt"))) {
-        String linea;
-        int ok = 0, fail = 0;
-        while ((linea = br.readLine()) != null) {
-            String[] p = linea.split(",", -1);
-            if (p.length >= 10) {
-                try {
-                    Curso c = new Curso(
-                        p[0].trim(),
-                        p[1].trim(),
-                        p[2].trim(),
-                        p[3].trim(),
-                        p[4].trim(),
-                        p[5].trim(),
-                        Integer.parseInt(p[6].trim()),
-                        Integer.parseInt(p[7].trim()),
-                        Double.parseDouble(p[8].trim()),
-                        p[9].trim()
-                    );
-                    if (c.validar() && cursoDAO.insertar(c)) {
-                        ok++;
+        private void migrarCursos() {
+            try (BufferedReader br = new BufferedReader(new FileReader("cursos.txt"))) {
+                String linea;
+                int ok = 0, fail = 0;
+                while ((linea = br.readLine()) != null) {
+                    String[] p = linea.split(",", -1);
+                    if (p.length >= 10) {
+                        try {
+                            Curso c = new Curso(
+                                p[0].trim(),
+                                p[1].trim(),
+                                p[2].trim(),
+                                p[3].trim(),
+                                p[4].trim(),
+                                p[5].trim(),
+                                Integer.parseInt(p[6].trim()),
+                                Integer.parseInt(p[7].trim()),
+                                Double.parseDouble(p[8].trim()),
+                                p[9].trim()
+                            );
+                            if (c.validar() && cursoDAO.insertar(c)) {
+                                ok++;
+                            } else {
+                                System.err.println("[Curso fallido] Código=" + c.getCodigo() + " | Error: " + c.getMensajeError());
+                                fail++;
+                            }
+                        } catch (Exception ex) {
+                            System.err.println("[Error parsing curso] línea: \"" + linea + "\" → " + ex.getMessage());
+                            fail++;
+                        }
                     } else {
-                        System.err.println("[Curso fallido] Código=" + c.getCodigo() + " | Error: " + c.getMensajeError());
+                        System.err.println("[Formato inválido curso] línea: \"" + linea + "\" (campos: " + p.length + ")");
                         fail++;
                     }
-                } catch (Exception ex) {
-                    System.err.println("[Error parsing curso] línea: \"" + linea + "\" → " + ex.getMessage());
-                    fail++;
                 }
-            } else {
-                System.err.println("[Formato inválido curso] línea: \"" + linea + "\" (campos: " + p.length + ")");
-                fail++;
+                System.out.printf("Cursos migrados: %d | Fallidos: %d%n", ok, fail);
+            } catch (IOException e) {
+                System.err.println("Error al leer cursos.txt: " + e.getMessage());
             }
         }
-        System.out.printf("✅ Cursos migrados: %d | ❌ Fallidos: %d%n", ok, fail);
-    } catch (IOException e) {
-        System.err.println("⚠ Error al leer cursos.txt: " + e.getMessage());
-    }
-}
 
-private void migrarMatriculas() {
-    try (BufferedReader br = new BufferedReader(new FileReader("matriculas.txt"))) {
-        String linea;
-        int ok = 0, fail = 0;
-        while ((linea = br.readLine()) != null) {
-            String[] p = linea.split(",", -1);
-            if (p.length >= 4) {
-                try {
-                    Matricula m = new Matricula(
-                        p[0].trim(),
-                        p[1].trim(),
-                        p[2].trim(),
-                        Double.parseDouble(p[3].trim())
-                    );
-                    if (m.validar() && matriculaDAO.insertar(m)) {
-                        ok++;
+        private void migrarMatriculas() {
+            try (BufferedReader br = new BufferedReader(new FileReader("matriculas.txt"))) {
+                String linea;
+                int ok = 0, fail = 0;
+                while ((linea = br.readLine()) != null) {
+                    String[] p = linea.split(",", -1);
+                    if (p.length >= 4) {
+                        try {
+                            Matricula m = new Matricula(
+                                p[0].trim(),
+                                p[1].trim(),
+                                p[2].trim(),
+                                Double.parseDouble(p[3].trim())
+                            );
+                            if (m.validar() && matriculaDAO.insertar(m)) {
+                                ok++;
+                            } else {
+                                System.err.println("[Matrícula fallida] Est=" + m.getDniEstudiante() + ", Curso=" + m.getCodigoCurso() + " | Error: " + m.getMensajeError());
+                                fail++;
+                            }
+                        } catch (Exception ex) {
+                            System.err.println("[Error parsing matrícula] línea: \"" + linea + "\" → " + ex.getMessage());
+                            fail++;
+                        }
                     } else {
-                        System.err.println("[Matrícula fallida] Est=" + m.getDniEstudiante() + ", Curso=" + m.getCodigoCurso() + " | Error: " + m.getMensajeError());
+                        System.err.println("[Formato inválido matrícula] línea: \"" + linea + "\"");
                         fail++;
                     }
-                } catch (Exception ex) {
-                    System.err.println("[Error parsing matrícula] línea: \"" + linea + "\" → " + ex.getMessage());
-                    fail++;
                 }
-            } else {
-                System.err.println("[Formato inválido matrícula] línea: \"" + linea + "\"");
-                fail++;
+                System.out.printf("Matrículas migradas: %d | Fallidas: %d%n", ok, fail);
+            } catch (IOException e) {
+                System.err.println("Error al leer matriculas.txt: " + e.getMessage());
             }
         }
-        System.out.printf("✅ Matrículas migradas: %d | ❌ Fallidas: %d%n", ok, fail);
-    } catch (IOException e) {
-        System.err.println("⚠ Error al leer matriculas.txt: " + e.getMessage());
-    }
-}
 
-private void migrarCalificaciones() {
-    try (BufferedReader br = new BufferedReader(new FileReader("calificaciones.txt"))) {
-        String linea;
-        int ok = 0, fail = 0;
-        while ((linea = br.readLine()) != null) {
-            String[] p = linea.split(",", -1);
-            if (p.length >= 5) {
-                try {
-                    // Manejar casos donde la observación contiene comas (ej: "Buen rendimiento" vs "En proceso")
-                    // Como el formato es fijo: Cxxx, DNI, fecha, nota, observación → juntamos el resto si hay más campos
-                    String codigo = p[0].trim();
-                    String dni = p[1].trim();
-                    String fecha = p[2].trim();
-                    String notaStr = p[3].trim();
-                    String observacion = p.length > 4 ? String.join(",", java.util.Arrays.copyOfRange(p, 4, p.length)).trim() : "";
+        private void migrarCalificaciones() {
+            try (BufferedReader br = new BufferedReader(new FileReader("calificaciones.txt"))) {
+                String linea;
+                int ok = 0, fail = 0;
+                while ((linea = br.readLine()) != null) {
+                    String[] p = linea.split(",", -1);
+                    if (p.length >= 5) {
+                        try {
+                            // Manejar casos donde la observación contiene comas (ej: "Buen rendimiento" vs "En proceso")
+                            // Como el formato es fijo: Cxxx, DNI, fecha, nota, observación → juntamos el resto si hay más campos
+                            String codigo = p[0].trim();
+                            String dni = p[1].trim();
+                            String fecha = p[2].trim();
+                            String notaStr = p[3].trim();
+                            String observacion = p.length > 4 ? String.join(",", java.util.Arrays.copyOfRange(p, 4, p.length)).trim() : "";
 
-                    Calificacion c = new Calificacion(
-                        codigo,
-                        dni,
-                        fecha,
-                        Double.parseDouble(notaStr),
-                        observacion
-                    );
-                    if (c.validar() && calificacionDAO.insertar(c)) {
-                        ok++;
+                            Calificacion c = new Calificacion(
+                                codigo,
+                                dni,
+                                fecha,
+                                Double.parseDouble(notaStr),
+                                observacion
+                            );
+                            if (c.validar() && calificacionDAO.insertar(c)) {
+                                ok++;
+                            } else {
+                                System.err.println("[Calificación fallida] Est=" + c.getDniEstudiante() + ", Curso=" + c.getCodigoCurso() + " | Error: " + c.getMensajeError());
+                                fail++;
+                            }
+                        } catch (Exception ex) {
+                            System.err.println("[Error parsing calificación] línea: \"" + linea + "\" → " + ex.getMessage());
+                            fail++;
+                        }
                     } else {
-                        System.err.println("[Calificación fallida] Est=" + c.getDniEstudiante() + ", Curso=" + c.getCodigoCurso() + " | Error: " + c.getMensajeError());
+                        System.err.println("[Formato inválido calificación] línea: \"" + linea + "\"");
                         fail++;
                     }
-                } catch (Exception ex) {
-                    System.err.println("[Error parsing calificación] línea: \"" + linea + "\" → " + ex.getMessage());
-                    fail++;
                 }
-            } else {
-                System.err.println("[Formato inválido calificación] línea: \"" + linea + "\"");
-                fail++;
+                System.out.printf("Calificaciones migradas: %d | Fallidas: %d%n", ok, fail);
+            } catch (IOException e) {
+                System.err.println("Error al leer calificaciones.txt: " + e.getMessage());
             }
         }
-        System.out.printf("✅ Calificaciones migradas: %d | ❌ Fallidas: %d%n", ok, fail);
-    } catch (IOException e) {
-        System.err.println("⚠ Error al leer calificaciones.txt: " + e.getMessage());
-    }
-}
 
-private void migrarNivelesIdioma() {
-    try (BufferedReader br = new BufferedReader(new FileReader("idiomas.txt"))) {
-        String linea;
-        int ok = 0, fail = 0;
-        while ((linea = br.readLine()) != null) {
-            String[] p = linea.split(",", -1);
-            if (p.length >= 4) {
-                try {
-                    String descripcion = p.length > 3 ? String.join(",", java.util.Arrays.copyOfRange(p, 3, p.length)).trim() : "";
-                    IdiomaNivel in = new IdiomaNivel(
-                        p[0].trim(),
-                        p[1].trim(),
-                        p[2].trim(),
-                        descripcion
-                    );
-                    if (in.validar() && idiomaNivelDAO.insertar(in)) {
-                        ok++;
+        private void migrarNivelesIdioma() {
+            try (BufferedReader br = new BufferedReader(new FileReader("idiomas.txt"))) {
+                String linea;
+                int ok = 0, fail = 0;
+                while ((linea = br.readLine()) != null) {
+                    String[] p = linea.split(",", -1);
+                    if (p.length >= 4) {
+                        try {
+                            String descripcion = p.length > 3 ? String.join(",", java.util.Arrays.copyOfRange(p, 3, p.length)).trim() : "";
+                            IdiomaNivel in = new IdiomaNivel(
+                                p[0].trim(),
+                                p[1].trim(),
+                                p[2].trim(),
+                                descripcion
+                            );
+                            if (in.validar() && idiomaNivelDAO.insertar(in)) {
+                                ok++;
+                            } else {
+                                System.err.println("[Nivel de idioma fallido] Código=" + in.getCodigo() + " | Error: " + in.getMensajeError());
+                                fail++;
+                            }
+                        } catch (Exception ex) {
+                            System.err.println("[Error parsing nivel idioma] línea: \"" + linea + "\" → " + ex.getMessage());
+                            fail++;
+                        }
                     } else {
-                        System.err.println("[Nivel de idioma fallido] Código=" + in.getCodigo() + " | Error: " + in.getMensajeError());
+                        System.err.println("[Formato inválido nivel idioma] línea: \"" + linea + "\"");
                         fail++;
                     }
-                } catch (Exception ex) {
-                    System.err.println("[Error parsing nivel idioma] línea: \"" + linea + "\" → " + ex.getMessage());
-                    fail++;
                 }
-            } else {
-                System.err.println("[Formato inválido nivel idioma] línea: \"" + linea + "\"");
-                fail++;
+                System.out.printf("Niveles de idioma migrados: %d | Fallidos: %d%n", ok, fail);
+            } catch (IOException e) {
+                System.err.println("Error al leer idiomas.txt: " + e.getMessage());
             }
         }
-        System.out.printf("✅ Niveles de idioma migrados: %d | ❌ Fallidos: %d%n", ok, fail);
-    } catch (IOException e) {
-        System.err.println("⚠ Error al leer idiomas.txt: " + e.getMessage());
-    }
-}
 }
