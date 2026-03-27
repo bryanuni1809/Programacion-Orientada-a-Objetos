@@ -59,7 +59,7 @@ public abstract class Persona implements IEntidad, IValidable, Serializable {
 
 
     @Override
-    public final boolean validar() {  // ← 'final' evita que subclases cambien el flujo
+    public final boolean validar() {
         if (!validarDatosBasicos()) return false;
         if (!validarDatosEspecificos()) return false;
         mensajeError = "";

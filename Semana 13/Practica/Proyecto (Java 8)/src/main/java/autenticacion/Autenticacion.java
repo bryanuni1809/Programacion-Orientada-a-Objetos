@@ -17,7 +17,6 @@ public class Autenticacion{
 
     private static final Autenticacion INSTANCIA = new Autenticacion();
     private final UsuarioDAO usuarioDAO = new UsuarioDAO();
-
     public static Autenticacion getInstance() {
         return INSTANCIA;
     }
